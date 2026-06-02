@@ -261,6 +261,29 @@ img { display: block; max-width: 100%; }
 }
 
 /* ============================================================================
+   PINWHEEL TRAVELER  (fixed, JS-controlled — spins in over the cover,
+   then travels into the intro slot and idles in the "wind")
+   ========================================================================== */
+.pinwheel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  pointer-events: none;
+  will-change: transform;
+}
+.pinwheel__spin {
+  width: 100%;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.pinwheel__spin img { width: 100%; height: auto; }
+
+/* When the motion build runs, the in-flow graphic is an invisible spacer
+   (reserves the grid slot + stays the accessible element). */
+.js.motion .intro__graphic img { visibility: hidden; }
+
+/* ============================================================================
    MOTION — initial states (JS removes them after load / on reveal)
    ========================================================================== */
 .js [data-reveal] { opacity: 0; transform: translateY(24px); }
@@ -270,6 +293,7 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   .titleblock__streaks { --streak-hide: 0%; }
   .js [data-reveal] { opacity: 1; transform: none; }
+  .js #introGraphic { opacity: 1; }
 }
 
 /* ---------- Responsive: stack intro on narrow screens ---------- */
