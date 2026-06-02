@@ -5,11 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Design Playbook — GovTech Consulting</title>
   <meta name="description" content="An outline for how we work, what we believe, and the outcomes we're agreeing to pursue together." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <!-- ScrollSmoother wrapper — pinned scenes live inside; the fixed menu/pinwheel stay outside -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
   <main>
     <!-- ───────────────────────── COVER 1 → REVEAL (pinned stage) ───────────────────────── -->
     <section class="hero" id="hero">
@@ -19,7 +23,7 @@
 
         <div class="titleblock" id="titleblock">
           <div class="titleblock__media">
-            <img class="titleblock__streaks" id="streaks" src="assets/Title_Streaks.png" alt="" aria-hidden="true" />
+            <img class="titleblock__streaks" id="streaks" src="assets/title_streaks_2.png" alt="" aria-hidden="true" />
             <img class="titleblock__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
           </div>
         </div>
@@ -68,6 +72,8 @@
       </div>
     </section>
   </main>
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
 
   <!-- ───────────────────────── MENU (bookshelf overlay) ───────────────────────── -->
   <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
@@ -145,6 +151,7 @@
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
   <script src="vendor/CustomEase.min.js"></script>
   <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>

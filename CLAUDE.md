@@ -9,9 +9,10 @@ that opens a full-screen **bookshelf Menu overlay**. More sections will be added
 
 ## Tech stack
 - **Plain HTML / CSS / vanilla JS** (ES modules). No framework, no build step.
-- **GSAP + ScrollTrigger** — owns almost all motion: the two pinned/scrubbed scroll scenes,
+- **GSAP + ScrollTrigger + ScrollSmoother** — own almost all motion: page smooth-scroll
+  (`#smooth-wrapper > #smooth-content`, subtle `smooth:1`), the two pinned/scrubbed scroll scenes,
   the scroll fades, the pinwheel rise/align, the continuous "wind" spin, the Menu (books fall
-  in / sway / raise), and the Explore button's magnetic pull. **CustomEase + CustomWiggle**
+  in / knock / raise), and the Explore button's magnetic pull. **CustomEase + CustomWiggle**
   (now-free GSAP plugins) are vendored + registered but **currently unused** (the idle `wiggle()`
   was removed — the button is static at rest); kept for a possible hover wiggle.
 - **motion.dev (Motion One)** — used for **one** entrance only (`.titleblock__media` load-in).
@@ -35,7 +36,10 @@ There is a `.claude/launch.json` config named `gtc-static` for the preview tooli
 - `css/styles.css` — tokens (`:root`), `@font-face`, the type system, layout, `.pinwheel`
   traveler styles, the magnetic button component, the Menu/shelf/`.book` system (**fixed px** per
   Figma — 188px books, 90px gaps), and motion base states (`.js [data-reveal]` hidden, `.js.motion` spacer hide).
-- `js/main.js` — seven functions, all booted at the bottom:
+- `js/main.js` — eight functions, all booted at the bottom (`smoothScroll()` first):
+  - `smoothScroll()` — creates the GSAP **ScrollSmoother** on `#smooth-wrapper`/`#smooth-content`
+    (`smooth:1`, `smoothTouch:0`); skipped under reduced motion. The **menu does not touch the
+    smoother** — while open it hard-locks page scroll via `documentElement` overflow instead (see gotcha).
   - `heroIntro()` — Motion One load-in for `.titleblock__media`; GSAP `from` load-in for the
     eyebrow / subtitle / arrow (captured in `heroEntrance` so the scroll scene can kill them).
   - `arrowBob()` — infinite GSAP `y` bob on the arrow (independent of its opacity).
@@ -51,8 +55,8 @@ There is a `.claude/launch.json` config named `gtc-static` for the preview tooli
     on hover the pill (`.mag-btn`, strength 0.4) and its `.label` (0.24) parallax toward the cursor,
     both `overwrite:true`, returning with `elastic.out` on leave. Drives both the Explore CTA and
     the Menu back button.
-- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `arrow.svg` (57×45), `Align_Graphic.svg` (pinwheel), `Title_Streaks.png` (the gradient bleed, transparent, tucked behind the title letters), `menu_1.svg` (mono flower) / `menu_1_hover.svg` (colour flower) / `menu_2.svg` (blue leaf) — the 100×100 book icons, `book_element_{1..5}.svg` (gray shelf-spine clusters, 294px tall), `fonts/`.
-- `vendor/` — `gsap.min.js`, `ScrollTrigger.min.js`, `motion.esm.js`, `CustomEase.min.js`, `CustomWiggle.min.js`.
+- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `arrow.svg` (57×45), `Align_Graphic.svg` (pinwheel), `title_streaks_2.png` (gradient "PLAYBOOK", registered behind the crisp letters; `Title_Streaks.png` is the older streaks-only strip, no longer used), `favicon.png` (32²), `menu_1.svg` (mono flower) / `menu_1_hover.svg` (colour flower) / `menu_2.svg` (blue leaf) — the 100×100 book icons, `book_element_{1..5}.svg` (gray shelf-spine clusters, 294px tall), `fonts/`.
+- `vendor/` — `gsap.min.js`, `ScrollTrigger.min.js`, `ScrollSmoother.min.js`, `motion.esm.js`, `CustomEase.min.js`, `CustomWiggle.min.js`.
 - `.figma_ref/` — Figma reference screenshots for visual diffing (not shipped/served).
 
 ## Design source
@@ -110,12 +114,16 @@ The page is two pinned scenes back-to-back, then the intro flows normally.
      after `ALIGN_AT` to finish before the section unpins (see gotcha).
 
 ## The signature motion (gradient streaks)
-The "gradient grows out of PLAYBOOK" effect = `Title_Streaks.png` (the exact Figma artwork,
-cropped to **streaks-only, transparent**, at the letter baseline) sitting **behind** the crisp
-`Opening_Title.svg` letters. It's revealed top→bottom by animating a CSS custom property
-`--streak-hide` (100% → 0%) inside `clip-path: inset(0 0 var(--streak-hide) 0)`, scrubbed to
-scroll inside the pinned hero timeline. Keep the streaks a separate layer from the letters so
-the navy lettering stays vector-crisp.
+The "gradient grows out of PLAYBOOK" effect = `title_streaks_2.png` (the gradient **PLAYBOOK**
+word that bleeds down + fades out) sitting **behind** the crisp `Opening_Title.svg` letters.
+It's **registered to the lockup's PLAYBOOK line** so the gradient letters sit exactly under the
+navy ones (`left:0`, `width:100%` = full 606px lockup width; `top:52.6%` = the PLAYBOOK line, y 121 of the 606×230 lockup);
+the bleed extends below. Since the gradient letters are occluded by the opaque navy letters, only
+the downward bleed reads. It's revealed top→bottom by animating `--streak-hide` (100%→0%) — but via
+a **feathered `mask-image`** (a `linear-gradient` whose black→transparent boundary tracks
+`100% − --streak-hide` with a ±6% soft band), NOT a hard `clip-path`, so the reveal edge is soft (no
+harsh scroll line). Scrubbed inside the pinned hero timeline. Keep streaks a separate layer so the
+navy lettering stays vector-crisp.
 
 ## The pinwheel (rise → align → wind)
 Lives in `pinwheelScene()`. The element is a **JS-injected fixed traveler** appended to `<body>`:
@@ -170,8 +178,10 @@ full-screen `position:fixed` overlay (z 50), `hidden` until opened.
 - **Open/close (`menuScene`) — heavy-book physics:** open un-hides (pre-positioning books above the
   fold to avoid a flash), sets `<main> inert` + locks scroll, fades the overlay, then `openBooks()`
   drops each book under gravity (`power2.in`, **random** delay/duration per book), fires an
-  `impactShake()` on landing (jolts the whole shelf down a few px, `elastic.out` settle — the "thud"),
-  then rocks the book about its base to rest (`elastic.out(1,0.3)`). `closeBooks()` (exit) accelerates
+  `impactShake()` on landing (jolts the whole shelf down a few px, `elastic.out` settle — the "thud";
+  **suppressed + settled while the cursor is over the shelf** via the `overShelf` flag, so moving the
+  mouse in right after landing doesn't ride the shake), then rocks the book about its base to rest
+  (`elastic.out(1,0.3)`). `closeBooks()` (exit) accelerates
   every book straight **down off the bottom** (`y → vh+400`, `power2.in`) with a slight `+=` tumble,
   random per book, then fades the overlay and `finishClose()` re-adds `hidden`/`inert` + restores focus.
   All open tweens are tracked (`openMaster` + `bookTls`) and `killOpen()`'d if close interrupts. `Esc` closes.
@@ -229,6 +239,13 @@ full-screen `position:fixed` overlay (z 50), `hidden` until opened.
 - Always honour `prefers-reduced-motion`: `pinwheelScene`/`scrollScene` bail to end-states and the
   static graphic; `introReveal` shows the copy.
 - After font load, call `ScrollTrigger.refresh()` (metrics shift can break pin distances).
+- **ScrollSmoother:** only `#smooth-content` (the `<main>`) is transformed/smoothed; the `position:fixed`
+  **menu overlay and pinwheel traveler live OUTSIDE it** (direct children of `<body>`) so fixed stays
+  viewport-anchored. The pinwheel's `place()` reads the slot's live `getBoundingClientRect()`, which
+  already reflects the smoother transform, so the fixed traveler still aligns. The menu **does NOT call
+  the smoother API** (pausing it tangled with the open/close and bugged out); instead, while open it
+  hard-locks page scroll via `documentElement.style.overflow = "hidden"` — freezing the window scroll
+  the smoother rides on, decoupled from ScrollSmoother. Restored on close.
 - **Headless verification caveat:** GSAP's rAF ticker stalls under Chrome `--virtual-time-budget`,
   so `gsap.ticker`-driven transforms and timed timelines don't advance — the pinwheel/align/wind
   read as "stuck." Verify geometry from `ScrollTrigger` `.progress` + `getBoundingClientRect` and

@@ -183,19 +183,24 @@ img { display: block; max-width: 100%; }
   width: 100%;
   height: auto;
 }
-/* Streaks tucked behind the letters, hanging from the PLAYBOOK baseline.
-   Native strip = 599 × 486 below a 606-wide lockup → width 98.8%.
-   Revealed top→bottom via clip. */
+/* Gradient "PLAYBOOK" (title_streaks_2.png) registered behind the crisp SVG letters:
+   top + sides match the lockup's PLAYBOOK line (x 8.97→606, y 121 of 606×230), so the
+   gradient bleeds down out of the letters. Revealed top→bottom via a FEATHERED mask
+   (soft edge, no harsh scroll line) driven by --streak-hide 100%→0%. */
 .titleblock__streaks {
   position: absolute;
   z-index: 1;
-  left: 50%;
-  top: 92.5%;
-  width: 98.8%;
+  left: 0;
+  top: 52.6%;      /* PLAYBOOK top (121 / 230) */
+  width: 100%;     /* full Opening_Title width (606px) */
   height: auto;
-  transform: translateX(-50%);
   --streak-hide: 100%;
-  clip-path: inset(0 0 var(--streak-hide) 0);
+  -webkit-mask-image: linear-gradient(to bottom,
+    #000 calc(100% - var(--streak-hide) - 6%),
+    transparent calc(100% - var(--streak-hide) + 6%));
+  mask-image: linear-gradient(to bottom,
+    #000 calc(100% - var(--streak-hide) - 20%),
+    transparent calc(100% - var(--streak-hide) + 6%));
   pointer-events: none;
 }
 
@@ -399,7 +404,8 @@ img { display: block; max-width: 100%; }
   z-index: 50;
   display: block;
   background: var(--chalk);
-  overflow: auto;
+  overflow: hidden;   /* tilting books pivot at the viewport's bottom edge; `auto` flickered a
+                         scrollbar in/out as a corner dipped past the edge → the "screen shake" */
 }
 .menu[hidden] { display: none; }
 
