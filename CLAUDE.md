@@ -1,14 +1,22 @@
 # GTC — The Design Playbook
 
 A polished, awwwards-grade **static single-page website** for the GovTech Consulting ("GTC")
-Design Playbook. Currently the **header is built** (above-the-fold cover + the scroll
-transition where a colour gradient bleeds down from the `PLAYBOOK` lettering and the intro
-"What this is" section is revealed). More sections will be added below over time.
+Design Playbook. The **header is built**: the above-the-fold cover, the pinned scroll
+transition where a colour gradient bleeds down from the `PLAYBOOK` lettering, a dedicated
+pinned beat where the **pinwheel rises in and aligns to the text**, and the intro
+"What this is" section. The intro now ends in an **Explore** button (wiggle + magnetic)
+that opens a full-screen **bookshelf Menu overlay**. More sections will be added below over time.
 
 ## Tech stack
 - **Plain HTML / CSS / vanilla JS** (ES modules). No framework, no build step.
-- **GSAP + ScrollTrigger** — the pinned, scrubbed scroll scene (title rises, gradient streaks grow).
-- **motion.dev (Motion One)** — entrance micro-animations (hero load-in, intro reveal stagger).
+- **GSAP + ScrollTrigger + ScrollSmoother** — own almost all motion: page smooth-scroll
+  (`#smooth-wrapper > #smooth-content`, subtle `smooth:1`), the two pinned/scrubbed scroll scenes,
+  the scroll fades, the pinwheel rise/align, the continuous "wind" spin, the Menu (books fall
+  in / knock / raise), and the Explore button's magnetic pull. **CustomEase + CustomWiggle**
+  (now-free GSAP plugins) are vendored + registered but **currently unused** (the idle `wiggle()`
+  was removed — the button is static at rest); kept for a possible hover wiggle.
+- **motion.dev (Motion One)** — used for **one** entrance only (`.titleblock__media` load-in).
+  Everything else is GSAP (see the "two libraries over one property" gotcha).
 - Everything is **vendored locally** (`vendor/`) and **fonts are self-hosted** (`assets/fonts/`) → fully offline-capable. Do not switch to CDNs.
 
 ## Run / preview
@@ -18,11 +26,37 @@ python3 -m http.server 8124    # then open http://localhost:8124/index.html
 There is a `.claude/launch.json` config named `gtc-static` for the preview tooling.
 
 ## File map
-- `index.html` — two `<section>`s: `#hero` (Cover 1 → reveal stage) and `#intro` (Cover 3 "What this is").
-- `css/styles.css` — tokens (`:root`), `@font-face`, the type system, layout, motion base states.
-- `js/main.js` — `heroIntro()` (motion.dev), `arrowBob()`, `scrollScene()` (GSAP pin/scrub), `introReveal()` (ScrollTrigger → motion).
-- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `arrow.svg` (57×45), `Align_Graphic.svg` (pinwheel), `Title_Streaks.png` (the gradient bleed, transparent, tucked behind the title letters), `fonts/`.
-- `vendor/` — `gsap.min.js`, `ScrollTrigger.min.js`, `motion.esm.js`.
+- `index.html` — two `<section>`s: `#hero` (Cover 1 → reveal stage) and `#intro` (Cover 3
+  "What this is"), plus the `#menu` bookshelf overlay (sibling of `<main>`, `hidden` by default).
+  The pinwheel that animates between the sections is **not** in the markup — JS injects a fixed
+  traveler (see below). The in-flow `#introGraphic img` stays as a hidden spacer + accessible
+  element. The intro ends with `.intro__cta` → a **magnetic button component** (`.mag-zone--explore`
+  > `#exploreBtn`). `#menu` holds the eyebrow + `Opening_Title.svg` lockup, the back button (same
+  component, `.mag-zone--back` > `#menuClose`), and `#menuShelf` → decorative `.shelf__spines` + four `.book` cards.
+- `css/styles.css` — tokens (`:root`), `@font-face`, the type system, layout, `.pinwheel`
+  traveler styles, the magnetic button component, the Menu/shelf/`.book` system (**fixed px** per
+  Figma — 188px books, 90px gaps), and motion base states (`.js [data-reveal]` hidden, `.js.motion` spacer hide).
+- `js/main.js` — eight functions, all booted at the bottom (`smoothScroll()` first):
+  - `smoothScroll()` — creates the GSAP **ScrollSmoother** on `#smooth-wrapper`/`#smooth-content`
+    (`smooth:1`, `smoothTouch:0`); skipped under reduced motion. The **menu does not touch the
+    smoother** — while open it hard-locks page scroll via `documentElement` overflow instead (see gotcha).
+  - `heroIntro()` — Motion One load-in for `.titleblock__media`; GSAP `from` load-in for the
+    eyebrow / subtitle / arrow (captured in `heroEntrance` so the scroll scene can kill them).
+  - `arrowBob()` — infinite GSAP `y` bob on the arrow (independent of its opacity).
+  - `scrollScene()` — GSAP pin/scrub on `#hero` (title rises, streaks grow, extras fade out).
+  - `introReveal()` — reduced-motion-only fallback that shows the intro statically.
+  - `pinwheelScene()` — pins `#intro`; rises the pinwheel in, holds, then a timed transition
+    aligns it to the slot + reveals the text. Plus the continuous "wind" spin.
+  - `menuScene()` — open/close the `#menu` overlay (`hidden` + `<main>` `inert` + body scroll lock);
+    on open the four books **drop & settle** (`back.out`, staggered L→R); cursor over `#menuShelf`
+    **sways** every book (rotation on `.book__inner`); interactive books (1 & 2) **raise** (`y` on
+    the outer `.book`) + turn orange + (book 1) swap icon via the `.is-hover` class. `Esc` closes.
+  - `magneticButtons()` — wires every `.mag-zone` (the magnetic button component). Static at rest;
+    on hover the pill (`.mag-btn`, strength 0.4) and its `.label` (0.24) parallax toward the cursor,
+    both `overwrite:true`, returning with `elastic.out` on leave. Drives both the Explore CTA and
+    the Menu back button.
+- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `arrow.svg` (57×45), `Align_Graphic.svg` (pinwheel), `title_streaks_2.png` (gradient "PLAYBOOK", registered behind the crisp letters; `Title_Streaks.png` is the older streaks-only strip, no longer used), `favicon.png` (32²), `menu_1.svg` (mono flower) / `menu_1_hover.svg` (colour flower) / `menu_2.svg` (blue leaf) — the 100×100 book icons, `book_element_{1..5}.svg` (gray shelf-spine clusters, 294px tall), `fonts/`.
+- `vendor/` — `gsap.min.js`, `ScrollTrigger.min.js`, `ScrollSmoother.min.js`, `motion.esm.js`, `CustomEase.min.js`, `CustomWiggle.min.js`.
 - `.figma_ref/` — Figma reference screenshots for visual diffing (not shipped/served).
 
 ## Design source
@@ -30,13 +64,17 @@ Figma file `DGg9Fqa2owVvSHvOvHBaTA` ("GTC Playbook Design (Copy)"). Key nodes:
 - `1:2` type system · `2:20` typesetting sample
 - `2:112` Desktop – Cover 1 (1440×1024) · `2:13723` Desktop – Cover 3 (1440×1428)
 - `2:18242` scroll-state title (letters + gradient streaks, 599×710) → source of `Title_Streaks.png`
+- `2008:147` Explore button · `2:22779` Menu (bookshelf, 1440×1024) · `2:22921` Menu hover (book 1 → orange)
 
 ## Design tokens
 | Token | Value |
 |------|-------|
 | `--midnight` | `#012233` (Figma "Midnight") |
 | `--chalk` | `#f6f2e7` (Figma "Chalk", page bg) |
+| `--blue` / `--orange` / `--gray3` | `#4F94CF` (books 1–2) · `#F9A518` (book hover) · `#C7C7CC` (shelf spines) |
+| `--book-dark` | `rgba(27,31,38,0.72)` (books 3–4 "coming soon") |
 | Accent palette | pink `#F394BE`, blues `#AED3ED / #73AAE5 / #4F94CF`, orange/gold (gradient only) |
+| Explore pill gradient | `linear-gradient(0deg, #ffa8cd 0%, #fdd193 100%)` (pink→peach, +1px `#000`/20% inner stroke) |
 
 **Fonts:** Boldonse (display), DM Sans (variable, opsz 14 — Light 300 / Medium 500 / Bold 700),
 Source Serif 4 (Regular + Italic). All downloaded as woff2 from Google Fonts.
@@ -58,24 +96,167 @@ Figma `letterSpacing` tokens are **percentages of font-size**.
 - **Cover 1 (1440×1024):** eyebrow top 49 (≈4.78vh) centered · `Opening_Title.svg` 606×230 dead-centered · subtitle top 665 (≈64.9vh) centered · `arrow.svg` top 934 (≈91.2vh) centered.
 - **Cover 3 (1440×1428):** title docked top 119 (≈8.3%) and grows to 599×710 with streaks · `Align_Graphic.svg` 396² at left 210 / top 915 · text block left 626 / top 915 / width 604.
 
+## Scroll choreography (top → bottom)
+The page is two pinned scenes back-to-back, then the intro flows normally.
+
+1. **`#hero` pin** (`scrollScene`, `start "top top"`, `end +=1.4·vh`, `scrub: 0.6`):
+   - eyebrow / subtitle / arrow **fade + slide out** (`autoAlpha → 0`),
+   - the title block **rises** from centre to docked-near-top (`titleDeltaY()` ≈ 8.3% of frame),
+   - the gradient **streaks grow** top→bottom via `--streak-hide` 100%→0%.
+2. **`#intro` pin** (`pinwheelScene`, `start "top top"`, `end +=0.7·vh`, pin only — no scrub).
+   By the time it pins, the gradient is fully gone, so everything happens on plain `--chalk`:
+   - **Rise** (scroll-scrubbed, `pin.progress` 0 → `RISE_END`): the pinwheel slides up from
+     below the fold to viewport centre. No fade — it's hidden purely by sitting off-screen.
+   - **Hold** (`RISE_END` → `ALIGN_AT`): a short beat, centred, spinning.
+   - **Align + reveal** (timed, fired at `pin.progress ≥ ALIGN_AT`): a paused GSAP timeline
+     glides the pinwheel to the text-block slot **and** reveals the `[data-reveal]` copy with a
+     stagger. This is **timed (0.8s), not scrubbed** — so it needs enough pinned scroll left
+     after `ALIGN_AT` to finish before the section unpins (see gotcha).
+
 ## The signature motion (gradient streaks)
-The "gradient grows out of PLAYBOOK" effect = `Title_Streaks.png` (the exact Figma artwork,
-cropped to **streaks-only, transparent**, at the letter baseline) sitting **behind** the crisp
-`Opening_Title.svg` letters. It's revealed top→bottom by animating a CSS custom property
-`--streak-hide` (100% → 0%) inside `clip-path: inset(0 0 var(--streak-hide) 0)`, scrubbed to
-scroll inside the pinned hero timeline. Keep the streaks a separate layer from the letters so
-the navy lettering stays vector-crisp.
+The "gradient grows out of PLAYBOOK" effect = `title_streaks_2.png` (the gradient **PLAYBOOK**
+word that bleeds down + fades out) sitting **behind** the crisp `Opening_Title.svg` letters.
+It's **registered to the lockup's PLAYBOOK line** so the gradient letters sit exactly under the
+navy ones (`left:0`, `width:100%` = full 606px lockup width; `top:52.6%` = the PLAYBOOK line, y 121 of the 606×230 lockup);
+the bleed extends below. Since the gradient letters are occluded by the opaque navy letters, only
+the downward bleed reads. It's revealed top→bottom by animating `--streak-hide` (100%→0%) — but via
+a **feathered `mask-image`** (a `linear-gradient` whose black→transparent boundary tracks
+`100% − --streak-hide` with a ±6% soft band), NOT a hard `clip-path`, so the reveal edge is soft (no
+harsh scroll line). Scrubbed inside the pinned hero timeline. Keep streaks a separate layer so the
+navy lettering stays vector-crisp.
+
+## The pinwheel (rise → align → wind)
+Lives in `pinwheelScene()`. The element is a **JS-injected fixed traveler** appended to `<body>`:
+`.pinwheel` (outer — owns position/scale, written every frame by a `gsap.ticker` callback) →
+`.pinwheel__spin` (inner — owns rotation, the wind) → `<img>`. The traveler is `aria-hidden`.
+
+- **Spacer pattern:** the original in-flow `#introGraphic img` stays in the DOM as an
+  **invisible layout spacer** (`.js.motion .intro__graphic img { visibility:hidden }`) and the
+  accessible node. `place()` reads its **live `getBoundingClientRect()`** as the align target →
+  responsive, and once parked the pinwheel scrolls naturally with the page.
+- **`place()` (per frame):** `rise = clamp01(pin.progress / RISE_END)`,
+  `riseY = lerp(belowY, centerY, power3.out(rise))` (`belowY = vh + w/2 + 40`, off-screen;
+  `centerY = vh · CENTER_Y`). The align blend is `lerp(riseY → slotCentre, prox.align)` for
+  both x and y, where `prox.align` is driven by the **timed** transition (0 = centred, 1 = slot).
+- **Trigger / reverse:** the intro pin's `onUpdate` calls `transition.play()` at
+  `progress ≥ ALIGN_AT` and `transition.reverse()` at `progress < ALIGN_AT − GAP`. The gap is
+  hysteresis to prevent flapping; **with the current values the reverse never fires (one-way /
+  latched reveal)** — widen or narrow it via that constant if reversible behaviour is wanted.
+- **Wind:** `baseSpin` = endless `rotation += 360` (9s), and a recursive `gust()` timeline
+  randomly modulates `baseSpin.timeScale` (fast gust → calm drift) for organic, never-repeating spin.
+- **Tunables (top of `pinwheelScene`)** and their effect:
+  - intro pin `end` `window.innerHeight * 0.7` — total length of the pinned beat (empty-space budget).
+  - `RISE_END` (0.45) — fraction of the pin spent rising (lower = snappier rise, less empty bg).
+  - `ALIGN_AT` (0.50) — when the timed align/reveal fires. **Keep `RISE_END ≤ ALIGN_AT`.**
+  - `CENTER_Y` (0.5) — resting height while centred.
+  - transition `duration` (0.8s) — the align glide speed.
+
+## Hero "extras" fade (eyebrow / subtitle / arrow)
+These three are animated **in** on load (GSAP `from`, captured in `heroEntrance`) and **out** on
+scroll (the hero scrub, `fromTo autoAlpha 1→0`). Both are GSAP on purpose, and two safeguards
+make the fade reliable in both directions:
+- the scrub uses **`fromTo` with an explicit `autoAlpha:1` start + `immediateRender:false`**, and
+- the entrance tweens are **killed on the first scroll** (`scrollScene`'s `onUpdate`).
+See the gotchas for why both are necessary.
+
+## The Menu (bookshelf overlay) + Explore button
+Lives in `menuScene()` / `exploreButton()`. The Explore button (Figma `2008:147`) sits at the
+bottom of `#intro` (a `[data-reveal]` member, so it enters with the intro copy). `#menu` is a
+full-screen `position:fixed` overlay (z 50), `hidden` until opened.
+
+- **Bookshelf layout = fixed pixels** (per Figma; does not scale down). `#menuShelf` is a 1022px-wide
+  (`4×188 + 3×90`) × 340px stage, centred (`left:50%` + `translateX(-50%)`), with sharp-cornered books
+  at `--book-x` 0 / 278 / 556 / 834 px (188px wide, 90px gaps). Inner type/positions are the literal
+  Figma px (num 36/top 19, rule top 98/w 140, title 20/top 110, icon 100/bottom 22). **Spines** are the
+  `assets/book_element_{1..5}.svg` vectors (gray clusters of rects + leaning parallelograms, 294px tall,
+  bottom-aligned behind the books) — one per gap region: `_1` left of book 1, `_2/3/4` between the
+  books, `_5` right of book 4, positioned via `--x` px.
+- **Book = outer/inner.** The **whole book** (`.book`, outer) owns `y` + `rotation` for every motion —
+  fall-in, landing rock, the cursor-reactive tilt, hover raise, exit tumble — all pivoting at its base
+  (`transformOrigin:50% 100%`). `y` (raise) and `rotation` (tilt) are independent props so they compose
+  via `overwrite:"auto"`. `.book__inner` is no longer animated (kept as the content wrapper).
+- **Open/close (`menuScene`) — heavy-book physics:** open un-hides (pre-positioning books above the
+  fold to avoid a flash), sets `<main> inert` + locks scroll, fades the overlay, then `openBooks()`
+  drops each book under gravity (`power2.in`, **random** delay/duration per book), fires an
+  `impactShake()` on landing (jolts the whole shelf down a few px, `elastic.out` settle — the "thud";
+  **suppressed + settled while the cursor is over the shelf** via the `overShelf` flag, so moving the
+  mouse in right after landing doesn't ride the shake), then rocks the book about its base to rest
+  (`elastic.out(1,0.3)`). `closeBooks()` (exit) accelerates
+  every book straight **down off the bottom** (`y → vh+400`, `power2.in`) with a slight `+=` tumble,
+  random per book, then fades the overlay and `finishClose()` re-adds `hidden`/`inert` + restores focus.
+  All open tweens are tracked (`openMaster` + `bookTls`) and `killOpen()`'d if close interrupts. `Esc` closes.
+- **Cursor-reactive tilt (`knock`)**: as the cursor sweeps the shelf, each element it *enters* — **book
+  OR spine cluster** — is knocked once: it tips in the cursor's **direction of travel** (`kick =
+  clamp(±9°, dx·0.2)`, magnitude scales with sweep speed), then rocks back upright with
+  `elastic.out(1,0.3)` (same heft as the landing). A reaction, not a follow. The `pointermove` lives on
+  `#menu` (so the outer spines are reachable) gated to the shelf's vertical band; hit-testing uses
+  `offsetLeft/offsetWidth` (transform-independent) and re-fires only on entering a new element. Spines
+  are `z-index:0` behind the `z-index:1` books, so a tipping spine tucks **behind** — never overlapping.
+- **Hover raise / colour / icon**: interactive books only (`.book--interactive` = 1 & 2). Hover/focus
+  adds `.is-hover` (CSS turns the card `--orange`; book 1 cross-fades `menu_1.svg`→`menu_1_hover.svg`)
+  and GSAP raises the outer `y` (-40px). Books 3 & 4 (`.book--soon`, dark) are **dimmed / non-interactive** —
+  they still get knocked (ambient shelf physics) but don't raise/recolour.
+- **Magnetic button component ("True button")**: structure is `.mag-zone` (the field) → `.mag-btn`
+  (the pill, transform target, `overflow:hidden`) → `.mag-btn__bg` (fill layer) + `.label` span.
+  `magneticButtons()` wires every `.mag-zone` once at boot. The button is **static at rest** (no
+  idle wiggle); on `mousemove`, `gsap.utils.mapRange` over the zone rect drives the magnetic pull —
+  pill at `strength` 0.4, `.label` at `labelStrength` 0.24 (lighter parallax), both `overwrite:true`;
+  `mouseleave` returns both with `elastic.out(1,0.4)`. Variants:
+  - `--explore` (Figma 2008:147): pink→peach pill (`READ THE PLAYBOOK`) in a ~340×150 field;
+    `.mag-btn__bg` carries the `linear-gradient(0deg,#ffa8cd,#fdd193)` + `box-shadow: inset 0 0 0 1px
+    rgba(0,0,0,.2)` **inner** stroke; padding `12px 24px`. (`#intro` is `min-height:100svh` + flex
+    column `justify-content:center`, so the content + CTA sit vertically centred — no bottom deadspace.)
+  - `--back` (Menu): transparent pill, `--midnight` text + `1px rgba(1,34,51,.25)` border on the bg
+    (hover fills `rgba(1,34,51,.06)`); `overflow:visible` (short label, no clip); no arrow. The
+    zone is absolute top-left in `#menu`.
+- **Reduced motion**: the menu opens instantly with books placed (no drop/sway/raise); the Explore
+  button skips the wiggle/magnetic; colour + icon swap stay (CSS `:hover`).
 
 ## Conventions & gotchas
+- **One animation library per property.** If both Motion One and GSAP animate the same property,
+  the loser's *finished* animation (Motion One's WAAPI fill holds its end value above inline
+  styles) intermittently overrides the other → the classic "sometimes still visible when
+  scrolling" bug. Consolidate to GSAP for anything the scroll scene also touches.
+- **Load-entrance + scroll-scrub on the same property** needs two fixes: (1) the scrub tween must
+  be `fromTo` with an explicit start and `immediateRender:false` — a plain `.to()` lazily captures
+  its start from the element, which the entrance `from(autoAlpha:0)` leaves at 0, making it a
+  `0→0` no-op that never animates or restores; (2) kill the entrance tweens on first scroll, or
+  their *late completion* snaps the value back to 1 and overrides the (possibly paused) scrub.
+- Use **`autoAlpha`** (opacity + visibility) for fade-outs so faded elements are truly gone.
+- **Cross-section element travel** = fixed traveler + invisible in-flow spacer. The spacer keeps
+  layout and accessibility; drive the traveler from the spacer's live rect so it stays responsive
+  and hands off to natural scrolling once parked. Center via `translate(-50%,-50%)` written by the
+  ticker (GSAP doesn't touch the outer; rotation lives on the inner) so there's no transform fight.
+- **Scrubbed position + timed transition:** a timed transition fired inside a pin can be *outrun* —
+  if the user scrolls past the pin `end` before it finishes, the section unpins and the (live) target
+  starts moving, so the traveler chases it and never settles. Give the timed align enough pinned
+  scroll after `ALIGN_AT` to complete (`(1 − ALIGN_AT) · pinLength` ≳ what a normal scroll covers
+  in the transition's duration).
 - Center absolutely-positioned hero elements with `left:0;right:0;margin-inline:auto` (NOT
   `transform: translateX(-50%)`) so GSAP can own the `transform` for animation without conflict.
 - GSAP-animated CSS custom props must be **declared with a real initial value** (e.g.
   `--streak-hide: 100%`), otherwise GSAP reads an empty start and jumps to the end value.
-- Always honour `prefers-reduced-motion`: show end-states, skip the scrub.
+- Always honour `prefers-reduced-motion`: `pinwheelScene`/`scrollScene` bail to end-states and the
+  static graphic; `introReveal` shows the copy.
 - After font load, call `ScrollTrigger.refresh()` (metrics shift can break pin distances).
-- The preview screenshot tool may render at a different viewport than `preview_resize`/eval
-  reports — trust eval/`getBoundingClientRect` measurements for exact-position verification.
+- **ScrollSmoother:** only `#smooth-content` (the `<main>`) is transformed/smoothed; the `position:fixed`
+  **menu overlay and pinwheel traveler live OUTSIDE it** (direct children of `<body>`) so fixed stays
+  viewport-anchored. The pinwheel's `place()` reads the slot's live `getBoundingClientRect()`, which
+  already reflects the smoother transform, so the fixed traveler still aligns. The menu **does NOT call
+  the smoother API** (pausing it tangled with the open/close and bugged out); instead, while open it
+  hard-locks page scroll via `documentElement.style.overflow = "hidden"` — freezing the window scroll
+  the smoother rides on, decoupled from ScrollSmoother. Restored on close.
+- **Headless verification caveat:** GSAP's rAF ticker stalls under Chrome `--virtual-time-budget`,
+  so `gsap.ticker`-driven transforms and timed timelines don't advance — the pinwheel/align/wind
+  read as "stuck." Verify geometry from `ScrollTrigger` `.progress` + `getBoundingClientRect` and
+  compute the expected output, not the rendered transform. (Scrub *scrubs* do apply via
+  `ScrollTrigger.update()`, so the streak/title scrub is testable.) See the project memory note.
 
 ## Status / next
-- ✅ Header: Cover 1, pinned gradient-reveal scene, Cover 3 "What this is". Responsive + reduced-motion. No console errors.
-- ⏭️ Sections below Cover 3 are not built yet.
+- ✅ Header: Cover 1, pinned gradient-reveal scene, the pinwheel rise→align beat, Cover 3
+  "What this is". Responsive + reduced-motion. No console errors.
+- ✅ Explore button (wiggle + magnetic) at the bottom of `#intro`, and the bookshelf **Menu**
+  overlay (`2:22779` / hover `2:22921`): books fall in, sway with the cursor, books 1–2 raise +
+  turn orange (book 1 swaps to the colour icon); books 3–4 dimmed "coming soon". Back/`Esc` closes.
+- ⏭️ The pages behind books 1–4 are not built yet (the books currently open nothing). Sections
+  below Cover 3 (beyond the Menu) are not built yet.
