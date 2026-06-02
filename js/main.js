@@ -232,27 +232,83 @@ function menuScene() {
   let isOpen = false;
   let lastFocus = null;
 
+  const inners = books.map((b) => b.querySelector(".book__inner"));
+  const ABOVE = () => -(window.innerHeight + 160);  // start fully above the fold
+  const BELOW = () => window.innerHeight + 400;      // exit target below the fold
+  let openMaster = null;   // menu fade + scheduling
+  let bookTls = [];        // per-book fall timelines (so close can kill them)
+
+  // A heavy "thud" — jolt the whole shelf down a few px and let it settle.
+  // (xPercent:-50 keeps it centred while GSAP owns the transform.)
+  function impactShake(amount) {
+    gsap.set(shelf, { xPercent: -50 });
+    gsap.fromTo(shelf, { y: amount }, { y: 0, duration: 0.55, ease: "elastic.out(1.4, 0.28)", overwrite: "auto" });
+  }
+
+  // IN: each book falls from above under gravity (accelerating ease-in), lands hard,
+  // then rocks about its base and damps to rest — pivot at 50% 100%. Random per book.
+  function openBooks() {
+    if (!isOpen) return;
+    gsap.set(shelf, { xPercent: -50, y: 0 });
+    bookTls = books.map((b) => {
+      const tilt = gsap.utils.random(2.5, 8) * (gsap.utils.random(0, 1) < 0.5 ? -1 : 1);
+      gsap.set(b, { transformOrigin: "50% 100%", y: ABOVE(), rotation: tilt, autoAlpha: 1 });
+      return gsap.timeline({ delay: gsap.utils.random(0, 0.7) })
+        .to(b, { y: 0, duration: gsap.utils.random(0.48, 0.6), ease: "power2.in" })  // gravity fall
+        .add(() => impactShake(gsap.utils.random(4, 4.5)))                              // shelf thud on landing
+        .to(b, { rotation: 0, duration: 1.4, ease: "elastic.out(1, 0.3)" });         // rock → settle
+    });
+  }
+
+  // OUT: books accelerate straight down off the bottom with a slight tumble. Random.
+  function closeBooks(onDone) {
+    gsap.set(inners, { rotation: 0 });
+    let lastEnd = 0;
+    books.forEach((b) => {
+      const delay = gsap.utils.random(0, 0.28);
+      const dur = gsap.utils.random(0.5, 0.65);
+      gsap.to(b, {
+        y: BELOW(), rotation: "+=" + gsap.utils.random(-28, 28),
+        duration: dur, delay, ease: "power2.in", overwrite: true,   // accelerate down (gravity)
+      });
+      lastEnd = Math.max(lastEnd, delay + dur);
+    });
+    gsap.to(menu, { autoAlpha: 0, duration: 0.3, ease: "power2.in", delay: Math.max(0, lastEnd - 0.15), onComplete: onDone });
+  }
+
+  function killOpen() {
+    if (openMaster) { openMaster.kill(); openMaster = null; }
+    bookTls.forEach((t) => t.kill());
+    bookTls = [];
+    gsap.killTweensOf(books);
+    gsap.killTweensOf(shelf);
+  }
+
   function open() {
     if (isOpen) return;
     isOpen = true;
     lastFocus = document.activeElement;
+
+    if (reduce) {
+      menu.hidden = false;
+      if (main) main.inert = true;
+      document.body.style.overflow = "hidden";
+      gsap.set(menu, { autoAlpha: 1 });
+      gsap.set(books, { clearProps: "transform", autoAlpha: 1 });
+      (closeBtn || menu).focus({ preventScroll: true });
+      return;
+    }
+
+    killOpen();
+    books.forEach((b) => gsap.set(b, { y: ABOVE(), autoAlpha: 0 }));  // pre-hide above the fold (no flash)
     menu.hidden = false;
     if (main) main.inert = true;            // background unreachable while open
     document.body.style.overflow = "hidden";
 
-    if (reduce) {
-      gsap.set(menu, { autoAlpha: 1 });
-      gsap.set(books, { clearProps: "transform", autoAlpha: 1 });
-    } else {
-      // Books drop from above the fold and settle (overshoot via back.out), L→R.
-      gsap.killTweensOf(books);
-      gsap.timeline()
-        .fromTo(menu, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35, ease: "power2.out" })
-        .fromTo(books,
-          { y: () => -(window.innerHeight + 40), rotation: (i) => (i % 2 ? 7 : -7), autoAlpha: 0 },
-          { y: 0, rotation: 0, autoAlpha: 1, duration: 0.95, ease: "back.out(1.5)", stagger: 0.08 },
-          0.05);
-    }
+    openMaster = gsap.timeline();
+    openMaster
+      .fromTo(menu, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: "power2.out" })
+      .add(openBooks, 0.12);
     (closeBtn || menu).focus({ preventScroll: true });
   }
 
@@ -261,6 +317,7 @@ function menuScene() {
     if (main) main.inert = false;
     document.body.style.overflow = "";
     gsap.set(books, { clearProps: "transform" });
+    gsap.set(shelf, { y: 0 });
     if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
   }
 
@@ -268,10 +325,8 @@ function menuScene() {
     if (!isOpen) return;
     isOpen = false;
     if (reduce) { finishClose(); return; }
-    gsap.killTweensOf(books);
-    gsap.timeline({ onComplete: finishClose })
-      .to(books, { y: () => -(window.innerHeight * 0.35), autoAlpha: 0, duration: 0.4, ease: "power2.in", stagger: 0.05 })
-      .to(menu, { autoAlpha: 0, duration: 0.3, ease: "power2.in" }, 0.12);
+    killOpen();
+    closeBooks(finishClose);
   }
 
   openBtn.addEventListener("click", open);
@@ -280,26 +335,49 @@ function menuScene() {
 
   if (reduce) return; // no ambient sway / raise tweens under reduced motion
 
-  // --- Gentle sway: every book leans with the cursor as it crosses the shelf
-  //     (rotation on the INNER layer; raise lives on the outer → no transform fight). ---
-  const inners = books.map((b) => b.querySelector(".book__inner"));
-  shelf.addEventListener("pointermove", (e) => {
+  // --- Cursor-reactive tilt: as the cursor sweeps across the shelf, each element it
+  //     ENTERS gets knocked — the whole book (or spine cluster) tips in the cursor's
+  //     direction of travel (magnitude scales with sweep speed), pivots at its base,
+  //     then rocks back upright with the same elastic heft as the landing. Spines sit
+  //     behind the books (z-index), so a tipping spine tucks behind, never overlapping. ---
+  const spines = gsap.utils.toArray(".spine", shelf);
+  const tiltables = [...books, ...spines];               // books + spine clusters, all knockable
+  const knockTl = tiltables.map(() => null);
+  function knock(i, dx) {
+    const el = tiltables[i];
+    const kick = gsap.utils.clamp(-9, 9, dx * 0.2);      // direction = travel · magnitude = speed
+    if (knockTl[i]) knockTl[i].kill();
+    gsap.set(el, { transformOrigin: "50% 100%" });
+    knockTl[i] = gsap.timeline()
+      .to(el, { rotation: kick, duration: 0.16, ease: "power3.out", overwrite: "auto" })  // tip
+      .to(el, { rotation: 0, duration: 1.1, ease: "elastic.out(1, 0.3)" });               // rock → settle (drop heft)
+  }
+
+  let lastX = null;
+  let overIdx = -1;
+  // listen on the whole menu (so the outer spines are reachable) but only react while
+  // the cursor is sweeping across the shelf's vertical band.
+  menu.addEventListener("pointermove", (e) => {
     const sr = shelf.getBoundingClientRect();
-    books.forEach((b, i) => {
-      const br = b.getBoundingClientRect();
-      const dx = (e.clientX - (br.left + br.width / 2)) / sr.width;
-      gsap.to(inners[i], { rotation: gsap.utils.clamp(-4, 4, dx * 16), duration: 0.5, ease: "power2.out" });
-    });
+    if (e.clientY < sr.top - 60 || e.clientY > sr.bottom + 20) { lastX = null; overIdx = -1; return; }
+    const dx = lastX === null ? 0 : e.clientX - lastX;   // horizontal sweep velocity
+    lastX = e.clientX;
+    const localX = e.clientX - sr.left;
+    let idx = -1;
+    for (let i = 0; i < tiltables.length; i++) {
+      const L = tiltables[i].offsetLeft;                 // layout positions — transform-independent
+      if (localX >= L && localX <= L + tiltables[i].offsetWidth) { idx = i; break; }
+    }
+    if (idx !== -1 && idx !== overIdx) knock(idx, dx);   // knocked once on entering a new element
+    overIdx = idx;
   });
-  shelf.addEventListener("pointerleave", () => {
-    inners.forEach((el) => gsap.to(el, { rotation: 0, duration: 0.7, ease: "elastic.out(1, 0.5)" }));
-  });
+  menu.addEventListener("pointerleave", () => { lastX = null; overIdx = -1; });
 
   // --- Raise + colour + icon swap (interactive books only; .book--soon opt out).
   //     Raise = y on the outer; colour + icon-swap = the .is-hover class (CSS). ---
   gsap.utils.toArray(".book--interactive", menu).forEach((b) => {
-    const enter = () => { b.classList.add("is-hover"); gsap.to(b, { y: -18, duration: 0.35, ease: "power2.out", overwrite: "auto" }); };
-    const leave = () => { b.classList.remove("is-hover"); gsap.to(b, { y: 0, duration: 0.45, ease: "power2.out", overwrite: "auto" }); };
+    const enter = () => { b.classList.add("is-hover"); gsap.to(b, { y: -40, duration: 0.4, ease: "power2.out", overwrite: "auto" }); };
+    const leave = () => { b.classList.remove("is-hover"); gsap.to(b, { y: 0, duration: 0.5, ease: "power2.out", overwrite: "auto" }); };
     b.addEventListener("mouseenter", enter);
     b.addEventListener("mouseleave", leave);
     b.addEventListener("focus", enter);

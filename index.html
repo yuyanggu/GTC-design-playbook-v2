@@ -62,7 +62,7 @@
         <div class="mag-zone mag-zone--explore" id="exploreZone">
           <button class="mag-btn mag-btn--explore" id="exploreBtn" type="button" aria-haspopup="dialog" aria-controls="menu">
             <span class="mag-btn__bg" aria-hidden="true"></span>
-            <span class="label">explore</span>
+            <span class="label">read the playbook</span>
           </button>
         </div>
       </div>
@@ -83,20 +83,17 @@
     <img class="menu__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
 
     <div class="menu__shelf" id="menuShelf" aria-label="Playbook sections">
-      <!-- decorative gray book-spines leaning on the shelf -->
+      <!-- decorative gray book-spines (vectors), one cluster per gap region -->
       <div class="shelf__spines" aria-hidden="true">
-        <span class="spine" style="--x:-2.24cqw; --w:1.46cqw;"></span>
-        <span class="spine" style="--x:19.41cqw; --w:4.49cqw;"></span>
-        <span class="spine" style="--x:24.68cqw; --w:1.46cqw;"></span>
-        <span class="spine" style="--x:46.34cqw; --w:1.46cqw;"></span>
-        <span class="spine spine--lean" style="--x:48.59cqw; --w:5.17cqw;"></span>
-        <span class="spine spine--lean" style="--x:73.66cqw; --w:5.17cqw;"></span>
-        <span class="spine" style="--x:79.22cqw; --w:1.46cqw;"></span>
-        <span class="spine spine--lean" style="--x:100.59cqw; --w:3.22cqw;"></span>
+        <img class="spine" src="assets/book_element_1.svg" alt="" style="--x:-23px; --w:15px;" />
+        <img class="spine" src="assets/book_element_2.svg" alt="" style="--x:198px; --w:69px;" />
+        <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
+        <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
+        <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1028px; --w:33px;" />
       </div>
 
       <!-- Book 1 — interactive -->
-      <button class="book book--interactive book--1" type="button" data-book style="--book-x:0cqw;">
+      <button class="book book--interactive book--1" type="button" data-book style="--book-x:0px;">
         <span class="book__inner">
           <span class="book__num">1</span>
           <span class="book__rule" aria-hidden="true"></span>
@@ -109,7 +106,7 @@
       </button>
 
       <!-- Book 2 — interactive (menu_2 icon, no hover variant yet) -->
-      <button class="book book--interactive book--2" type="button" data-book style="--book-x:27.41cqw;">
+      <button class="book book--interactive book--2" type="button" data-book style="--book-x:278px;">
         <span class="book__inner">
           <span class="book__num">2</span>
           <span class="book__rule" aria-hidden="true"></span>
@@ -121,7 +118,7 @@
       </button>
 
       <!-- Book 3 — coming soon (dimmed, non-interactive) -->
-      <div class="book book--soon book--3" data-book aria-disabled="true" style="--book-x:54.54cqw;">
+      <div class="book book--soon book--3" data-book aria-disabled="true" style="--book-x:556px;">
         <span class="book__inner">
           <span class="book__num">3</span>
           <span class="book__rule" aria-hidden="true"></span>
@@ -133,7 +130,7 @@
       </div>
 
       <!-- Book 4 — coming soon (dimmed, non-interactive) -->
-      <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:81.66cqw;">
+      <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
         <span class="book__inner">
           <span class="book__num">4</span>
           <span class="book__rule" aria-hidden="true"></span>

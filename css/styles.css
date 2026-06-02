@@ -226,7 +226,11 @@ img { display: block; max-width: 100%; }
 .intro {
   position: relative;
   width: 100%;
-  padding: clamp(80px, 12vh, 180px) 0 clamp(120px, 18vh, 220px);
+  min-height: 100svh;            /* fill the pinned viewport… */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;       /* …and vertically centre the content (no bottom deadspace) */
+  padding: clamp(64px, 9vh, 130px) 0;
 }
 .intro__inner {
   width: min(85.4%, 1230px);     /* Figma content spans x:210 → 1230 of 1440 */
@@ -346,15 +350,15 @@ img { display: block; max-width: 100%; }
 
 /* -- Explore variant (Figma 2008:147) — pink→gold pill, 1px inner stroke -- */
 .intro__cta {
-  margin: clamp(40px, 7vh, 96px) auto 0;
+  margin: clamp(48px, 7vh, 88px) auto 0;  /* ~140px above the button incl. the zone's top field */
   display: flex;
   justify-content: center;
 }
-.mag-zone--explore { width: 220px; height: 140px; }   /* tightened field for 0.4/0.24 pull */
-.mag-btn--explore { padding: 12px 32px; }
+.mag-zone--explore { width: 340px; height: 150px; }   /* field around the wider pill */
+.mag-btn--explore { padding: 12px 24px; }
 .mag-btn--explore .mag-btn__bg {
-  background: linear-gradient(to top, #f7bdf8 31.577%, #ffda67 150.94%);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);      /* 1px inner stroke, #000 @ 10% */
+  background: linear-gradient(0deg, #ffa8cd 0%, #fdd193 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);      /* 1px inner stroke, #000 @ 20% */
 }
 .mag-btn--explore .label {
   font-weight: 600;
@@ -420,42 +424,39 @@ img { display: block; max-width: 100%; }
   transform: translate(-50%, -50%);
 }
 
-/* Shelf — centred group of 4 books (Figma x:207→1232 of 1440). The container's
-   inline-size drives cqw units so every book/spine/type scales proportionally. */
+/* Shelf — centred group of 4 books (188px wide, 90px gaps → group = 1022px), sized
+   in fixed pixels per Figma (does not scale down). Books at --book-x 0/278/556/834. */
 .menu__shelf {
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: min(1025px, 92vw);
-  aspect-ratio: 1025 / 340;          /* 1025 wide → 340 tall (book height) */
+  width: 1022px;                     /* 4×188 + 3×90 */
+  height: 340px;
   transform: translateX(-50%);
-  container-type: inline-size;
 }
 
-/* Decorative leaning gray spines (behind the books) */
+/* Decorative gray book-spines (the book_element_*.svg vectors), behind the books,
+   bottom-aligned and shorter (294px) than the 340px cards. Placed in the 5 gaps. */
 .shelf__spines { position: absolute; inset: 0; z-index: 0; }
 .spine {
   position: absolute;
   bottom: 0;
   left: var(--x);
   width: var(--w);
-  height: 28.68cqw;                  /* 294 / 1025 */
-  background: var(--gray3);
-  border-radius: 0.4cqw 0.4cqw 0 0;
+  height: 294px;
 }
-.spine--lean { transform: skewX(-7deg); transform-origin: bottom center; }
 
-/* ---- Book card (188 × 340) ---- */
+/* ---- Book card (188 × 340, sharp corners) ---- */
 .book {
   position: absolute;
   bottom: 0;
   left: var(--book-x);
-  width: 18.34cqw;                   /* 188 / 1025 */
-  aspect-ratio: 188 / 340;
+  width: 188px;
+  height: 340px;
   z-index: 1;
   padding: 0;
   border: 0;
-  border-radius: 0.7cqw;
+  border-radius: 0;                  /* sharp corners */
   background: var(--blue);
   cursor: pointer;
   font: inherit;
@@ -470,60 +471,59 @@ img { display: block; max-width: 100%; }
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border-radius: inherit;
   will-change: transform;
 }
 
 .book__num {
   position: absolute;
-  top: 1.85cqw;                      /* 19 / 1025 */
+  top: 19px;
   left: 0;
   right: 0;
   text-align: center;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 3.51cqw;                /* 36 */
+  font-size: 36px;
   line-height: 1;
   color: var(--chalk);
 }
 .book__rule {
   position: absolute;
-  top: 9.56cqw;                      /* 98 / 1025 */
+  top: 98px;
   left: 50%;
   transform: translateX(-50%);
-  width: 13.66cqw;                   /* 140 */
+  width: 140px;
   height: 2px;
   background: rgba(246, 242, 231, 0.55);
 }
 .book__title {
   position: absolute;
-  top: 10.73cqw;                     /* 110 / 1025 */
+  top: 110px;
   left: 50%;
   transform: translateX(-50%);
-  width: 13.66cqw;                   /* 140 */
+  width: 140px;
   text-align: center;
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 1.95cqw;                /* 20 */
+  font-size: 20px;
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.4px;
   color: #fff;
 }
 .book__soon {
   display: block;
-  margin-top: 1.1cqw;
+  margin-top: 11px;
   font-weight: 300;
-  font-size: 1.56cqw;                /* 16 */
+  font-size: 16px;
   letter-spacing: 0.32px;
   text-transform: uppercase;
 }
 .book__icon {
   position: absolute;
-  bottom: 2.15cqw;                   /* 22 / 1025 */
+  bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  width: 9.76cqw;                    /* 100 */
-  aspect-ratio: 1;
+  width: 100px;
+  height: 100px;
 }
 .book__icon img {
   position: absolute;

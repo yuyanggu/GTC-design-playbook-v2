@@ -33,8 +33,8 @@ There is a `.claude/launch.json` config named `gtc-static` for the preview tooli
   > `#exploreBtn`). `#menu` holds the eyebrow + `Opening_Title.svg` lockup, the back button (same
   component, `.mag-zone--back` > `#menuClose`), and `#menuShelf` → decorative `.shelf__spines` + four `.book` cards.
 - `css/styles.css` — tokens (`:root`), `@font-face`, the type system, layout, `.pinwheel`
-  traveler styles, the Explore button, the Menu/shelf/`.book` system (sized in **`cqw`** off the
-  shelf's `container-type:inline-size`), and motion base states (`.js [data-reveal]` hidden, `.js.motion` spacer hide).
+  traveler styles, the magnetic button component, the Menu/shelf/`.book` system (**fixed px** per
+  Figma — 188px books, 90px gaps), and motion base states (`.js [data-reveal]` hidden, `.js.motion` spacer hide).
 - `js/main.js` — seven functions, all booted at the bottom:
   - `heroIntro()` — Motion One load-in for `.titleblock__media`; GSAP `from` load-in for the
     eyebrow / subtitle / arrow (captured in `heroEntrance` so the scroll scene can kill them).
@@ -51,7 +51,7 @@ There is a `.claude/launch.json` config named `gtc-static` for the preview tooli
     on hover the pill (`.mag-btn`, strength 0.4) and its `.label` (0.24) parallax toward the cursor,
     both `overwrite:true`, returning with `elastic.out` on leave. Drives both the Explore CTA and
     the Menu back button.
-- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `arrow.svg` (57×45), `Align_Graphic.svg` (pinwheel), `Title_Streaks.png` (the gradient bleed, transparent, tucked behind the title letters), `menu_1.svg` (mono flower) / `menu_1_hover.svg` (colour flower) / `menu_2.svg` (blue leaf) — the 100×100 book icons, `fonts/`.
+- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `arrow.svg` (57×45), `Align_Graphic.svg` (pinwheel), `Title_Streaks.png` (the gradient bleed, transparent, tucked behind the title letters), `menu_1.svg` (mono flower) / `menu_1_hover.svg` (colour flower) / `menu_2.svg` (blue leaf) — the 100×100 book icons, `book_element_{1..5}.svg` (gray shelf-spine clusters, 294px tall), `fonts/`.
 - `vendor/` — `gsap.min.js`, `ScrollTrigger.min.js`, `motion.esm.js`, `CustomEase.min.js`, `CustomWiggle.min.js`.
 - `.figma_ref/` — Figma reference screenshots for visual diffing (not shipped/served).
 
@@ -70,7 +70,7 @@ Figma file `DGg9Fqa2owVvSHvOvHBaTA` ("GTC Playbook Design (Copy)"). Key nodes:
 | `--blue` / `--orange` / `--gray3` | `#4F94CF` (books 1–2) · `#F9A518` (book hover) · `#C7C7CC` (shelf spines) |
 | `--book-dark` | `rgba(27,31,38,0.72)` (books 3–4 "coming soon") |
 | Accent palette | pink `#F394BE`, blues `#AED3ED / #73AAE5 / #4F94CF`, orange/gold (gradient only) |
-| Explore pill gradient | `linear-gradient(to top, #f7bdf8 31.577%, #ffda67 150.94%)` |
+| Explore pill gradient | `linear-gradient(0deg, #ffa8cd 0%, #fdd193 100%)` (pink→peach, +1px `#000`/20% inner stroke) |
 
 **Fonts:** Boldonse (display), DM Sans (variable, opsz 14 — Light 300 / Medium 500 / Bold 700),
 Source Serif 4 (Regular + Italic). All downloaded as woff2 from Google Fonts.
@@ -156,31 +156,46 @@ Lives in `menuScene()` / `exploreButton()`. The Explore button (Figma `2008:147`
 bottom of `#intro` (a `[data-reveal]` member, so it enters with the intro copy). `#menu` is a
 full-screen `position:fixed` overlay (z 50), `hidden` until opened.
 
-- **Bookshelf layout = `cqw` off the shelf container.** `#menuShelf` is `container-type:inline-size`
-  with `aspect-ratio:1025/340` (the Figma book group spans x 207→1232 of 1440, height 340). Every
-  book, spine, number, rule, title and icon is sized/positioned in **`cqw`** (1cqw = 1% of shelf
-  width = 10.25px at full size) so the whole shelf scales proportionally. Book left = `--book-x`
-  (inline), card = `18.34cqw` wide × `aspect-ratio:188/340`. Spines = absolute gray rects (`--x`,
-  `--w` in cqw); `.spine--lean` adds `skewX(-7deg)`.
-- **Book = outer/inner (same convention as the pinwheel traveler).** `.book` (outer) owns `y`
-  (fall-in **and** hover raise); `.book__inner` owns `rotation` (the sway) → no transform fight.
-- **Open/close (`menuScene`)**: open un-hides, sets `<main> inert` + locks body scroll, then a
-  timeline fades the overlay and **drops** the four books from above with `back.out(1.5)` stagger.
-  Close reverses then re-adds `hidden`/`inert` and restores focus to `#exploreBtn`. `Esc` closes.
-- **Sway**: `pointermove` on the shelf maps each book's horizontal distance from the cursor to a
-  small `rotation` on its `.book__inner` (clamped ±4°); `pointerleave` → `elastic.out` back to 0.
+- **Bookshelf layout = fixed pixels** (per Figma; does not scale down). `#menuShelf` is a 1022px-wide
+  (`4×188 + 3×90`) × 340px stage, centred (`left:50%` + `translateX(-50%)`), with sharp-cornered books
+  at `--book-x` 0 / 278 / 556 / 834 px (188px wide, 90px gaps). Inner type/positions are the literal
+  Figma px (num 36/top 19, rule top 98/w 140, title 20/top 110, icon 100/bottom 22). **Spines** are the
+  `assets/book_element_{1..5}.svg` vectors (gray clusters of rects + leaning parallelograms, 294px tall,
+  bottom-aligned behind the books) — one per gap region: `_1` left of book 1, `_2/3/4` between the
+  books, `_5` right of book 4, positioned via `--x` px.
+- **Book = outer/inner.** The **whole book** (`.book`, outer) owns `y` + `rotation` for every motion —
+  fall-in, landing rock, the cursor-reactive tilt, hover raise, exit tumble — all pivoting at its base
+  (`transformOrigin:50% 100%`). `y` (raise) and `rotation` (tilt) are independent props so they compose
+  via `overwrite:"auto"`. `.book__inner` is no longer animated (kept as the content wrapper).
+- **Open/close (`menuScene`) — heavy-book physics:** open un-hides (pre-positioning books above the
+  fold to avoid a flash), sets `<main> inert` + locks scroll, fades the overlay, then `openBooks()`
+  drops each book under gravity (`power2.in`, **random** delay/duration per book), fires an
+  `impactShake()` on landing (jolts the whole shelf down a few px, `elastic.out` settle — the "thud"),
+  then rocks the book about its base to rest (`elastic.out(1,0.3)`). `closeBooks()` (exit) accelerates
+  every book straight **down off the bottom** (`y → vh+400`, `power2.in`) with a slight `+=` tumble,
+  random per book, then fades the overlay and `finishClose()` re-adds `hidden`/`inert` + restores focus.
+  All open tweens are tracked (`openMaster` + `bookTls`) and `killOpen()`'d if close interrupts. `Esc` closes.
+- **Cursor-reactive tilt (`knock`)**: as the cursor sweeps the shelf, each element it *enters* — **book
+  OR spine cluster** — is knocked once: it tips in the cursor's **direction of travel** (`kick =
+  clamp(±9°, dx·0.2)`, magnitude scales with sweep speed), then rocks back upright with
+  `elastic.out(1,0.3)` (same heft as the landing). A reaction, not a follow. The `pointermove` lives on
+  `#menu` (so the outer spines are reachable) gated to the shelf's vertical band; hit-testing uses
+  `offsetLeft/offsetWidth` (transform-independent) and re-fires only on entering a new element. Spines
+  are `z-index:0` behind the `z-index:1` books, so a tipping spine tucks **behind** — never overlapping.
 - **Hover raise / colour / icon**: interactive books only (`.book--interactive` = 1 & 2). Hover/focus
   adds `.is-hover` (CSS turns the card `--orange`; book 1 cross-fades `menu_1.svg`→`menu_1_hover.svg`)
-  and GSAP raises the outer `y`. Books 3 & 4 (`.book--soon`, dark) are **dimmed / non-interactive** —
-  they still sway (ambient shelf physics) but don't raise/recolour.
+  and GSAP raises the outer `y` (-40px). Books 3 & 4 (`.book--soon`, dark) are **dimmed / non-interactive** —
+  they still get knocked (ambient shelf physics) but don't raise/recolour.
 - **Magnetic button component ("True button")**: structure is `.mag-zone` (the field) → `.mag-btn`
   (the pill, transform target, `overflow:hidden`) → `.mag-btn__bg` (fill layer) + `.label` span.
   `magneticButtons()` wires every `.mag-zone` once at boot. The button is **static at rest** (no
   idle wiggle); on `mousemove`, `gsap.utils.mapRange` over the zone rect drives the magnetic pull —
   pill at `strength` 0.4, `.label` at `labelStrength` 0.24 (lighter parallax), both `overwrite:true`;
   `mouseleave` returns both with `elastic.out(1,0.4)`. Variants:
-  - `--explore` (Figma 2008:147): pink→gold pill in a ~220×140 field; `.mag-btn__bg` carries the
-    gradient + `box-shadow: inset 0 0 0 1px rgba(0,0,0,.1)` **inner** stroke; `EXPLORE` label.
+  - `--explore` (Figma 2008:147): pink→peach pill (`READ THE PLAYBOOK`) in a ~340×150 field;
+    `.mag-btn__bg` carries the `linear-gradient(0deg,#ffa8cd,#fdd193)` + `box-shadow: inset 0 0 0 1px
+    rgba(0,0,0,.2)` **inner** stroke; padding `12px 24px`. (`#intro` is `min-height:100svh` + flex
+    column `justify-content:center`, so the content + CTA sit vertically centred — no bottom deadspace.)
   - `--back` (Menu): transparent pill, `--midnight` text + `1px rgba(1,34,51,.25)` border on the bg
     (hover fills `rgba(1,34,51,.06)`); `overflow:visible` (short label, no clip); no arrow. The
     zone is absolute top-left in `#menu`.
