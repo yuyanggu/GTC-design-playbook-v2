@@ -7,8 +7,8 @@ import { animate } from "../vendor/motion.esm.js";
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
-// CustomEase + CustomWiggle are vendored (free) — power the Explore button's wiggle ease.
-gsap.registerPlugin(...[ScrollTrigger, window.CustomEase, window.CustomWiggle].filter(Boolean));
+// ScrollSmoother (page smooth-scroll) + CustomEase/CustomWiggle are vendored (free).
+gsap.registerPlugin(...[ScrollTrigger, window.ScrollSmoother, window.CustomEase, window.CustomWiggle].filter(Boolean));
 
 const root = document.documentElement;
 root.classList.add("js");
@@ -23,6 +23,10 @@ const arrow = document.querySelector("#arrow");
 // the moment scrolling starts (otherwise their late completion snaps opacity back to 1
 // and overrides the scroll fade — the "still visible when scrolling" bug).
 let heroEntrance = null;
+
+// ScrollSmoother instance (the menu does NOT touch it — it just hard-locks page scroll
+// via documentElement overflow while open, to avoid smoother/menu interaction bugs).
+let smoother = null;
 
 /* ---- Title vertical travel: centre → docked near top (Figma ≈ 8.3% of frame) ---- */
 function titleDeltaY() {
@@ -237,10 +241,13 @@ function menuScene() {
   const BELOW = () => window.innerHeight + 400;      // exit target below the fold
   let openMaster = null;   // menu fade + scheduling
   let bookTls = [];        // per-book fall timelines (so close can kill them)
+  let overShelf = false;   // is the cursor currently over the shelf? (suppresses the thud)
 
   // A heavy "thud" — jolt the whole shelf down a few px and let it settle.
-  // (xPercent:-50 keeps it centred while GSAP owns the transform.)
+  // (xPercent:-50 keeps it centred while GSAP owns the transform.) Skipped while the
+  // cursor is over the shelf, so a quick mouse-in after landing doesn't ride the thud.
   function impactShake(amount) {
+    if (overShelf) return;
     gsap.set(shelf, { xPercent: -50 });
     gsap.fromTo(shelf, { y: amount }, { y: 0, duration: 0.55, ease: "elastic.out(1.4, 0.28)", overwrite: "auto" });
   }
@@ -255,7 +262,7 @@ function menuScene() {
       gsap.set(b, { transformOrigin: "50% 100%", y: ABOVE(), rotation: tilt, autoAlpha: 1 });
       return gsap.timeline({ delay: gsap.utils.random(0, 0.7) })
         .to(b, { y: 0, duration: gsap.utils.random(0.48, 0.6), ease: "power2.in" })  // gravity fall
-        .add(() => impactShake(gsap.utils.random(4, 4.5)))                              // shelf thud on landing
+        .add(() => impactShake(gsap.utils.random(2, 5)))                              // shelf thud on landing
         .to(b, { rotation: 0, duration: 1.4, ease: "elastic.out(1, 0.3)" });         // rock → settle
     });
   }
@@ -289,6 +296,8 @@ function menuScene() {
     isOpen = true;
     lastFocus = document.activeElement;
 
+    root.style.overflow = "hidden";          // hard-lock the page scroll (decoupled from ScrollSmoother)
+
     if (reduce) {
       menu.hidden = false;
       if (main) main.inert = true;
@@ -318,6 +327,7 @@ function menuScene() {
     document.body.style.overflow = "";
     gsap.set(books, { clearProps: "transform" });
     gsap.set(shelf, { y: 0 });
+    root.style.overflow = "";               // restore page scroll
     if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
   }
 
@@ -349,8 +359,8 @@ function menuScene() {
     if (knockTl[i]) knockTl[i].kill();
     gsap.set(el, { transformOrigin: "50% 100%" });
     knockTl[i] = gsap.timeline()
-      .to(el, { rotation: kick, duration: 0.16, ease: "power3.out", overwrite: "auto" })  // tip
-      .to(el, { rotation: 0, duration: 1.1, ease: "elastic.out(1, 0.3)" });               // rock → settle (drop heft)
+      .to(el, { rotation: kick, duration: 0.4, ease: "power3.out", overwrite: "auto" })  // tip
+      .to(el, { rotation: 0, duration: 1.1, ease: "elastic.out(1, 0.5)" });               // rock → settle (drop heft)
   }
 
   let lastX = null;
@@ -359,7 +369,12 @@ function menuScene() {
   // the cursor is sweeping across the shelf's vertical band.
   menu.addEventListener("pointermove", (e) => {
     const sr = shelf.getBoundingClientRect();
-    if (e.clientY < sr.top - 60 || e.clientY > sr.bottom + 20) { lastX = null; overIdx = -1; return; }
+    if (e.clientY < sr.top - 60 || e.clientY > sr.bottom + 20) { lastX = null; overIdx = -1; overShelf = false; return; }
+    if (!overShelf) {                                    // just entered the shelf band
+      overShelf = true;
+      gsap.set(shelf, { xPercent: -50 });
+      gsap.to(shelf, { y: 0, duration: 0.2, ease: "power2.out", overwrite: "auto" }); // settle any residual landing thud
+    }
     const dx = lastX === null ? 0 : e.clientX - lastX;   // horizontal sweep velocity
     lastX = e.clientX;
     const localX = e.clientX - sr.left;
@@ -371,7 +386,7 @@ function menuScene() {
     if (idx !== -1 && idx !== overIdx) knock(idx, dx);   // knocked once on entering a new element
     overIdx = idx;
   });
-  menu.addEventListener("pointerleave", () => { lastX = null; overIdx = -1; });
+  menu.addEventListener("pointerleave", () => { lastX = null; overIdx = -1; overShelf = false; });
 
   // --- Raise + colour + icon swap (interactive books only; .book--soon opt out).
   //     Raise = y on the outer; colour + icon-swap = the .is-hover class (CSS). ---
@@ -418,8 +433,24 @@ function magneticButtons() {
 }
 
 /* ============================================================================
+   0 · Smooth scrolling (GSAP ScrollSmoother) — wraps #smooth-content; the pinned
+   scenes ride inside it, the fixed menu/pinwheel stay outside. Subtle (smooth:1).
+   ========================================================================== */
+function smoothScroll() {
+  if (reduce || !window.ScrollSmoother) return;
+  smoother = ScrollSmoother.create({
+    wrapper: "#smooth-wrapper",
+    content: "#smooth-content",
+    smooth: 1,        // subtle catch-up
+    smoothTouch: 0,   // native scrolling on touch devices
+    effects: false,
+  });
+}
+
+/* ============================================================================
    Boot
    ========================================================================== */
+smoothScroll();   // create the smoother first so the pinned ScrollTriggers attach to it
 heroIntro();
 arrowBob();
 scrollScene();
