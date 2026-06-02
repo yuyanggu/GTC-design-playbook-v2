@@ -7,7 +7,8 @@ import { animate } from "../vendor/motion.esm.js";
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
-gsap.registerPlugin(ScrollTrigger);
+// CustomEase + CustomWiggle are vendored (free) — power the Explore button's wiggle ease.
+gsap.registerPlugin(...[ScrollTrigger, window.CustomEase, window.CustomWiggle].filter(Boolean));
 
 const root = document.documentElement;
 root.classList.add("js");
@@ -146,7 +147,7 @@ function pinwheelScene() {
   trav.style.opacity = "1"; // no fade — it's hidden by sitting below the fold until it rises
 
   const CENTER_Y = 0.5;  // viewport ratio where it rests while centred on the plain bg
-  const RISE_END = 0.32;  // pin progress at which the rise finishes — quick, so little empty bg
+  const RISE_END = 0.45;  // pin progress at which the rise finishes — quick, so little empty bg
   const ALIGN_AT = 0.50;  // pin progress that fires the timed align + reveal (leaves room
                           // after it for the 0.8s glide to finish while still pinned)
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -183,7 +184,7 @@ function pinwheelScene() {
       // The gap between the two thresholds is hysteresis so it can't flap if the user
       // hovers exactly on the trigger point. (play/reverse are idempotent.)
       if (self.progress >= ALIGN_AT) transition.play();
-      else if (self.progress < ALIGN_AT - 0.15) transition.reverse();
+      else if (self.progress < ALIGN_AT - 0.55) transition.reverse();
     },
   });
 
@@ -217,6 +218,128 @@ function pinwheelScene() {
 }
 
 /* ============================================================================
+   5 · Menu (bookshelf overlay) — open/close, books fall in, sway, raise
+   ========================================================================== */
+function menuScene() {
+  const menu = document.querySelector("#menu");
+  const openBtn = document.querySelector("#exploreBtn");
+  const closeBtn = document.querySelector("#menuClose");
+  if (!menu || !openBtn) return;
+
+  const main = document.querySelector("main");
+  const shelf = menu.querySelector("#menuShelf");
+  const books = gsap.utils.toArray(".book", menu);
+  let isOpen = false;
+  let lastFocus = null;
+
+  function open() {
+    if (isOpen) return;
+    isOpen = true;
+    lastFocus = document.activeElement;
+    menu.hidden = false;
+    if (main) main.inert = true;            // background unreachable while open
+    document.body.style.overflow = "hidden";
+
+    if (reduce) {
+      gsap.set(menu, { autoAlpha: 1 });
+      gsap.set(books, { clearProps: "transform", autoAlpha: 1 });
+    } else {
+      // Books drop from above the fold and settle (overshoot via back.out), L→R.
+      gsap.killTweensOf(books);
+      gsap.timeline()
+        .fromTo(menu, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.35, ease: "power2.out" })
+        .fromTo(books,
+          { y: () => -(window.innerHeight + 40), rotation: (i) => (i % 2 ? 7 : -7), autoAlpha: 0 },
+          { y: 0, rotation: 0, autoAlpha: 1, duration: 0.95, ease: "back.out(1.5)", stagger: 0.08 },
+          0.05);
+    }
+    (closeBtn || menu).focus({ preventScroll: true });
+  }
+
+  function finishClose() {
+    menu.hidden = true;
+    if (main) main.inert = false;
+    document.body.style.overflow = "";
+    gsap.set(books, { clearProps: "transform" });
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
+
+  function close() {
+    if (!isOpen) return;
+    isOpen = false;
+    if (reduce) { finishClose(); return; }
+    gsap.killTweensOf(books);
+    gsap.timeline({ onComplete: finishClose })
+      .to(books, { y: () => -(window.innerHeight * 0.35), autoAlpha: 0, duration: 0.4, ease: "power2.in", stagger: 0.05 })
+      .to(menu, { autoAlpha: 0, duration: 0.3, ease: "power2.in" }, 0.12);
+  }
+
+  openBtn.addEventListener("click", open);
+  if (closeBtn) closeBtn.addEventListener("click", close);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) close(); });
+
+  if (reduce) return; // no ambient sway / raise tweens under reduced motion
+
+  // --- Gentle sway: every book leans with the cursor as it crosses the shelf
+  //     (rotation on the INNER layer; raise lives on the outer → no transform fight). ---
+  const inners = books.map((b) => b.querySelector(".book__inner"));
+  shelf.addEventListener("pointermove", (e) => {
+    const sr = shelf.getBoundingClientRect();
+    books.forEach((b, i) => {
+      const br = b.getBoundingClientRect();
+      const dx = (e.clientX - (br.left + br.width / 2)) / sr.width;
+      gsap.to(inners[i], { rotation: gsap.utils.clamp(-4, 4, dx * 16), duration: 0.5, ease: "power2.out" });
+    });
+  });
+  shelf.addEventListener("pointerleave", () => {
+    inners.forEach((el) => gsap.to(el, { rotation: 0, duration: 0.7, ease: "elastic.out(1, 0.5)" }));
+  });
+
+  // --- Raise + colour + icon swap (interactive books only; .book--soon opt out).
+  //     Raise = y on the outer; colour + icon-swap = the .is-hover class (CSS). ---
+  gsap.utils.toArray(".book--interactive", menu).forEach((b) => {
+    const enter = () => { b.classList.add("is-hover"); gsap.to(b, { y: -18, duration: 0.35, ease: "power2.out", overwrite: "auto" }); };
+    const leave = () => { b.classList.remove("is-hover"); gsap.to(b, { y: 0, duration: 0.45, ease: "power2.out", overwrite: "auto" }); };
+    b.addEventListener("mouseenter", enter);
+    b.addEventListener("mouseleave", leave);
+    b.addEventListener("focus", enter);
+    b.addEventListener("blur", leave);
+  });
+}
+
+/* ============================================================================
+   6 · Magnetic button component ("True button") — wires every `.mag-zone`.
+   Static at rest; on hover the pill (`.mag-btn`) and its `.label` parallax toward
+   the cursor at different strengths (`overwrite:true`), springing back on leave.
+   Used by the Explore CTA (--explore) and the Menu back button (--back).
+   ========================================================================== */
+function magneticButtons() {
+  if (reduce) return;
+  const strength = 0.4;       // the pill
+  const labelStrength = 0.24; // the label (lighter parallax)
+
+  document.querySelectorAll(".mag-zone").forEach((zone) => {
+    const btn = zone.querySelector(".mag-btn");
+    if (!btn) return;
+    const label = btn.querySelector(".label");
+
+    zone.addEventListener("mousemove", (e) => {
+      const rect = zone.getBoundingClientRect();
+      const mapX = gsap.utils.mapRange(rect.left, rect.right, -rect.width / 2, rect.width / 2, e.clientX);
+      const mapY = gsap.utils.mapRange(rect.top, rect.bottom, -rect.height / 2, rect.height / 2, e.clientY);
+
+      gsap.to(btn, { x: mapX * strength, y: mapY * strength, duration: 0.4, ease: "power2.out", overwrite: true });
+      if (label) gsap.to(label, { x: mapX * labelStrength, y: mapY * labelStrength, duration: 0.4, ease: "power2.out", overwrite: true });
+    });
+
+    zone.addEventListener("mouseleave", () => {
+      gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1,0.4)", overwrite: true });
+      if (label) gsap.to(label, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1,0.4)", overwrite: true });
+    });
+  });
+}
+
+/* ============================================================================
    Boot
    ========================================================================== */
 heroIntro();
@@ -224,6 +347,8 @@ arrowBob();
 scrollScene();
 introReveal();
 pinwheelScene();
+menuScene();
+magneticButtons();
 
 // Fonts can shift metrics → recompute pin distances once loaded.
 if (document.fonts && document.fonts.ready) {

@@ -56,11 +56,100 @@
           </div>
         </div>
       </div>
+
+      <!-- Explore CTA — magnetic button component (explore variant) -->
+      <div class="intro__cta" data-reveal>
+        <div class="mag-zone mag-zone--explore" id="exploreZone">
+          <button class="mag-btn mag-btn--explore" id="exploreBtn" type="button" aria-haspopup="dialog" aria-controls="menu">
+            <span class="mag-btn__bg" aria-hidden="true"></span>
+            <span class="label">explore</span>
+          </button>
+        </div>
+      </div>
     </section>
   </main>
 
+  <!-- ───────────────────────── MENU (bookshelf overlay) ───────────────────────── -->
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
+    <!-- Back — magnetic button component (back variant) -->
+    <div class="mag-zone mag-zone--back" id="menuCloseZone">
+      <button class="mag-btn mag-btn--back" id="menuClose" type="button" aria-label="Back to cover">
+        <span class="mag-btn__bg" aria-hidden="true"></span>
+        <span class="label">Back</span>
+      </button>
+    </div>
+
+    <p class="eyebrow menu__eyebrow">govtech consulting</p>
+    <img class="menu__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
+
+    <div class="menu__shelf" id="menuShelf" aria-label="Playbook sections">
+      <!-- decorative gray book-spines leaning on the shelf -->
+      <div class="shelf__spines" aria-hidden="true">
+        <span class="spine" style="--x:-2.24cqw; --w:1.46cqw;"></span>
+        <span class="spine" style="--x:19.41cqw; --w:4.49cqw;"></span>
+        <span class="spine" style="--x:24.68cqw; --w:1.46cqw;"></span>
+        <span class="spine" style="--x:46.34cqw; --w:1.46cqw;"></span>
+        <span class="spine spine--lean" style="--x:48.59cqw; --w:5.17cqw;"></span>
+        <span class="spine spine--lean" style="--x:73.66cqw; --w:5.17cqw;"></span>
+        <span class="spine" style="--x:79.22cqw; --w:1.46cqw;"></span>
+        <span class="spine spine--lean" style="--x:100.59cqw; --w:3.22cqw;"></span>
+      </div>
+
+      <!-- Book 1 — interactive -->
+      <button class="book book--interactive book--1" type="button" data-book style="--book-x:0cqw;">
+        <span class="book__inner">
+          <span class="book__num">1</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Why we exist,<br />and the moment</span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+          </span>
+        </span>
+      </button>
+
+      <!-- Book 2 — interactive (menu_2 icon, no hover variant yet) -->
+      <button class="book book--interactive book--2" type="button" data-book style="--book-x:27.41cqw;">
+        <span class="book__inner">
+          <span class="book__num">2</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Our point<br />of view</span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
+          </span>
+        </span>
+      </button>
+
+      <!-- Book 3 — coming soon (dimmed, non-interactive) -->
+      <div class="book book--soon book--3" data-book aria-disabled="true" style="--book-x:54.54cqw;">
+        <span class="book__inner">
+          <span class="book__num">3</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Stages of<br />a project<span class="book__soon">(Coming soon)</span></span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+          </span>
+        </span>
+      </div>
+
+      <!-- Book 4 — coming soon (dimmed, non-interactive) -->
+      <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:81.66cqw;">
+        <span class="book__inner">
+          <span class="book__num">4</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/CustomEase.min.js"></script>
+  <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
