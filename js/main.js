@@ -40,7 +40,7 @@ function titleDeltaY() {
    1 · Hero entrance (motion.dev) — runs once on load
    ========================================================================== */
 function heroIntro() {
-  if (reduce) return;
+  if (reduce || !titleblock) return;   // no hero on this page → nothing to enter
   // titleblock media keeps the Motion One entrance (nothing else animates it).
   animate(
     ".titleblock__media",
@@ -59,7 +59,7 @@ function heroIntro() {
 
 /* ---- Arrow idle bob (independent of scroll opacity) ---- */
 function arrowBob() {
-  if (reduce) return;
+  if (reduce || !arrow) return;
   gsap.to(arrow, { y: 9, duration: 1.15, repeat: -1, yoyo: true, ease: "sine.inOut" });
 }
 
@@ -67,6 +67,7 @@ function arrowBob() {
    2 · Pinned scroll scene (GSAP) — extras out, title up, streaks grow
    ========================================================================== */
 function scrollScene() {
+  if (!titleblock) return;   // hero-only scene; absent on interior pages
   gsap.set(titleblock, { xPercent: -50, yPercent: -50 });
 
   if (reduce) {
@@ -226,9 +227,11 @@ function pinwheelScene() {
    ========================================================================== */
 function menuScene() {
   const menu = document.querySelector("#menu");
-  const openBtn = document.querySelector("#exploreBtn");
+  // Any element with [data-menu-open] opens the bookshelf (the Explore CTA on the cover,
+  // the hamburger in a page's left rail, …). One menu, many triggers.
+  const openBtns = gsap.utils.toArray("[data-menu-open]");
   const closeBtn = document.querySelector("#menuClose");
-  if (!menu || !openBtn) return;
+  if (!menu || !openBtns.length) return;
 
   const main = document.querySelector("main");
   const shelf = menu.querySelector("#menuShelf");
@@ -339,9 +342,16 @@ function menuScene() {
     closeBooks(finishClose);
   }
 
-  openBtn.addEventListener("click", open);
+  openBtns.forEach((b) => b.addEventListener("click", open));
   if (closeBtn) closeBtn.addEventListener("click", close);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) close(); });
+
+  // Book navigation: an interactive book with [data-href] opens its page (full nav).
+  // Wired before the reduced-motion bail so the links work without the raise/sway tweens.
+  books.forEach((b) => {
+    const href = b.getAttribute("data-href");
+    if (href) b.addEventListener("click", () => { window.location.href = href; });
+  });
 
   if (reduce) return; // no ambient sway / raise tweens under reduced motion
 

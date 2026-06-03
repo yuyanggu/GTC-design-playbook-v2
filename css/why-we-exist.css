@@ -1,0 +1,323 @@
+/* ============================================================================
+   "Why we exist, and the moment" — interior page
+   Layered on top of styles.css (tokens, @font-face, type system, .menu/.book,
+   .mag-zone all come from there). Reference frame = 1440 wide; hero band 1024.
+   ========================================================================== */
+
+body { background: var(--chalk); }
+
+/* ---------------------------------------------------------------------------
+   Left rail (fixed) — divider + rotated label + hamburger (opens menu) + search
+   --------------------------------------------------------------------------- */
+.rail {
+  position: fixed;
+  inset: 0 auto 0 0;          /* top:0 bottom:0 left:0 */
+  width: 94px;
+  z-index: 40;
+  pointer-events: none;        /* only the controls catch the pointer */
+}
+.rail > * { pointer-events: auto; }
+
+.rail__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: rgba(1, 34, 51, 0.15);
+}
+
+/* Vertical label, reads bottom → top — its top edge sits 20px below the rail top.
+   Rotated -90° about its left-top, so it grows upward; anchoring `top` at
+   (20px + text length) puts the text top at the desired 20px padding. */
+.rail__label {
+  position: absolute;
+  top: 340px;
+  left: 36px;
+  margin: 0;
+  transform-origin: left top;
+  transform: rotate(-90deg);
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0.4px;       /* +2% of 20px */
+  text-transform: uppercase;
+  color: var(--midnight);
+}
+
+/* Hamburger — blue square, vertically centred in the rail */
+.rail__menu {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 94px;
+  height: 95px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: var(--blue);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+.rail__menu:hover { background: #3f86c4; }
+.rail__menu:focus-visible { outline: 3px solid var(--midnight); outline-offset: 3px; }
+
+/* Search — bare icon, 20px above the rail bottom */
+.rail__search {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 20px;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--midnight);
+  cursor: pointer;
+}
+.rail__search:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
+.lucide { display: block; }
+
+/* ---------------------------------------------------------------------------
+   HERO (orange cover)
+   --------------------------------------------------------------------------- */
+.page-hero {
+  position: relative;
+  min-height: 100vh;
+  background: var(--orange);
+  overflow: hidden;
+}
+.page-hero::before {                 /* centred 1440 canvas for hero contents */
+  content: none;
+}
+.page-hero__title {
+  position: absolute;
+  left: max(209px, calc(50% - 720px + 209px));   /* x=209 inside a centred 1440 canvas */
+  top: clamp(280px, 41vh, 460px);
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5.2vw, 75px);
+  line-height: 1.8;
+  color: var(--chalk);
+}
+.page-hero__title span { display: block; }
+
+.hero-flower {
+  position: absolute;
+  top: 0;
+  right: 0;                       /* anchored to the top-right corner */
+  width: clamp(360px, 38vw, 549px);
+  aspect-ratio: 549 / 554;
+}
+.hero-flower__spin { width: 100%; height: 100%; transform-origin: 50% 50%; will-change: transform; }
+.hero-flower img { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* ---------------------------------------------------------------------------
+   BODY
+   --------------------------------------------------------------------------- */
+.page-body {
+  position: relative;
+  background: var(--chalk);
+  padding-top: 48px;            /* 1024 hero band → 1072 first content row */
+  padding-bottom: 140px;
+}
+.page-body__canvas {
+  position: relative;
+  width: min(1440px, 100%);
+  margin-inline: auto;
+}
+/* display:contents → toc/flowercol participate directly in the canvas layout. */
+.body-left { display: contents; }
+
+/* ----- Table of contents (left column — pinned to follow scroll) -----
+   Floated (in normal flow) so ScrollTrigger can pin it — CSS sticky/fixed can't
+   survive the ScrollSmoother transform, and pinning fails on absolute/grid/flex
+   children. The pin (js/why-we-exist.js) holds it through the body, then releases. */
+.toc {
+  float: left;
+  width: 328px;
+  margin-left: 132px;
+}
+.toc__label {
+  margin: 0 0 9px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--midnight);
+}
+.toc__progress {
+  position: relative;
+  width: 161px;
+  height: 11px;
+  border-radius: 10px;
+  background: var(--skeleton);
+  overflow: hidden;
+}
+.toc__progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 38%;                  /* start; JS tracks scroll */
+  border-radius: 10px;
+  background: var(--orange);
+}
+.toc__list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.toc__list li { display: flex; flex-direction: column; gap: 5px; }
+
+.toc__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 305px;
+  height: 60px;
+  padding: 0 18px;
+  background: var(--toc-gray);
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+.toc__row.is-active { background: var(--orange); }
+.toc__row:focus-visible { outline: 3px solid var(--midnight); outline-offset: 2px; }
+.toc__num {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--chalk);
+}
+.toc__rule { flex: none; width: 1px; height: 45px; background: rgba(255, 255, 255, 0.65); }
+.toc__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.1;
+  letter-spacing: -0.3px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* skeleton placeholder bars */
+.toc__skeleton {
+  display: block;
+  width: 305px;
+  height: 15px;
+  background: var(--skeleton);
+}
+.toc__skeleton--b { width: 293px; margin-left: 12px; }
+.toc__skeleton--e { width: 293px; margin-left: 12px; }
+.toc__skeleton--f { width: 281px; margin-left: 18px; }
+
+/* ----- Body copy (right column) ----- */
+.copy {
+  margin-left: 626px;
+  width: 604px;
+  padding-top: 78px;           /* 1150 − 1072 */
+  color: var(--midnight);
+}
+.copy__heading {
+  margin: 0 0 24px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 3.35vw, 48px);
+  line-height: 88px;            /* 183.333% of 48px — generous box, no glyph clipping */
+  color: var(--orange);
+}
+.section-head {
+  margin: 1.7em 0 0.55em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 2.1vw, 30px);
+  line-height: 1.1;
+  letter-spacing: -0.3px;
+  color: var(--orange);
+}
+.copy > .section-head:first-of-type { margin-top: 0; }
+.copy p {
+  margin: 0 0 1.1em;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.45;
+  letter-spacing: -0.16px;
+  color: var(--midnight);
+}
+
+/* ----- Closing pull-quote ----- */
+.pullquote {
+  display: flex;
+  gap: 14px;
+  margin: 2.4em 0 0;
+}
+.pullquote__mark { flex: none; margin-top: 6px; }
+.pullquote p {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  color: #000;
+}
+
+/* ---------------------------------------------------------------------------
+   Reveal base states (JS animates these in; reduced motion shows them at once)
+   --------------------------------------------------------------------------- */
+.js .reveal { opacity: 0; transform: translateY(24px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Responsive fallback — single column under the 1440 canvas
+   --------------------------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .rail { width: 64px; }
+  .rail__label { display: none; }
+  .rail__menu { top: 24px; width: 64px; height: 64px; }
+  .rail__search { bottom: 28px; }
+
+  .page-hero__title { left: clamp(84px, 9vw, 132px); top: clamp(220px, 38vh, 400px); }
+  .hero-flower { left: auto; right: -70px; width: clamp(300px, 46vw, 520px); }
+
+  .page-body__canvas { width: 100%; }
+  .toc {
+    position: static;
+    width: min(360px, 100%);
+    margin: 0 auto 56px;
+    padding-left: 84px;
+  }
+  .toc__row, .toc__skeleton { width: 100%; max-width: 305px; }
+  .copy {
+    margin-left: 0;
+    width: auto;
+    max-width: 640px;
+    margin-inline: auto;
+    padding: 0 32px 0 96px;
+  }
+}
+
+@media (max-width: 680px) {
+  .toc { padding-left: 76px; }
+  .copy { padding-left: 84px; padding-right: 22px; }
+  .pullquote p { font-size: 18px; }
+}

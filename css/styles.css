@@ -45,6 +45,12 @@
   --gray3: #c7c7cc;
   --book-dark: rgba(27, 31, 38, 0.72);
 
+  /* Flower-petal + page accents (Figma) */
+  --sky: #73aae5;          /* blue petal */
+  --pink: #f394be;         /* pink petal */
+  --skeleton: #d9d9d9;     /* TOC placeholder bars */
+  --toc-gray: rgba(27, 31, 38, 0.47); /* inactive TOC row */
+
   --font-display: "Boldonse", system-ui, sans-serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
   --font-serif: "Source Serif 4", Georgia, serif;
