@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why we exist, and the moment — The Design Playbook</title>
+  <meta name="description" content="Why GovTech exists, the modernisation opportunity, and the A.I. reality — the opening chapter of the GTC Design Playbook." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/why-we-exist.css" />
+</head>
+<body>
+  <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
+       The vertical divider runs the full height; the rotated label, the hamburger
+       (opens the bookshelf Menu) and the search icon ride in the rail. Lives OUTSIDE
+       #smooth-wrapper so it stays viewport-anchored, like the menu/pinwheel. -->
+  <div class="rail" aria-label="Section navigation">
+    <span class="rail__divider" aria-hidden="true"></span>
+
+    <p class="rail__label">why we exist, and the moment</p>
+
+    <!-- Hamburger → opens the books Menu (shared #menu, via [data-menu-open]) -->
+    <button class="rail__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg class="lucide" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" />
+      </svg>
+    </button>
+
+    <!-- Search (decorative for now) -->
+    <button class="rail__search" type="button" aria-label="Search (coming soon)">
+      <svg class="lucide" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+  <main class="page">
+
+    <!-- ───────────────────────── HERO (orange cover) ───────────────────────── -->
+    <section class="page-hero">
+      <h1 class="page-hero__title">
+        <span class="reveal">01</span>
+        <span class="reveal">Why we exist,</span>
+        <span class="reveal">and the moment</span>
+      </h1>
+
+      <!-- 4-petal flower anchored to the top-right corner; spins slowly in the "wind" -->
+      <div class="hero-flower" aria-hidden="true">
+        <div class="hero-flower__spin">
+          <img src="assets/1_Graphic.svg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── BODY ───────────────────────── -->
+    <section class="page-body">
+      <div class="page-body__canvas">
+
+       <div class="body-left">
+        <!-- Table of contents (scroll-synced, sticky) -->
+        <nav class="toc reveal" aria-label="Table of contents">
+          <p class="toc__label">table of contents</p>
+          <div class="toc__progress" aria-hidden="true">
+            <span class="toc__progress-fill"></span>
+          </div>
+
+          <ul class="toc__list">
+            <li>
+              <a class="toc__row is-active" data-toc="s-11" href="#s-11">
+                <span class="toc__num">1.1</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">Why we exist, and the moment</span>
+              </a>
+              <span class="toc__skeleton toc__skeleton--a" aria-hidden="true"></span>
+              <span class="toc__skeleton toc__skeleton--b" aria-hidden="true"></span>
+            </li>
+            <li>
+              <a class="toc__row" data-toc="s-12" href="#s-12">
+                <span class="toc__num">1.2</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">The modernisation opportunity</span>
+              </a>
+              <span class="toc__skeleton toc__skeleton--c" aria-hidden="true"></span>
+            </li>
+            <li>
+              <a class="toc__row" data-toc="s-13" href="#s-13">
+                <span class="toc__num">1.3</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">The A.I. reality</span>
+              </a>
+              <span class="toc__skeleton toc__skeleton--d" aria-hidden="true"></span>
+              <span class="toc__skeleton toc__skeleton--e" aria-hidden="true"></span>
+              <span class="toc__skeleton toc__skeleton--f" aria-hidden="true"></span>
+            </li>
+          </ul>
+        </nav>
+       </div><!-- /.body-left -->
+
+        <!-- Body copy -->
+        <article class="copy">
+          <h2 class="copy__heading reveal">Why we exist,<br />and the moment</h2>
+
+          <h3 class="section-head reveal" id="s-11">1.1 Why GovTech</h3>
+          <p class="reveal">Singapore&rsquo;s Smart Nation vision called for something deliberate: a centralised digital government capability, built in-house, so that the knowledge and direction of transformation would sit within government &mdash; not fragmented across agencies or outsourced away. GovTech was the answer to that call.</p>
+          <p class="reveal">Its mandate has always been about more than technology. It&rsquo;s about what government can be for the people who depend on it &mdash; and what kind of future we&rsquo;re building together.</p>
+
+          <h3 class="section-head reveal" id="s-12">1.2 The modernisation opportunity</h3>
+          <p class="reveal">Singapore&rsquo;s national AI adoption mandate is a structural signal: the rules of what government can build, and how fast, have changed. What once took months can now be prototyped in days. The opportunity to build public services that are genuinely excellent &mdash; not just functional &mdash; is more within reach than it has ever been.</p>
+          <p class="reveal">But the goal is not simply to move faster. It&rsquo;s to move well &mdash; with the discernment and care that public services deserve, because what&rsquo;s ultimately at stake are the people these services are built for. That means starting with the real problem before committing to a direction, holding the standard for quality when the ability to build is no longer the constraint, and being honest about what deserves focus when more is possible than any team can pursue at once. GTC&rsquo;s work sets the conditions for how agencies across Singapore develop their own capabilities &mdash; which is exactly why it has to be done carefully and well.</p>
+
+          <h3 class="section-head reveal" id="s-13">1.3 The A.I. reality</h3>
+          <p class="reveal">The conditions around us have changed, and they have changed fast. As part of a government with the foresight to lean into this moment, we have both the position and the responsibility to lead the way. Not to wait and see, but to experiment, learn, and set the standard for what design at GTC for the public can be.</p>
+          <p class="reveal">AI is reshaping what is possible for design, and you will see that reflected in how we work. We acknowledge it as a reality, not a prescription. We won&rsquo;t tell you which tools to use, because the tools themselves are evolving faster than any document can capture. What we will say is: the craft is evolving, and it is on us to evolve with it. Good design is still about people. That hasn&rsquo;t changed. How we get there has.</p>
+
+          <blockquote class="pullquote reveal">
+            <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
+            <p>The craft is evolving, and it is on us to evolve with it. Good design is still about people. That hasn&rsquo;t changed. How we get there has.</p>
+          </blockquote>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
+
+  <!-- ───────────────────────── MENU (bookshelf overlay) — shared with index.html ───────────────────────── -->
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
+    <!-- Back — magnetic button component (back variant) -->
+    <div class="mag-zone mag-zone--back" id="menuCloseZone">
+      <button class="mag-btn mag-btn--back" id="menuClose" type="button" aria-label="Back to cover">
+        <span class="mag-btn__bg" aria-hidden="true"></span>
+        <span class="label">Back</span>
+      </button>
+    </div>
+
+    <p class="eyebrow menu__eyebrow">govtech consulting</p>
+    <img class="menu__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
+
+    <div class="menu__shelf" id="menuShelf" aria-label="Playbook sections">
+      <!-- decorative gray book-spines (vectors), one cluster per gap region -->
+      <div class="shelf__spines" aria-hidden="true">
+        <img class="spine" src="assets/book_element_1.svg" alt="" style="--x:-23px; --w:15px;" />
+        <img class="spine" src="assets/book_element_2.svg" alt="" style="--x:198px; --w:69px;" />
+        <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
+        <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
+        <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1028px; --w:33px;" />
+      </div>
+
+      <!-- Book 1 — interactive (this page) -->
+      <button class="book book--interactive book--1" type="button" data-book data-href="why-we-exist.html" style="--book-x:0px;">
+        <span class="book__inner">
+          <span class="book__num">1</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Why we exist,<br />and the moment</span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+          </span>
+        </span>
+      </button>
+
+      <!-- Book 2 — interactive (menu_2 icon, no hover variant yet) -->
+      <button class="book book--interactive book--2" type="button" data-book style="--book-x:278px;">
+        <span class="book__inner">
+          <span class="book__num">2</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Our point<br />of view</span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
+          </span>
+        </span>
+      </button>
+
+      <!-- Book 3 — coming soon (dimmed, non-interactive) -->
+      <div class="book book--soon book--3" data-book aria-disabled="true" style="--book-x:556px;">
+        <span class="book__inner">
+          <span class="book__num">3</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Stages of<br />a project<span class="book__soon">(Coming soon)</span></span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+          </span>
+        </span>
+      </div>
+
+      <!-- Book 4 — coming soon (dimmed, non-interactive) -->
+      <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
+        <span class="book__inner">
+          <span class="book__num">4</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
+  <script src="vendor/CustomEase.min.js"></script>
+  <script src="vendor/CustomWiggle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/why-we-exist.js"></script>
+</body>
+</html>
