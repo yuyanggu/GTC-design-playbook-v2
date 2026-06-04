@@ -9,7 +9,7 @@
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/why-we-exist.css" />
+  <link rel="stylesheet" href="css/chapter.css" />
 </head>
 <body>
   <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
@@ -50,7 +50,7 @@
       </h1>
 
       <!-- 4-petal flower anchored to the top-right corner; spins slowly in the "wind" -->
-      <div class="hero-flower" aria-hidden="true">
+      <div class="hero-flower" data-spin aria-hidden="true">
         <div class="hero-flower__spin">
           <img src="assets/1_Graphic.svg" alt="" />
         </div>
@@ -63,7 +63,7 @@
 
        <div class="body-left">
         <!-- Table of contents (scroll-synced, sticky) -->
-        <nav class="toc reveal" aria-label="Table of contents">
+        <nav class="toc" aria-label="Table of contents">
           <p class="toc__label">table of contents</p>
           <div class="toc__progress" aria-hidden="true">
             <span class="toc__progress-fill"></span>
@@ -166,29 +166,31 @@
         </span>
       </button>
 
-      <!-- Book 2 — interactive (menu_2 icon, no hover variant yet) -->
-      <button class="book book--interactive book--2" type="button" data-book style="--book-x:278px;">
+      <!-- Book 2 — interactive (Our point of view) -->
+      <button class="book book--interactive book--2" type="button" data-book data-href="our-point-of-view.html" style="--book-x:278px;">
         <span class="book__inner">
           <span class="book__num">2</span>
           <span class="book__rule" aria-hidden="true"></span>
           <span class="book__title">Our point<br />of view</span>
           <span class="book__icon">
             <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
           </span>
         </span>
       </button>
 
-      <!-- Book 3 — coming soon (dimmed, non-interactive) -->
-      <div class="book book--soon book--3" data-book aria-disabled="true" style="--book-x:556px;">
+      <!-- Book 3 — interactive (Stages of a project) -->
+      <button class="book book--interactive book--3" type="button" data-book data-href="stages-of-a-project.html" style="--book-x:556px;">
         <span class="book__inner">
           <span class="book__num">3</span>
           <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">Stages of<br />a project<span class="book__soon">(Coming soon)</span></span>
+          <span class="book__title">Stages of<br />a project</span>
           <span class="book__icon">
             <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
           </span>
         </span>
-      </div>
+      </button>
 
       <!-- Book 4 — coming soon (dimmed, non-interactive) -->
       <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
@@ -210,6 +212,6 @@
   <script src="vendor/CustomEase.min.js"></script>
   <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>
-  <script type="module" src="js/why-we-exist.js"></script>
+  <script type="module" src="js/chapter.js"></script>
 </body>
 </html>

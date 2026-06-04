@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stages of a project — The Design Playbook</title>
+  <meta name="description" content="How we engage and the stages of a project — qualifying, discovery, building, and support. Chapter 3 of the GTC Design Playbook." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/chapter.css" />
+</head>
+<body style="--hero-bg: var(--midnight); --hero-title: var(--chalk); --accent: var(--midnight); --rail-fg: var(--chalk);">
+  <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
+  <div class="rail" aria-label="Section navigation">
+    <span class="rail__divider" aria-hidden="true"></span>
+
+    <p class="rail__label">stages of a project</p>
+
+    <button class="rail__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg class="lucide" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" />
+      </svg>
+    </button>
+
+    <button class="rail__search" type="button" aria-label="Search (coming soon)">
+      <svg class="lucide" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+      </svg>
+    </button>
+  </div>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+  <main class="page">
+
+    <!-- ───────────────────────── HERO (midnight cover) ───────────────────────── -->
+    <section class="page-hero">
+      <h1 class="page-hero__title">
+        <span class="reveal">03</span>
+        <span class="reveal">Stages of</span>
+        <span class="reveal">a project</span>
+      </h1>
+
+      <!-- Top-right graphic (static — no animation) -->
+      <div class="hero-flower" aria-hidden="true">
+        <div class="hero-flower__spin">
+          <img src="assets/1_Graphic.svg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── BODY ───────────────────────── -->
+    <section class="page-body">
+      <div class="page-body__canvas">
+
+       <div class="body-left">
+        <nav class="toc" aria-label="Table of contents">
+          <p class="toc__label">table of contents</p>
+          <div class="toc__progress" aria-hidden="true">
+            <span class="toc__progress-fill"></span>
+          </div>
+
+          <ul class="toc__list">
+            <li>
+              <a class="toc__row is-active" data-toc="s-31" href="#s-31">
+                <span class="toc__num">3.1</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">How we engage</span>
+              </a>
+              <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-31-1" href="#s-31-1"><span class="toc__subtitle">Types of projects we take on</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-31-2" href="#s-31-2"><span class="toc__subtitle">What we don’t do</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-31-3" href="#s-31-3"><span class="toc__subtitle">Where we enter</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-31-4" href="#s-31-4"><span class="toc__subtitle">Ideal project team</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-31-5" href="#s-31-5"><span class="toc__subtitle">Where we exit</span></a></li>
+              </ul>
+              <span class="toc__skeleton toc__skeleton--a" aria-hidden="true"></span>
+            </li>
+            <li>
+              <a class="toc__row" data-toc="s-32" href="#s-32">
+                <span class="toc__num">3.2</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">Qualifying</span>
+              </a>
+              <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-32-1" href="#s-32-1"><span class="toc__subtitle">What happens</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-32-2" href="#s-32-2"><span class="toc__subtitle">Activities</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-32-3" href="#s-32-3"><span class="toc__subtitle">Outputs</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-32-4" href="#s-32-4"><span class="toc__subtitle">Outcomes</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-32-5" href="#s-32-5"><span class="toc__subtitle">Critical callouts</span></a></li>
+              </ul>
+              <span class="toc__skeleton toc__skeleton--b" aria-hidden="true"></span>
+            </li>
+            <li>
+              <a class="toc__row" data-toc="s-33" href="#s-33">
+                <span class="toc__num">3.3</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">Discovery</span>
+              </a>
+              <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-33-1" href="#s-33-1"><span class="toc__subtitle">The value of discovery</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-33-2" href="#s-33-2"><span class="toc__subtitle">Subphase 1 — Uncover what is true</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-33-3" href="#s-33-3"><span class="toc__subtitle">Outcomes — Subphase 1</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-33-4" href="#s-33-4"><span class="toc__subtitle">Subphase 2 — Rapid experiment</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-33-5" href="#s-33-5"><span class="toc__subtitle">Experimentation cycle</span></a></li>
+              </ul>
+              <span class="toc__skeleton toc__skeleton--f" aria-hidden="true"></span>
+            </li>
+            <li>
+              <a class="toc__row" data-toc="s-34" href="#s-34">
+                <span class="toc__num">3.4</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">Building &amp; delivering</span>
+              </a>
+              <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-34-1" href="#s-34-1"><span class="toc__subtitle">What we think happens here</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-34-2" href="#s-34-2"><span class="toc__subtitle">What gets handed over</span></a></li>
+              </ul>
+              <span class="toc__skeleton toc__skeleton--c" aria-hidden="true"></span>
+            </li>
+            <li>
+              <a class="toc__row" data-toc="s-35" href="#s-35">
+                <span class="toc__num">3.5</span>
+                <span class="toc__rule" aria-hidden="true"></span>
+                <span class="toc__title">Support &amp; maintenance</span>
+              </a>
+              <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-35-1" href="#s-35-1"><span class="toc__subtitle">What we think happens here</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-35-2" href="#s-35-2"><span class="toc__subtitle">What gets handed over</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-35-3" href="#s-35-3"><span class="toc__subtitle">Capability building</span></a></li>
+              </ul>
+              <span class="toc__skeleton toc__skeleton--e" aria-hidden="true"></span>
+            </li>
+          </ul>
+        </nav>
+       </div><!-- /.body-left -->
+
+        <article class="copy">
+          <h2 class="copy__heading reveal">Stages of<br />a project</h2>
+          <p class="lead reveal">Partnership is how we work. We work with agencies as partners, not service providers. Agencies bring the domain knowledge and mandate; we bring the discovery capability, technology and product domain. Together, we build something that creates impact for the public. That spirit of co-creation shapes everything about how we show up from day one.</p>
+
+          <!-- 3.1 -->
+          <h3 class="section-head reveal" id="s-31">3.1 How we engage</h3>
+
+          <h4 class="subsection-head reveal" id="s-31-1">Types of projects we take on</h4>
+          <p class="reveal">We work on modernisation and discovery projects where there is a genuine problem worth solving, a partner ready to work alongside us, and enough clarity to get started. We begin from a question mark and work toward a point where a build can begin with real confidence. That journey, done well, is where the most meaningful work happens.</p>
+          <p class="reveal">Before committing, we explore the funding landscape together: whether budget has been secured, what it covers, and whether it fits the scope. Getting this clarity early sets everyone up for a more honest, energised, and productive engagement.</p>
+          <p class="reveal">Examples of projects we take on:</p>
+          <ul class="reveal">
+            <li>An agency has a legacy system that is failing users and officers. We come in to discover what is actually broken, map the full service, and prototype what a better version could look like.</li>
+            <li>A ministry wants to understand whether a new policy can be delivered digitally. We run discovery to validate the need, surface the constraints, and experiment with what a service could be before any build commitment is made.</li>
+            <li>An agency is streamlining multiple fragmented systems and workstreams into a single platform. The product is new — and so is the way the operation needs to run. We help them discover not just what to build, but how the people, processes, and workflows around it need to be rethought alongside it.</li>
+          </ul>
+          <p class="reveal"><strong>A note on research-heavy projects:</strong> There are exceptions. Some projects warrant a longer, deeper research phase before prototyping becomes possible — particularly where the system is complex, the stakeholders are many, or the problem space is genuinely unclear. That is fine. What matters is that the research connects to something — that it is building toward discovery and action, not sitting on its own as a deliverable.</p>
+
+          <h4 class="subsection-head reveal" id="s-31-2">What we don’t do</h4>
+          <p class="reveal">We do our best work when we are part of shaping the problem from the start. We are not a vendor executing a brief, and we are not here to create dependency. We are here to build capability alongside the people we work with, so that when we leave, the work continues and gets better. Concretely, this means we do not:</p>
+          <ul class="reveal">
+            <li><strong>Take over the entire project.</strong> We are a consulting and discovery team. We are not the permanent design or engineering function for an agency. Our role is to accelerate and enable, not to run things indefinitely.</li>
+            <li><strong>Write funding papers or investment proposals.</strong> Helping an agency make the internal case for a project is not within our scope. We can inform that thinking, but writing IV papers or procurement documents is not what we are here to do.</li>
+            <li><strong>Run isolated research tasks without a discovery arc.</strong> We are not a research-for-hire team. If an agency needs someone to run a user test and hand back a report, that is not us. Research has to connect to discovery, hypothesis, and action — otherwise there is no point.</li>
+            <li><strong>Deliver a prototype and walk away.</strong> Prototyping without the full discovery arc — and without building the agency’s capability to take it forward — is not the model. A prototype handed over with no context, no roadmap, and no team to own it will go nowhere.</li>
+            <li><strong>Design without being involved in the discovery.</strong> If the solution has already been decided and we are being asked to make it look good, that is not a project we can add real value to.</li>
+          </ul>
+
+          <h4 class="subsection-head reveal" id="s-31-3">Where we enter</h4>
+          <p class="reveal">The earlier we are part of shaping the problem, the more value the work creates. We are transparent about where we enter every engagement, so both sides start with a shared and realistic picture of what is possible. Entering too late compromises the work. If the direction has already been locked, if the scope has been fixed without discovery, or if the agency has already committed to a build — our ability to do this well is significantly reduced. This is worth naming clearly at the start of every engagement.</p>
+
+          <h4 class="subsection-head reveal" id="s-31-4">What an ideal project team looks like</h4>
+          <p class="reveal">The question is never whether the agency has a designer or an engineer. We can fill those gaps and we are glad to. What makes a project thrive is having the right people engaged on the agency side: a clearly identified business owner, a sponsor with decision-making authority, and a shared sense of what success looks like. From day one, we look for people on the agency side who can grow into ownership over time. Capability transfer does not happen at handover. It starts at the beginning.</p>
+          <p class="reveal"><strong>A risk worth naming:</strong> Projects without a clearly identified business owner stall. We have seen this play out — when no one on the agency side has the authority to make decisions or the mandate to drive the work, even the best discovery and prototyping work struggles to land.</p>
+
+          <h4 class="subsection-head reveal" id="s-31-5">Where we exit</h4>
+          <p class="reveal">There are two natural exit points: after experimentation, with a validated high-confidence roadmap in the agency’s hands; or after build and delivery, before ongoing support. A third path stays embedded through the support phase for projects that call for it. We do not leave teams hanging. Our intention is always to set up the capability for the team to carry on — and that work starts from day one, not at the point of handover.</p>
+
+          <div class="figure-note reveal">
+            <b>Diagram — The full project arc</b>
+            A horizontal timeline showing all stages in sequence: Qualifying → Discovery (Subphase 1 + Subphase 2) → Building and Delivering → Support and Maintenance. Capability Building runs as a parallel track underneath the full arc.
+          </div>
+
+          <!-- 3.2 -->
+          <h3 class="section-head reveal" id="s-32">3.2 Qualifying</h3>
+          <p class="reveal">Assessing the ask, framing the problem, scoping the engagement. Deciding whether the work is relevant, clear enough to take on, and whether we’re the right team for it.</p>
+
+          <h4 class="subsection-head reveal" id="s-32-1">What happens</h4>
+          <p class="reveal">We read the ask, understand enough about the context to have a view on it, and decide whether this is work we should take on. The depth of this stage flexes with the project. Sometimes it’s a single conversation. Sometimes it’s a few weeks of light sensing before we commit.</p>
+
+          <h4 class="subsection-head reveal" id="s-32-2">Activities</h4>
+          <ul class="reveal">
+            <li>Conversations with the partner to understand the ask</li>
+            <li>Problem reframing sessions</li>
+            <li>Internal discussions on fit and team shape</li>
+            <li>Scoping the engagement</li>
+          </ul>
+          <h4 class="subsection-head reveal" id="s-32-3">Outputs</h4>
+          <ul class="reveal">
+            <li>Engagement brief</li>
+            <li>Project plan</li>
+            <li>One-pager with problem framing and recommendation</li>
+          </ul>
+          <h4 class="subsection-head reveal" id="s-32-4">Outcomes</h4>
+          <ul class="reveal">
+            <li>The partner walks away with a clearer read of their own problem than when they walked in.</li>
+            <li>We and the partner share the same picture of the work — what we’re doing together, and what we’re not.</li>
+            <li>The team knows its shape: who’s in, what each person holds.</li>
+            <li>Both sides have a directional sense of effort and timeline, honest about where confidence is still low.</li>
+            <li>A real decision has been made. We’ve committed, or we’ve declined, with reasoning.</li>
+          </ul>
+          <h4 class="subsection-head reveal" id="s-32-5">Critical callouts</h4>
+          <ul class="reveal">
+            <li>The stated ask is almost never the whole problem. Our job here is to hear it without accepting it at face value.</li>
+            <li>Not taking on a project is a legitimate outcome. If it’s not the right work for us, or we’re not the right team, saying that clearly is more useful than a polite yes.</li>
+            <li>Qualifying isn’t discovery. We’re not trying to solve the problem here — we’re trying to understand it well enough to know if we should.</li>
+            <li>Budget, scope, and timeline conversations at this stage should focus on aligning what’s needed for the stages ahead. High-confidence sizing for the build typically only emerges later. Naming this up front prevents misplaced expectations.</li>
+          </ul>
+
+          <!-- 3.3 -->
+          <h3 class="section-head reveal" id="s-33">3.3 Discovery</h3>
+          <p class="reveal">Every project begins with a challenge, and an opportunity to get to the real truth of it. We help agencies navigate complex problem spaces and validate the true needs of citizens and end-users, building strategic confidence before any solution is proposed. In government, the ground truth is often hidden beneath layers of interpretation. GTC’s position lets us surface it fully and honestly, so that every decision that follows is outcome-focused from the start. What we uncover may point to a new product — and every new product brings with it new processes, new roles, and new ways of operating that need to be designed alongside it.</p>
+
+          <h4 class="subsection-head reveal" id="s-33-1">The value of discovery</h4>
+          <p class="reveal">The speed of building has collapsed. But the cost of building the wrong thing hasn’t.</p>
+          <div class="figure-note reveal">
+            <b>Diagram — The value of discovery</b>
+            The shift discovery enables: Assumption-led → Insight-led; High risk → De-risked; Bloated scope → Strategic scope; Output-focused → Outcome-focused.
+          </div>
+          <ul class="reveal">
+            <li><strong>From assumption to insight.</strong> We find out what people actually need — not what we assume they want, or what someone in a meeting thinks is the problem.</li>
+            <li><strong>De-risk your investment.</strong> Validate before you commit. Discovering the wrong direction early costs far less than building it.</li>
+            <li><strong>Focus on what matters most.</strong> Rather than trying to solve everything at once, we identify the highest-impact problems to tackle first and work outward from there.</li>
+            <li><strong>Build something that delivers.</strong> Not just a product that functions — one that genuinely improves the experience for the people who use it and the people who run it.</li>
+          </ul>
+          <p class="reveal">Technology has changed what discovery can be. Prototyping and testing early is now fast, accessible, and within reach of the same people running research. Discovery is no longer just research leading to insights. It is research and experimentation running together — which is why it has two subphases that must work in tandem.</p>
+
+          <h4 class="subsection-head reveal" id="s-33-2">Subphase 1 — Uncover what is true</h4>
+          <p class="reveal">We go deep into the problem before any solution is proposed. This is where we build a shared, grounded understanding of the system, the people, and the constraints, so we know exactly what we are tackling before we commit to a direction. From what we uncover, we identify and prioritise the critical use cases with the highest frequency of use, highest impact, and most direct connection to the core problem.</p>
+          <p class="reveal">Discovery here can take two forms, and both are worth understanding from the start — so that when they run together, they actively inform each other. The ground truth is often very different from what reaches a decision maker.</p>
+          <p class="reveal"><strong>Experience discovery — led by design</strong></p>
+          <ul class="reveal">
+            <li>Align on goals and outcomes with the organisation and agency teams</li>
+            <li>Analyse the landscape and draw on academic and sector research</li>
+            <li>Run focus groups, qualitative interviews, field studies, usability testing, and quantitative surveys with citizens and end-users</li>
+            <li>Synthesise insights, run co-creation workshops, and define user archetypes</li>
+            <li>Develop a clear value proposition and product strategy, expressed through user journey maps and service blueprints</li>
+            <li>Map the full operational picture — the service, the workflows, the roles, and what the before and after of digital looks like for the people running it</li>
+          </ul>
+          <p class="reveal"><strong>Technical discovery — led by engineering, often in parallel</strong></p>
+          <ul class="reveal">
+            <li>Uncover the tech architecture, legacy system constraints, and technical risks</li>
+            <li>Map data pipelines, APIs, and integration dependencies</li>
+            <li>Identify what exists, what needs to be built, and what may slow things down</li>
+          </ul>
+          <h4 class="subsection-head reveal" id="s-33-3">Outcomes — Subphase 1</h4>
+          <ul class="reveal">
+            <li>The real problem is understood — not the stated one, but the actual one</li>
+            <li>Value propositions, business case, user needs, and policy implications are all surfaced</li>
+            <li>Challenges and constraints are named, including technical ones</li>
+            <li>A clear, defensible view of which use cases to tackle first — and why</li>
+            <li>The team has a shared picture of what it is actually working on</li>
+          </ul>
+          <p class="reveal"><strong>Critical callout:</strong> Every discovery surfaces trade-offs. In a government context, decisions rarely have clean answers — policy constraints, siloed mandates, competing agency priorities, and resource realities all create tension. Part of the work here is naming those trade-offs honestly so the right people can make informed decisions. This stage is not about solutions; it’s about making sure the problem is real, understood, and worth solving.</p>
+
+          <h4 class="subsection-head reveal" id="s-33-4">Subphase 2 — Identify what works (rapid experiment)</h4>
+          <p class="reveal">We grow things, we don’t build them. Building implies a plan, a spec, a defined output. Growing means planting a seed, nurturing it through iterations, and transplanting to production only when it’s ready. Every prototype is expected to fail on the first try — that’s the point. Rapid learning beats slow certainty.</p>
+          <p class="reveal"><strong>Rapid iteration.</strong> Speed is not a nice-to-have — it is the point.</p>
+          <ul class="reveal">
+            <li>Prototypes are not production-ready, and they are not supposed to be</li>
+            <li>Scalability is not the goal — a developer can rebuild a validated prototype production-ready; our value is the idea and the data, not clean code</li>
+            <li>We aim to get the first prototype in front of real users within three weeks, then iterate in two-week cycles</li>
+            <li>The goal is a high-confidence roadmap backed by real data and real user feedback, not a polished first attempt</li>
+          </ul>
+          <p class="reveal"><strong>Real validation.</strong> True insight comes from testing with the people who will actually use it.</p>
+          <ul class="reveal">
+            <li>Internal reviews and stakeholder walkthroughs are a start, but they are not validation</li>
+            <li>Real validation means putting something in front of real users — officers, citizens, or both — in real contexts, and learning from what happens</li>
+            <li>Every prototype needs a clear hypothesis it is testing, and a clear way to measure whether it worked</li>
+          </ul>
+          <p class="reveal"><strong>Functional prototype.</strong> There is a scale of prototype fidelity, and understanding where you are on it matters.</p>
+          <ul class="reveal">
+            <li><strong>Static design.</strong> A Figma file or screen layout. Useful for exploring visual direction and early flows, but not testable in any meaningful way.</li>
+            <li><strong>Interactive mockup.</strong> Browser-based, fully clickable, built with synthetic data. Useful for early alignment and fast to produce — but it cannot replace a real workflow, and the signal it generates is limited.</li>
+            <li><strong>Functional prototype.</strong> Built with real or synthetic data that mirrors the real schema, testable in a real workflow, and capable of generating signal you can act on. This is what we are aiming for.</li>
+          </ul>
+          <div class="figure-note reveal">
+            <b>Diagram — The prototype spectrum</b>
+            A scale from Static design → Interactive mockup → Functional prototype, with a marker showing where signal value increases and an arrow labelled “This is where we are aiming.”
+          </div>
+          <p class="reveal"><strong>Prototype the operation.</strong> Digital is only one layer of what we are building. The operations, workflows, and policy integration that sit around it need to be prototyped too — not handed off to others to figure out later. We prototype new operational concepts alongside the digital product, and collaborate across digital, ops, and policy rather than working in sequence — avoiding the waterfall handoff where digital ships and ops scrambles to catch up.</p>
+          <p class="reveal"><strong>What gets in the way — and how we work through it.</strong> Pushing into functional prototyping is not always straightforward. The constraints are real — sensitive data classifications, API access, data pipelines not yet in place. We treat these as challenges to actively work through, not reasons to stay at the interactive mockup stage. On the team side, creative technologists work alongside designers so the team can build at the functional level even when not every designer does. On the data side, synthetic data that mirrors the real schema is a strong, legitimate starting point while we work toward real access in parallel.</p>
+
+          <h4 class="subsection-head reveal" id="s-33-5">The rapid experimentation cycle</h4>
+          <div class="figure-note reveal">
+            <b>Diagram — The rapid experimentation cycle</b>
+            A loop of Hypothesis → Build → Test → back to Hypothesis. First prototype within 3 weeks, then 2-week iteration cycles, with a marked shift point from experimenting to building.
+          </div>
+          <ul class="reveal">
+            <li><strong>Hypothesis.</strong> Start with a clear bet. Based on what we know from discovery, what do we believe could work? Frame it specifically enough that it can be tested. The hypothesis is what gives the prototype its purpose.</li>
+            <li><strong>Build.</strong> Turn the hypothesis into something real — a prototype that works with real or synthetic data, in a real workflow, in front of real users. We build to prove, not just to build.</li>
+            <li><strong>Test.</strong> Put it in front of the people who matter — officers, citizens, or both. Observe, listen, collect data, then bring what you learn back to the hypothesis and start again.</li>
+          </ul>
+          <p class="reveal">Each cycle sharpens the picture. What was unclear becomes clearer; what was assumed gets confirmed or challenged. Failed prototypes teach as much as successful ones — failure is learning, not a setback. The loop continues until the evidence is strong enough to commit, and that shift from experimenting to building is a moment worth marking deliberately.</p>
+
+          <blockquote class="pullquote reveal">
+            <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
+            <p>We grow things, we don’t build them. Every prototype is expected to fail on the first try — that’s the point. Rapid learning beats slow certainty.</p>
+          </blockquote>
+
+          <!-- 3.4 -->
+          <h3 class="section-head reveal" id="s-34">3.4 Building &amp; delivering</h3>
+          <p class="reveal"><strong>Note:</strong> the team hasn’t run a full project through this stage yet. What follows draws on collective external experience and will be refined as we learn from our own projects.</p>
+          <p class="reveal">Discovery is done and confidence is earned. The team has made a deliberate decision to move from experimenting to building. This stage is predominantly engineering-led: design’s role shifts from shaping the problem and running experiments to maintaining quality, supporting the build, and ensuring what gets shipped stays true to what was validated. Testing and iteration don’t stop here — they continue in parallel. The question changes from “does this work?” to “how do we build it well and get it into people’s hands?”</p>
+          <p class="reveal">Modernisation is iterative by nature — not a single arc, but a series of slices. As one slice is built and delivered, the next begins: another round of discovery, another hypothesis, another experiment before the next build. With AI accelerating what’s possible, these cycles run faster than ever. The loop running again is not a sign something went wrong — it is exactly how iterative modernisation moves.</p>
+          <h4 class="subsection-head reveal" id="s-34-1">What we think happens here</h4>
+          <ul class="reveal">
+            <li>Sprint-based build and delivery cycles, led by engineering</li>
+            <li>Design working alongside the build — not ahead of it, not behind it</li>
+            <li>Continuous testing with real users as features ship</li>
+            <li>Design QA to ensure what gets built matches the intent</li>
+            <li>Iterative experimentation continuing in parallel — potentially looping back into discovery for the next slice of modernisation</li>
+            <li>Capability building continues — the agency team grows in confidence through the build</li>
+          </ul>
+          <h4 class="subsection-head reveal" id="s-34-2">What gets handed over</h4>
+          <ul class="reveal">
+            <li>Shipped product increments</li>
+            <li>Updated roadmap</li>
+            <li>Documentation and release notes</li>
+          </ul>
+
+          <!-- 3.5 -->
+          <h3 class="section-head reveal" id="s-35">3.5 Support &amp; maintenance</h3>
+          <p class="reveal"><strong>Note:</strong> our involvement at this stage is expected to be minimal. This section will be kept brief until we have more direct experience to draw from.</p>
+          <p class="reveal">By the time a product reaches support and maintenance, the agency team should be ready to own it. Our role here is to support that transition and close the engagement well — not to run the product for them.</p>
+          <h4 class="subsection-head reveal" id="s-35-1">What we think happens here</h4>
+          <ul class="reveal">
+            <li>Light-touch support as the agency team finds their footing</li>
+            <li>Monitoring live usage and flagging anything that needs attention</li>
+            <li>A structured retrospective — reflecting on what the full engagement taught us and what we carry into the next project</li>
+          </ul>
+          <h4 class="subsection-head reveal" id="s-35-2">What gets handed over</h4>
+          <ul class="reveal">
+            <li>Handover documentation</li>
+            <li>Exit summary</li>
+            <li>Retrospective notes</li>
+          </ul>
+
+          <h4 class="subsection-head reveal" id="s-35-3">Capability building — a parallel workstream</h4>
+          <p class="reveal">Capability building is not a handover activity. From day one it runs in parallel with every stage — because a product that works and leaves a team fully equipped to grow it is what real transformation looks like. As part of the Central Modernisation Office’s broader modernisation agenda, this is one of the most lasting contributions GTC can make. Beyond building the team, we make sure what we leave behind is set up to thrive: a clear vision and strategy to rally around, an agreed operating model, and the right metrics and value-realisation frameworks to see and demonstrate impact.</p>
+          <p class="reveal">There are two dimensions of capability to build — the <strong>product team</strong> that designs, builds, and iterates on the service, and the <strong>operation team</strong> that runs and sustains it. When identifying the right people, we look for more than current skill level:</p>
+          <ul class="reveal">
+            <li><strong>Mindset fit.</strong> A genuine curiosity about the problem, openness to working in new ways, and a collaborative instinct that makes co-creation possible.</li>
+            <li><strong>Readiness to evolve.</strong> A willingness to grow with the work — to pick up new methods, embrace new ways of designing, and adapt as technology changes what design can do.</li>
+            <li><strong>Domain knowledge.</strong> An understanding of the agency’s context, systems, and users that is hard to bring in from the outside.</li>
+            <li><strong>Potential for ownership.</strong> The capacity and ambition to eventually lead the work, not just contribute to it.</li>
+          </ul>
+          <p class="reveal">Where possible we grow existing agency staff into design, product, or engineering roles — they already carry invaluable domain knowledge, and capability builds naturally alongside the project. When existing staff can’t be redeployed, bringing in fresh talent is a chance to build exactly the capability the project needs. A successful product also needs a team ready to <em>run</em> it: new operational roles, and the change management that sits alongside capability building as its own workstream. The goal across both dimensions is the same — when we leave, the work continues, the team is confident, and things get better over time.</p>
+
+          <div class="figure-note reveal">
+            <b>For each stage, we capture</b>
+            What happens (a short narrative); Activities and Outputs (side-by-side — the work, and the artefacts); Outcomes (what changes because of the stage); and Critical callouts (mindsets, permissions, and constraints worth naming). A lean core for every stage — Discovery gets deeper treatment given its centrality to the point of view.
+          </div>
+
+          <blockquote class="pullquote reveal">
+            <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
+            <p>When we leave, the work continues and gets better.</p>
+          </blockquote>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
+
+  <!-- ───────────────────────── MENU (bookshelf overlay) — shared ───────────────────────── -->
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
+    <div class="mag-zone mag-zone--back" id="menuCloseZone">
+      <button class="mag-btn mag-btn--back" id="menuClose" type="button" aria-label="Back to cover">
+        <span class="mag-btn__bg" aria-hidden="true"></span>
+        <span class="label">Back</span>
+      </button>
+    </div>
+
+    <p class="eyebrow menu__eyebrow">govtech consulting</p>
+    <img class="menu__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
+
+    <div class="menu__shelf" id="menuShelf" aria-label="Playbook sections">
+      <div class="shelf__spines" aria-hidden="true">
+        <img class="spine" src="assets/book_element_1.svg" alt="" style="--x:-23px; --w:15px;" />
+        <img class="spine" src="assets/book_element_2.svg" alt="" style="--x:198px; --w:69px;" />
+        <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
+        <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
+        <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1028px; --w:33px;" />
+      </div>
+
+      <!-- Book 1 — interactive -->
+      <button class="book book--interactive book--1" type="button" data-book data-href="why-we-exist.html" style="--book-x:0px;">
+        <span class="book__inner">
+          <span class="book__num">1</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Why we exist,<br />and the moment</span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+          </span>
+        </span>
+      </button>
+
+      <!-- Book 2 — interactive -->
+      <button class="book book--interactive book--2" type="button" data-book data-href="our-point-of-view.html" style="--book-x:278px;">
+        <span class="book__inner">
+          <span class="book__num">2</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Our point<br />of view</span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
+          </span>
+        </span>
+      </button>
+
+      <!-- Book 3 — interactive (this page) -->
+      <button class="book book--interactive book--3" type="button" data-book data-href="stages-of-a-project.html" style="--book-x:556px;">
+        <span class="book__inner">
+          <span class="book__num">3</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">Stages of<br />a project</span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+          </span>
+        </span>
+      </button>
+
+      <!-- Book 4 — coming soon (dimmed, non-interactive) -->
+      <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
+        <span class="book__inner">
+          <span class="book__num">4</span>
+          <span class="book__rule" aria-hidden="true"></span>
+          <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
+          <span class="book__icon">
+            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
+  <script src="vendor/CustomEase.min.js"></script>
+  <script src="vendor/CustomWiggle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/chapter.js"></script>
+</body>
+</html>

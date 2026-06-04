@@ -44,7 +44,7 @@ body { background: var(--chalk); }
   line-height: 1;
   letter-spacing: 0.4px;       /* +2% of 20px */
   text-transform: uppercase;
-  color: var(--midnight);
+  color: var(--rail-fg, var(--midnight));   /* chalk on dark heroes */
 }
 
 /* Hamburger — blue square, vertically centred in the rail */
@@ -78,7 +78,7 @@ body { background: var(--chalk); }
   place-items: center;
   border: 0;
   background: transparent;
-  color: var(--midnight);
+  color: var(--rail-fg, var(--midnight));   /* chalk on dark heroes */
   cursor: pointer;
 }
 .rail__search:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
@@ -90,11 +90,8 @@ body { background: var(--chalk); }
 .page-hero {
   position: relative;
   min-height: 100vh;
-  background: var(--orange);
+  background: var(--hero-bg, var(--orange));   /* per-chapter theme (default C1 orange) */
   overflow: hidden;
-}
-.page-hero::before {                 /* centred 1440 canvas for hero contents */
-  content: none;
 }
 .page-hero__title {
   position: absolute;
@@ -105,7 +102,7 @@ body { background: var(--chalk); }
   font-weight: 400;
   font-size: clamp(2.2rem, 5.2vw, 75px);
   line-height: 1.8;
-  color: var(--chalk);
+  color: var(--hero-title, var(--chalk));
 }
 .page-hero__title span { display: block; }
 
@@ -114,7 +111,7 @@ body { background: var(--chalk); }
   top: 0;
   right: 0;                       /* anchored to the top-right corner */
   width: clamp(360px, 38vw, 549px);
-  aspect-ratio: 549 / 554;
+  aspect-ratio: var(--flower-aspect, 549 / 554);
 }
 .hero-flower__spin { width: 100%; height: 100%; transform-origin: 50% 50%; will-change: transform; }
 .hero-flower img { display: block; width: 100%; height: 100%; overflow: visible; }
@@ -170,7 +167,7 @@ body { background: var(--chalk); }
   height: 100%;
   width: 38%;                  /* start; JS tracks scroll */
   border-radius: 10px;
-  background: var(--orange);
+  background: var(--accent, var(--orange));
 }
 .toc__list {
   list-style: none;
@@ -193,7 +190,7 @@ body { background: var(--chalk); }
   text-decoration: none;
   transition: background 0.3s ease;
 }
-.toc__row.is-active { background: var(--orange); }
+.toc__row.is-active { background: var(--accent, var(--orange)); }
 .toc__row:focus-visible { outline: 3px solid var(--midnight); outline-offset: 2px; }
 .toc__num {
   flex: none;
@@ -206,7 +203,7 @@ body { background: var(--chalk); }
 .toc__rule { flex: none; width: 1px; height: 45px; background: rgba(255, 255, 255, 0.65); }
 .toc__title {
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 600;
   font-size: 15px;
   line-height: 1.1;
   letter-spacing: -0.3px;
@@ -225,6 +222,41 @@ body { background: var(--chalk); }
 .toc__skeleton--e { width: 293px; margin-left: 12px; }
 .toc__skeleton--f { width: 281px; margin-left: 18px; }
 
+/* Sub-section rows — thinner "stacked books" under a section; accordion-opened
+   only for the section you're reading (height animated by JS). Same row language
+   as the main rows, just slimmer + indented + a lighter resting shade. */
+.toc__sub {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 0;            /* collapsed by default; JS animates to auto */
+  overflow: hidden;
+}
+.toc__sub li { display: block; }
+.toc__subrow {
+  display: flex;
+  align-items: center;
+  width: 285px;                       /* narrower; right edge aligns with main rows */
+  min-height: 34px;                   /* slimmer than the 60px main row */
+  margin: 5px 0 0 20px;               /* stack gap + indent under the parent */
+  padding: 6px 14px;
+  background: rgba(27, 31, 38, 0.40); /* lighter than the main inactive row */
+  text-decoration: none;
+  transition: background 0.25s ease;
+}
+.toc__subrow:hover { background: rgba(27, 31, 38, 0.52); }
+.toc__subrow.is-active { background: var(--accent, var(--orange)); }
+.toc__subrow:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
+.toc__subtitle {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
 /* ----- Body copy (right column) ----- */
 .copy {
   margin-left: 626px;
@@ -238,7 +270,7 @@ body { background: var(--chalk); }
   font-weight: 400;
   font-size: clamp(2rem, 3.35vw, 48px);
   line-height: 88px;            /* 183.333% of 48px — generous box, no glyph clipping */
-  color: var(--orange);
+  color: var(--accent, var(--orange));
 }
 .section-head {
   margin: 1.7em 0 0.55em;
@@ -247,7 +279,8 @@ body { background: var(--chalk); }
   font-size: clamp(1.4rem, 2.1vw, 30px);
   line-height: 1.1;
   letter-spacing: -0.3px;
-  color: var(--orange);
+  color: var(--accent, var(--orange));
+  scroll-margin-top: 120px;     /* anchor offset for TOC click-to-scroll */
 }
 .copy > .section-head:first-of-type { margin-top: 0; }
 .copy p {
@@ -258,6 +291,100 @@ body { background: var(--chalk); }
   line-height: 1.45;
   letter-spacing: -0.16px;
   color: var(--midnight);
+}
+.copy p strong { font-weight: 600; }
+
+/* Lead — the opening paragraph of a chapter body (a touch larger) */
+.copy .lead {
+  font-size: 18px;
+  line-height: 1.5;
+  margin-bottom: 1.4em;
+}
+
+/* Sub-section heading — named sub-points within a section (secondary to .section-head) */
+.subsection-head {
+  margin: 1.5em 0 0.5em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+  color: var(--midnight);
+  scroll-margin-top: 120px;     /* anchor offset for TOC sub-link clicks */
+}
+
+/* Lists — serif body, custom markers */
+.copy ul,
+.copy ol {
+  margin: 0 0 1.1em;
+  padding: 0;
+  list-style: none;
+}
+.copy li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 0.5em;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.16px;
+  color: var(--midnight);
+}
+.copy ul > li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent, var(--orange));
+}
+.copy ol { counter-reset: copy-ol; }
+.copy ol > li { padding-left: 30px; counter-increment: copy-ol; }
+.copy ol > li::before {
+  content: counter(copy-ol) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--accent, var(--orange));
+}
+
+/* Figure note — describes a diagram that isn't drawn yet (text-only aside) */
+.figure-note {
+  margin: 1.4em 0;
+  padding: 16px 18px;
+  border: 1px dashed rgba(1, 34, 51, 0.25);
+  border-radius: 4px;
+  background: rgba(1, 34, 51, 0.025);
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(1, 34, 51, 0.78);
+}
+.figure-note b {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent, var(--orange));
+}
+
+/* Source note — small muted citation */
+.source-note {
+  display: block;
+  margin: -0.4em 0 1.3em;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: rgba(1, 34, 51, 0.55);
 }
 
 /* ----- Closing pull-quote ----- */

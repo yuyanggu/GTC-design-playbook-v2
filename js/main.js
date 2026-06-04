@@ -346,11 +346,31 @@ function menuScene() {
   if (closeBtn) closeBtn.addEventListener("click", close);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) close(); });
 
-  // Book navigation: an interactive book with [data-href] opens its page (full nav).
-  // Wired before the reduced-motion bail so the links work without the raise/sway tweens.
+  // Book navigation: a book with [data-href] navigates. An in-page anchor (#ch2 — used
+  // by the continuous reader) closes the menu and smooth-scrolls to that chapter; any
+  // other href is a full page load. Wired before the reduced-motion bail so links work
+  // without the raise/sway tweens.
   books.forEach((b) => {
     const href = b.getAttribute("data-href");
-    if (href) b.addEventListener("click", () => { window.location.href = href; });
+    if (!href) return;
+    b.addEventListener("click", () => {
+      if (href.charAt(0) === "#") {
+        const target = document.querySelector(href);
+        if (!target) return;
+        // Jump to the chapter NOW, while the overlay is still fully opaque and covering the
+        // page — so the close fade uncovers the destination already in place (no flash of the
+        // chapter you were on). The scroll needs the page-scroll lock lifted first; the overlay
+        // hides the unlocked page until it finishes fading.
+        root.style.overflow = "";
+        document.body.style.overflow = "";
+        const sm = smoother || (window.ScrollSmoother && window.ScrollSmoother.get());
+        if (sm) sm.scrollTo(target, false);
+        else target.scrollIntoView();
+        close();
+      } else {
+        window.location.href = href;
+      }
+    });
   });
 
   if (reduce) return; // no ambient sway / raise tweens under reduced motion

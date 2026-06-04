@@ -1,0 +1,38 @@
+/* ============================================================================
+   The Design Playbook — continuous reader (playbook.html)
+   Layered on top of styles.css + chapter.css. Stacks the three chapter pages
+   into one document so scrolling flows seamlessly from chapter to chapter.
+
+   The chapter-to-chapter transition (ported from the GSAP "stacked panels"
+   ScrollTrigger demo): as you reach the bottom of a chapter, its panel pins and
+   the inner layer scales down + fades while the next chapter rises up over it.
+   The pin/scrub lives in js/chapter.js (panelTransitions); these rules just set
+   up the structure it animates.
+   ========================================================================== */
+
+/* Each chapter is a full panel. It carries its own theme vars (set inline) so the
+   hero colour + accent travel with the panel as it scrolls. The backdrop is BLACK:
+   it's only ever seen during the transition — around the shrinking chapter (the scale
+   pulls in horizontally, so black shows down both sides) and through the rounded
+   top corners of the chapter rising over it. (Matches the GSAP demo's dark stage.) */
+.chapter-panel {
+  position: relative;
+  /* background: #000; */
+}
+
+/* The layer the transition actually scales + fades. Separate element from the
+   pinned panel so ScrollTrigger's pin transform (on .chapter-panel) and our scale
+   transform (here) never fight over the same `transform`.
+   • Rounded top corners (clipped via overflow) — like the demo's cards. They read
+     most as the next chapter rises up over the previous one, its rounded top edge
+     sweeping into view against the black.
+   • transform-origin near the bottom so the shrinking card stays anchored where the
+     next chapter meets it, and the scale reveals black down the sides. */
+.chapter-panel__scale {
+  transform-origin: 50% calc(100% - 10vh);
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+/* The reader has no separate "page" wrapper; chapters butt directly together. */
+.playbook { display: block; }

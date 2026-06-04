@@ -551,10 +551,10 @@ img { display: block; max-width: 100%; }
 @media (hover: hover) {
   .book--interactive:hover,
   .book--interactive.is-hover { background: var(--orange); }
-  .book--1:hover .book__icon-base,
-  .book--1.is-hover .book__icon-base { opacity: 0; }
-  .book--1:hover .book__icon-hover,
-  .book--1.is-hover .book__icon-hover { opacity: 1; }
+  .book--interactive:hover .book__icon-base,
+  .book--interactive.is-hover .book__icon-base { opacity: 0; }
+  .book--interactive:hover .book__icon-hover,
+  .book--interactive.is-hover .book__icon-hover { opacity: 1; }
 }
 .book--interactive:focus-visible { outline: 3px solid var(--midnight); outline-offset: 3px; }
 
