@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/chapter.css" />
 </head>
-<body style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --rail-fg: var(--midnight);">
+<body style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --rail-fg: var(--midnight); --flower-aspect: 600 / 600;">
   <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
   <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
   <header class="topbar">
@@ -20,7 +20,7 @@
     </a>
     <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
       <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="3" x2="21" y1="6" y2="6" /><line x1="3" x2="21" y1="12" y2="12" /><line x1="3" x2="21" y1="18" y2="18" />
+        <line class="bar bar-top" x1="3" y1="7" x2="21" y2="7" /><line class="bar bar-mid" x1="3" y1="12" x2="21" y2="12" /><line class="bar bar-bot" x1="3" y1="17" x2="21" y2="17" />
       </svg>
     </button>
   </header>
@@ -39,14 +39,13 @@
     <section class="page-hero">
       <h1 class="page-hero__title">
         <span class="reveal">03</span>
-        <span class="reveal">Stages of</span>
-        <span class="reveal">a project</span>
+        <span class="reveal">Stages of a project</span>
       </h1>
 
       <!-- Top-right graphic (static — no animation) -->
       <div class="hero-flower" aria-hidden="true">
         <div class="hero-flower__spin">
-          <img src="assets/1_Graphic.svg" alt="" />
+          <img src="assets/3_Graphic.svg" alt="" />
         </div>
       </div>
     </section>
@@ -70,10 +69,10 @@
                 <span class="toc__title">How we engage</span>
               </a>
               <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-31-4" href="#s-31-4"><span class="toc__subtitle">Ideal project team</span></a></li>
                 <li><a class="toc__subrow" data-toc="s-31-1" href="#s-31-1"><span class="toc__subtitle">Types of projects we take on</span></a></li>
                 <li><a class="toc__subrow" data-toc="s-31-2" href="#s-31-2"><span class="toc__subtitle">What we don’t do</span></a></li>
                 <li><a class="toc__subrow" data-toc="s-31-3" href="#s-31-3"><span class="toc__subtitle">Where we enter</span></a></li>
-                <li><a class="toc__subrow" data-toc="s-31-4" href="#s-31-4"><span class="toc__subtitle">Ideal project team</span></a></li>
                 <li><a class="toc__subrow" data-toc="s-31-5" href="#s-31-5"><span class="toc__subtitle">Where we exit</span></a></li>
               </ul>
               <span class="toc__skeleton toc__skeleton--a" aria-hidden="true"></span>
@@ -143,6 +142,11 @@
           <!-- 3.1 -->
           <h3 class="section-head reveal" id="s-31">3.1 How we engage</h3>
 
+          <h4 class="subsection-head reveal" id="s-31-4">What an ideal project team looks like</h4>
+          <p class="reveal">The question is never whether the agency has a designer or an engineer. We can fill those gaps and we are glad to. What makes a project thrive is having the right people engaged on the agency side: a clearly identified business owner, a sponsor with decision-making authority, and a shared sense of what success looks like. From day one, we look for people on the agency side who can grow into ownership over time. Capability transfer does not happen at handover. It starts at the beginning.</p>
+          <p class="reveal"><strong>A risk worth naming:</strong> Projects without a clearly identified business owner stall. We have seen this play out — when no one on the agency side has the authority to make decisions or the mandate to drive the work, even the best discovery and prototyping work struggles to land.</p>
+
+
           <h4 class="subsection-head reveal" id="s-31-1">Types of projects we take on</h4>
           <p class="reveal">We work on modernisation and discovery projects where there is a genuine problem worth solving, a partner ready to work alongside us, and enough clarity to get started. We begin from a question mark and work toward a point where a build can begin with real confidence. That journey, done well, is where the most meaningful work happens.</p>
           <p class="reveal">Before committing, we explore the funding landscape together: whether budget has been secured, what it covers, and whether it fits the scope. Getting this clarity early sets everyone up for a more honest, energised, and productive engagement.</p>
@@ -167,19 +171,17 @@
           <h4 class="subsection-head reveal" id="s-31-3">Where we enter</h4>
           <p class="reveal">The earlier we are part of shaping the problem, the more value the work creates. We are transparent about where we enter every engagement, so both sides start with a shared and realistic picture of what is possible. Entering too late compromises the work. If the direction has already been locked, if the scope has been fixed without discovery, or if the agency has already committed to a build — our ability to do this well is significantly reduced. This is worth naming clearly at the start of every engagement.</p>
 
-          <h4 class="subsection-head reveal" id="s-31-4">What an ideal project team looks like</h4>
-          <p class="reveal">The question is never whether the agency has a designer or an engineer. We can fill those gaps and we are glad to. What makes a project thrive is having the right people engaged on the agency side: a clearly identified business owner, a sponsor with decision-making authority, and a shared sense of what success looks like. From day one, we look for people on the agency side who can grow into ownership over time. Capability transfer does not happen at handover. It starts at the beginning.</p>
-          <p class="reveal"><strong>A risk worth naming:</strong> Projects without a clearly identified business owner stall. We have seen this play out — when no one on the agency side has the authority to make decisions or the mandate to drive the work, even the best discovery and prototyping work struggles to land.</p>
-
           <h4 class="subsection-head reveal" id="s-31-5">Where we exit</h4>
           <p class="reveal">There are two natural exit points: after experimentation, with a validated high-confidence roadmap in the agency’s hands; or after build and delivery, before ongoing support. A third path stays embedded through the support phase for projects that call for it. We do not leave teams hanging. Our intention is always to set up the capability for the team to carry on — and that work starts from day one, not at the point of handover.</p>
 
-          <div class="figure-note reveal">
-            <b>Diagram — The full project arc</b>
-            A horizontal timeline showing all stages in sequence: Qualifying → Discovery (Subphase 1 + Subphase 2) → Building and Delivering → Support and Maintenance. Capability Building runs as a parallel track underneath the full arc.
-          </div>
+          <figure class="figure reveal">
+            <img class="figure__img" src="assets/03%20Diagram%201%20%E2%80%93%20Full%20Project%20Arc.svg" alt="A horizontal timeline showing all stages in sequence: Qualifying → Discovery (Subphase 1 + Subphase 2) → Building and Delivering → Support and Maintenance. Capability Building runs as a parallel track underneath the full arc." />
+          </figure>
 
           <!-- 3.2 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/03%20Divider.svg" alt="" />
+          </div>
           <h3 class="section-head reveal" id="s-32">3.2 Qualifying</h3>
           <p class="reveal">Assessing the ask, framing the problem, scoping the engagement. Deciding whether the work is relevant, clear enough to take on, and whether we’re the right team for it.</p>
 
@@ -216,15 +218,17 @@
           </ul>
 
           <!-- 3.3 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/03%20Divider.svg" alt="" />
+          </div>
           <h3 class="section-head reveal" id="s-33">3.3 Discovery</h3>
           <p class="reveal">Every project begins with a challenge, and an opportunity to get to the real truth of it. We help agencies navigate complex problem spaces and validate the true needs of citizens and end-users, building strategic confidence before any solution is proposed. In government, the ground truth is often hidden beneath layers of interpretation. GTC’s position lets us surface it fully and honestly, so that every decision that follows is outcome-focused from the start. What we uncover may point to a new product — and every new product brings with it new processes, new roles, and new ways of operating that need to be designed alongside it.</p>
 
           <h4 class="subsection-head reveal" id="s-33-1">The value of discovery</h4>
           <p class="reveal">The speed of building has collapsed. But the cost of building the wrong thing hasn’t.</p>
-          <div class="figure-note reveal">
-            <b>Diagram — The value of discovery</b>
-            The shift discovery enables: Assumption-led → Insight-led; High risk → De-risked; Bloated scope → Strategic scope; Output-focused → Outcome-focused.
-          </div>
+          <figure class="figure reveal">
+            <img class="figure__img" src="assets/03%20Diagram%202%20%E2%80%93%20Discovery.svg" alt="The shift discovery enables: Assumption-led → Insight-led; High risk → De-risked; Bloated scope → Strategic scope; Output-focused → Outcome-focused." />
+          </figure>
           <ul class="reveal">
             <li><strong>From assumption to insight.</strong> We find out what people actually need — not what we assume they want, or what someone in a meeting thinks is the problem.</li>
             <li><strong>De-risk your investment.</strong> Validate before you commit. Discovering the wrong direction early costs far less than building it.</li>
@@ -272,18 +276,16 @@
             <li><strong>Interactive mockup.</strong> Browser-based, fully clickable, built with synthetic data. Useful for early alignment and fast to produce — but it cannot replace a real workflow, and the signal it generates is limited.</li>
             <li><strong>Functional prototype.</strong> Built with real or synthetic data that mirrors the real schema, testable in a real workflow, and capable of generating signal you can act on. This is what we are aiming for.</li>
           </ul>
-          <div class="figure-note reveal">
-            <b>Diagram — The prototype spectrum</b>
-            A scale from Static design → Interactive mockup → Functional prototype, with a marker showing where signal value increases and an arrow labelled “This is where we are aiming.”
-          </div>
+          <figure class="figure reveal">
+            <img class="figure__img" src="assets/03%20Diagram%203%20%E2%80%93%20The%20prototype%20spectrum.svg" alt="A scale from Static design → Interactive mockup → Functional prototype, with a marker showing where signal value increases and an arrow labelled “This is where we are aiming.”" />
+          </figure>
           <p class="reveal"><strong>Prototype the operation.</strong> Digital is only one layer of what we are building. The operations, workflows, and policy integration that sit around it need to be prototyped too — not handed off to others to figure out later. We prototype new operational concepts alongside the digital product, and collaborate across digital, ops, and policy rather than working in sequence — avoiding the waterfall handoff where digital ships and ops scrambles to catch up.</p>
           <p class="reveal"><strong>What gets in the way — and how we work through it.</strong> Pushing into functional prototyping is not always straightforward. The constraints are real — sensitive data classifications, API access, data pipelines not yet in place. We treat these as challenges to actively work through, not reasons to stay at the interactive mockup stage. On the team side, creative technologists work alongside designers so the team can build at the functional level even when not every designer does. On the data side, synthetic data that mirrors the real schema is a strong, legitimate starting point while we work toward real access in parallel.</p>
 
           <h4 class="subsection-head reveal" id="s-33-5">The rapid experimentation cycle</h4>
-          <div class="figure-note reveal">
-            <b>Diagram — The rapid experimentation cycle</b>
-            A loop of Hypothesis → Build → Test → back to Hypothesis. First prototype within 3 weeks, then 2-week iteration cycles, with a marked shift point from experimenting to building.
-          </div>
+          <figure class="figure reveal">
+            <img class="figure__img" src="assets/03%20Diagram%204%20%E2%80%93%20The%20rapid%20experimentation%20cycle.svg" alt="A loop of Hypothesis → Build → Test → back to Hypothesis. First prototype within 3 weeks, then 2-week iteration cycles, with a marked shift point from experimenting to building." />
+          </figure>
           <ul class="reveal">
             <li><strong>Hypothesis.</strong> Start with a clear bet. Based on what we know from discovery, what do we believe could work? Frame it specifically enough that it can be tested. The hypothesis is what gives the prototype its purpose.</li>
             <li><strong>Build.</strong> Turn the hypothesis into something real — a prototype that works with real or synthetic data, in a real workflow, in front of real users. We build to prove, not just to build.</li>
@@ -297,6 +299,9 @@
           </blockquote>
 
           <!-- 3.4 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/03%20Divider.svg" alt="" />
+          </div>
           <h3 class="section-head reveal" id="s-34">3.4 Building &amp; delivering</h3>
           <p class="reveal"><strong>Note:</strong> the team hasn’t run a full project through this stage yet. What follows draws on collective external experience and will be refined as we learn from our own projects.</p>
           <p class="reveal">Discovery is done and confidence is earned. The team has made a deliberate decision to move from experimenting to building. This stage is predominantly engineering-led: design’s role shifts from shaping the problem and running experiments to maintaining quality, supporting the build, and ensuring what gets shipped stays true to what was validated. Testing and iteration don’t stop here — they continue in parallel. The question changes from “does this work?” to “how do we build it well and get it into people’s hands?”</p>
@@ -318,6 +323,9 @@
           </ul>
 
           <!-- 3.5 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/03%20Divider.svg" alt="" />
+          </div>
           <h3 class="section-head reveal" id="s-35">3.5 Support &amp; maintenance</h3>
           <p class="reveal"><strong>Note:</strong> our involvement at this stage is expected to be minimal. This section will be kept brief until we have more direct experience to draw from.</p>
           <p class="reveal">By the time a product reaches support and maintenance, the agency team should be ready to own it. Our role here is to support that transition and close the engagement well — not to run the product for them.</p>
@@ -365,76 +373,63 @@
 
   <!-- ───────────────────────── MENU (bookshelf overlay) — shared ───────────────────────── -->
   <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
-    <div class="mag-zone mag-zone--back" id="menuCloseZone">
-      <button class="mag-btn mag-btn--back" id="menuClose" type="button" aria-label="Back to cover">
-        <span class="mag-btn__bg" aria-hidden="true"></span>
-        <span class="label">Back</span>
-      </button>
-    </div>
-
-    <p class="eyebrow menu__eyebrow">govtech consulting</p>
-    <img class="menu__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
-
-    <div class="menu__shelf" id="menuShelf" aria-label="Playbook sections">
-      <div class="shelf__spines" aria-hidden="true">
-        <img class="spine" src="assets/book_element_1.svg" alt="" style="--x:-23px; --w:15px;" />
-        <img class="spine" src="assets/book_element_2.svg" alt="" style="--x:198px; --w:69px;" />
-        <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
-        <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
-        <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1028px; --w:33px;" />
-      </div>
-
-      <!-- Book 1 — interactive -->
-      <button class="book book--interactive book--1" type="button" data-book data-href="why-we-exist.html" style="--book-x:0px;">
-        <span class="book__inner">
-          <span class="book__num">1</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">Why we exist,<br />and the moment</span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+    <!-- Right-side drawer: scrim (click-to-close) + chalk card of chapter rows. Swipes in
+         from the right; on close the rows fall away (see menuScene in js/main.js). The
+         close control is the topbar hamburger (morphs to an X) / the scrim / Esc. -->
+    <div class="menu__scrim" data-menu-close aria-hidden="true"></div>
+    <nav class="menu__drawer" aria-label="Chapters" tabindex="-1">
+      <p class="menu__eyebrow">The Design Playbook</p>
+      <ul class="menu__list">
+        <li class="menu__item">
+          <a class="menu__row" data-href="why-we-exist.html" href="why-we-exist.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">01</span>
+              <span class="menu__title">Why we exist, and the moment</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_2.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">02</span>
+              <span class="menu__title">Our point of view</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="stages-of-a-project.html" href="stages-of-a-project.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_3.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">03</span>
+              <span class="menu__title">Stages of a project</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <span class="menu__row menu__row--soon" aria-disabled="true">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">04</span>
+              <span class="menu__title">How we work as a team</span>
+              <span class="menu__soon">Coming soon</span>
+            </span>
           </span>
-        </span>
-      </button>
-
-      <!-- Book 2 — interactive -->
-      <button class="book book--interactive book--2" type="button" data-book data-href="our-point-of-view.html" style="--book-x:278px;">
-        <span class="book__inner">
-          <span class="book__num">2</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">Our point<br />of view</span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
-          </span>
-        </span>
-      </button>
-
-      <!-- Book 3 — interactive (this page) -->
-      <button class="book book--interactive book--3" type="button" data-book data-href="stages-of-a-project.html" style="--book-x:556px;">
-        <span class="book__inner">
-          <span class="book__num">3</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">Stages of<br />a project</span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_3.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
-          </span>
-        </span>
-      </button>
-
-      <!-- Book 4 — coming soon (dimmed, non-interactive) -->
-      <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
-        <span class="book__inner">
-          <span class="book__num">4</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_4.svg" alt="" />
-          </span>
-        </span>
-      </div>
-    </div>
+        </li>
+      </ul>
+    </nav>
   </div>
 
   <script src="vendor/gsap.min.js"></script>

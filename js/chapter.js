@@ -262,30 +262,54 @@ function railSync(panelEls) {
   });
 }
 
-/* ---- Rail reveal + sticky-to-section: the left rail (divider + bottom label) shows
-   while a chalk `.page-body` fills the viewport (hidden over the coloured heroes). The
-   label is NOT pinned to the viewport — it sits 24px above the bottom while the
-   section's end is still below the fold, then rides up with the section's bottom and
-   scrolls away with the content. ---- */
+/* ---- Rail reveal: the left rail (divider + bottom label) shows only over the chalk
+   body and is OCCLUDED by the chapter heroes — the rail is `position:fixed` on top of
+   everything, so rather than floating over a hero we CLIP it to the chalk band between
+   the heroes currently on screen. The effect: the incoming chapter hero rising from the
+   bottom literally overlaps the rail (eating the label bottom→top, exactly as it covers
+   the rest of the outgoing chapter), and the current hero uncovers it from the top as
+   you enter a chapter. One per-frame updater owns the clip + label anchor, so it never
+   fights railSync (label text/colour) or panelTransitions (panel scale/fade). ---- */
 function railReveal() {
   const rail = document.querySelector(".rail");
   const label = rail && rail.querySelector(".rail__label");
   const bodies = gsap.utils.toArray(".page-body");
+  const heroes = gsap.utils.toArray(".page-hero");
   if (!rail || !label || !bodies.length) return;
+
   const update = () => {
     const vh = window.innerHeight;
     const mid = vh * 0.5;
-    let active = null;
-    for (const b of bodies) {
-      const r = b.getBoundingClientRect();        // live rect (reflects the smoother transform)
-      if (r.top <= mid && r.bottom > mid) { active = r; break; } // chalk body over the middle
+
+    // How far a coloured hero intrudes into the viewport from the top / bottom edges.
+    // (A hero is one full viewport tall, so it covers an edge whenever it's on screen.)
+    let topClip = 0, bottomClip = 0;
+    for (const h of heroes) {
+      const r = h.getBoundingClientRect();          // live rect (reflects the smoother transform)
+      if (r.bottom <= 0 || r.top >= vh) continue;   // hero off-screen
+      if (r.top <= 0.5) topClip = Math.max(topClip, Math.min(vh, r.bottom));               // from the top
+      if (r.bottom >= vh - 0.5) bottomClip = Math.max(bottomClip, vh - Math.max(0, r.top)); // from the bottom
     }
-    if (!active) { rail.classList.add("rail--hidden"); return; }
-    rail.classList.remove("rail--hidden");
-    // Stick 24px above the viewport bottom; once the section's end rises into view,
-    // follow it up so the label scrolls away with the section (not viewport-fixed).
-    label.style.top = Math.min(vh - 24, active.bottom - 24) + "px";
+
+    if (topClip + bottomClip >= vh - 0.5) {         // a hero covers the whole strip → gone
+      rail.style.visibility = "hidden";
+    } else {
+      rail.style.visibility = "visible";
+      // Clip away the hero-covered rows; the chalk band [topClip, vh−bottomClip] shows.
+      rail.style.clipPath = `inset(${Math.round(topClip)}px 0px ${Math.round(bottomClip)}px 0px)`;
+    }
+
+    // Anchor the label 40px above the viewport bottom. On standalone pages (no panel) let
+    // it ride up with the section's end so it scrolls away gracefully; in the reader the
+    // clip handles the exit, so keep it pinned and let the rising hero cover it.
+    let active = null, inPanel = false;
+    for (const b of bodies) {
+      const r = b.getBoundingClientRect();
+      if (r.top <= mid && r.bottom > mid) { active = r; inPanel = !!b.closest(".chapter-panel"); break; }
+    }
+    if (active) label.style.top = (inPanel ? vh - 40 : Math.min(vh - 40, active.bottom - 40)) + "px";
   };
+
   // One page-wide trigger drives the check every scroll + on refresh (handles scroll 0).
   ScrollTrigger.create({ start: 0, end: "max", onUpdate: update, onRefresh: update });
   update();

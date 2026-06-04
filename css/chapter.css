@@ -32,7 +32,7 @@ body { background: var(--chalk); }
    origin 24px from the bottom puts the first letter 24px above the bottom edge. */
 .rail__label {
   position: absolute;
-  top: calc(100% - 24px);      /* origin 24px from the viewport bottom */
+  top: calc(100% - 40px);      /* origin 40px from the viewport bottom (JS keeps it in sync) */
   left: 36px;
   margin: 0;
   transform-origin: left top;
@@ -84,20 +84,23 @@ body { background: var(--chalk); }
 .rail__search:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
 .lucide { display: block; }
 
-/* The rail (divider + bottom label) shows only over the chalk body — hidden
-   (instantly, no fade) while a hero covers the viewport top (JS toggles .rail--hidden). */
-.rail--hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+/* The rail (divider + bottom label) shows only over the chalk body. JS (railReveal in
+   js/chapter.js) is the single owner of its clip: it clips the rail to the chalk band so
+   the coloured chapter heroes occlude it — the incoming hero rising over the outgoing
+   chapter eats the rail bottom→top, just as it covers the rest of that chapter. */
+.rail { will-change: clip-path; }
 
 /* ---------------------------------------------------------------------------
    Top header — logo (→ home) top-left, hamburger (opens the Menu) top-right.
-   Fixed over the coloured hero and the body; below the menu overlay (z 50).
+   Fixed over the coloured hero and the body; ABOVE the menu overlay (z 50) so the
+   hamburger stays visible/clickable and morphs to an X while the drawer is open.
    --------------------------------------------------------------------------- */
 .topbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 45;
+  z-index: 60;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -132,13 +135,14 @@ body { background: var(--chalk); }
 }
 .page-hero__title {
   position: absolute;
-  left: max(209px, calc(50% - 720px + 209px));   /* x=209 inside a centred 1440 canvas */
-  top: clamp(280px, 41vh, 460px);
+  left: clamp(22px, 3vw, 44px);          /* hug the left, aligned with the topbar logo */
+  top: auto;
+  bottom: clamp(40px, 7vh, 88px);        /* hug the bottom */
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(2.2rem, 5.2vw, 75px);
-  line-height: 1.8;
+  line-height: 1.6;                      /* number + title stack */
   color: var(--hero-title, var(--chalk));
 }
 .page-hero__title span { display: block; }
@@ -147,7 +151,7 @@ body { background: var(--chalk); }
   position: absolute;
   top: 0;
   right: 0;                       /* anchored to the top-right corner */
-  width: clamp(360px, 38vw, 549px);
+  width: min(700px, 70vw);        /* 700px on desktop, scales down on narrow viewports */
   aspect-ratio: var(--flower-aspect, 549 / 554);
 }
 .hero-flower__spin { width: 100%; height: 100%; transform-origin: 50% 50%; will-change: transform; }
@@ -413,6 +417,30 @@ body { background: var(--chalk); }
   color: var(--accent, var(--orange));
 }
 
+/* Diagram figure — the rendered SVG diagram (C3). Shows at its natural width, capped to
+   the copy column and centred (small diagrams stay small), with generous vertical room. */
+.figure {
+  margin: clamp(48px, 9vh, 88px) 0;
+}
+.figure__img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+/* Section divider — a small, subtle per-chapter graphic between sections (01/02/03),
+   centred, with a little top/bottom breathing room. */
+.section-divider {
+  padding: clamp(22px, 4.5vh, 46px) 0;
+}
+.section-divider img {
+  display: block;
+  width: clamp(110px, 24%, 150px);
+  height: auto;
+  margin-inline: auto;
+}
+
 /* Source note — small muted citation */
 .source-note {
   display: block;
@@ -460,7 +488,7 @@ body { background: var(--chalk); }
   .rail__menu { top: 24px; width: 64px; height: 64px; }
   .rail__search { bottom: 28px; }
 
-  .page-hero__title { left: clamp(84px, 9vw, 132px); top: clamp(220px, 38vh, 400px); }
+  .page-hero__title { left: clamp(20px, 5vw, 44px); top: auto; bottom: clamp(28px, 5vh, 64px); }
   .hero-flower { left: auto; right: -70px; width: clamp(300px, 46vw, 520px); }
 
   .page-body__canvas { width: 100%; }
