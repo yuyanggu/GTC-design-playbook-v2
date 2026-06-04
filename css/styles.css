@@ -349,74 +349,152 @@ img { display: block; max-width: 100%; }
 }
 .mag-btn:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
 
-/* -- Back variant — transparent pill, midnight text + 25% midnight border -- */
-.mag-zone--back {
-  position: absolute;
-  top: clamp(8px, 1.6vh, 22px);
-  left: clamp(8px, 1.6vw, 28px);
-  z-index: 2;
-  width: 124px;
-  height: 84px;
-}
-.mag-btn--back { padding: 10px 18px; overflow: visible; }   /* short label — don't clip */
-.mag-btn--back .mag-btn__bg {
-  background: transparent;
-  border: 1px solid rgba(1, 34, 51, 0.25);
-  transition: background 0.2s ease;
-}
-.mag-btn--back:hover .mag-btn__bg { background: rgba(1, 34, 51, 0.06); }
-.mag-btn--back .label {
-  font-weight: 500;
-  font-size: 14px;
-  letter-spacing: 0.02em;
-  color: var(--midnight);
-}
-
 /* ============================================================================
-   MENU  (bookshelf overlay)  ·  reference frame 1440 × 1024
+   MENU  (right-side drawer overlay) — scrim + a chalk card that swipes in from the
+   right. On close the chapter rows fall away while the card fades (see menuScene in
+   js/main.js). One shared block per page (playbook + chapter pages). The bookshelf
+   .book system below is kept — index.html's landing shelf still uses it.
    ========================================================================== */
 .menu {
   position: fixed;
   inset: 0;
   z-index: 50;
   display: block;
-  background: var(--chalk);
-  overflow: hidden;   /* tilting books pivot at the viewport's bottom edge; `auto` flickered a
-                         scrollbar in/out as a corner dipped past the edge → the "screen shake" */
 }
 .menu[hidden] { display: none; }
 
-/* Back button uses the magnetic button component — see .mag-btn--back above. */
+/* Dimmed backdrop — click to close (carries data-menu-close). */
+.menu__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(1, 34, 51, 0.4);   /* midnight scrim */
+  cursor: pointer;
+}
 
-/* Eyebrow — Figma top:49 / 1024 ≈ 4.78% */
+/* The drawer — a floating card pinned to the top-right with even spacing, sized to
+   its contents. overflow:visible so the rows can fall past it on close. The chalk
+   panel itself is the ::before layer, faded independently of the falling rows via
+   the GSAP-driven --card-bg-o (kept off the rows so they stay solid as they drop). */
+.menu__drawer {
+  --card-bg-o: 1;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: auto;
+  width: clamp(320px, 92vw, 440px);
+  color: var(--midnight);
+  padding: clamp(20px, 3vh, 28px);
+  overflow: visible;
+  outline: none;
+}
+.menu__drawer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--chalk);
+  border-radius: 16px;                                 /* all four corners */
+  box-shadow: 0 18px 50px rgba(1, 34, 51, 0.18);
+  opacity: var(--card-bg-o, 1);
+}
+
 .menu__eyebrow {
-  position: absolute;
-  top: 4.78vh;
-  left: 0;
-  right: 0;
-  text-align: center;
-  letter-spacing: 0.4px;
-}
-/* Lockup — 606×230, vertical centre at 372/1024 ≈ 36.3% */
-.menu__title {
-  position: absolute;
-  left: 50%;
-  top: 36.3%;
-  width: var(--title-w);
-  height: auto;
-  transform: translate(-50%, -50%);
+  position: relative;
+  z-index: 1;
+  margin: 0 0 clamp(16px, 3.5vh, 30px);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--midnight);
+  opacity: 0.6;
 }
 
-/* Shelf — centred group of 4 books (188px wide, 90px gaps → group = 1022px), sized
-   in fixed pixels per Figma (does not scale down). Books at --book-x 0/278/556/834. */
-.menu__shelf {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 1022px;                     /* 4×188 + 3×90 */
-  height: 340px;
-  transform: translateX(-50%);
+.menu__list {
+  position: relative;
+  z-index: 1;                /* above the ::before card so falling rows stay on top */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
+
+/* A chapter row — mono icon left, number + title right. */
+.menu__row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(14px, 2vh, 20px) 8px;
+  text-decoration: none;
+  color: var(--midnight);
+  border-bottom: 1px solid rgba(1, 34, 51, 0.1);
+  border-radius: 10px;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+.menu__item:last-child .menu__row { border-bottom: 0; }
+
+.menu__icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+}
+.menu__icon img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.menu__icon-hover { opacity: 0; transition: opacity 0.25s ease; }
+
+.menu__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.menu__num {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  opacity: 0.5;
+}
+.menu__title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(18px, 2.4vw, 22px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.menu__soon {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+/* Hover / focus — orange accent, colour icon, slight nudge (interactive rows only). */
+@media (hover: hover) {
+  a.menu__row:hover {
+    background: rgba(249, 165, 24, 0.1);
+    color: var(--orange);
+    transform: translateX(4px);
+  }
+  a.menu__row:hover .menu__icon-hover { opacity: 1; }
+  a.menu__row:hover .menu__num { opacity: 0.85; }
+}
+a.menu__row:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+  color: var(--orange);
+}
+a.menu__row:focus-visible .menu__icon-hover { opacity: 1; }
+
+.menu__row--soon { opacity: 0.45; cursor: default; }
 
 /* Decorative gray book-spines (the book_element_*.svg vectors), behind the books,
    bottom-aligned and shorter (294px) than the 340px cards. Placed in the 5 gaps. */
