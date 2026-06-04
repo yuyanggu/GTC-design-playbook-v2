@@ -24,6 +24,7 @@ if (panels.length) {
   panels.forEach(initChapter);
   panelTransitions(panels);
   railSync(panels);
+  railReveal();
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => {
@@ -33,6 +34,7 @@ if (panels.length) {
 } else if (document.querySelector(".page-hero")) {
   // ----- Standalone chapter page: scope to the whole document -----
   initChapter(document);
+  railReveal();
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => ScrollTrigger.refresh());
@@ -258,6 +260,35 @@ function railSync(panelEls) {
       },
     });
   });
+}
+
+/* ---- Rail reveal + sticky-to-section: the left rail (divider + bottom label) shows
+   while a chalk `.page-body` fills the viewport (hidden over the coloured heroes). The
+   label is NOT pinned to the viewport — it sits 24px above the bottom while the
+   section's end is still below the fold, then rides up with the section's bottom and
+   scrolls away with the content. ---- */
+function railReveal() {
+  const rail = document.querySelector(".rail");
+  const label = rail && rail.querySelector(".rail__label");
+  const bodies = gsap.utils.toArray(".page-body");
+  if (!rail || !label || !bodies.length) return;
+  const update = () => {
+    const vh = window.innerHeight;
+    const mid = vh * 0.5;
+    let active = null;
+    for (const b of bodies) {
+      const r = b.getBoundingClientRect();        // live rect (reflects the smoother transform)
+      if (r.top <= mid && r.bottom > mid) { active = r; break; } // chalk body over the middle
+    }
+    if (!active) { rail.classList.add("rail--hidden"); return; }
+    rail.classList.remove("rail--hidden");
+    // Stick 24px above the viewport bottom; once the section's end rises into view,
+    // follow it up so the label scrolls away with the section (not viewport-fixed).
+    label.style.top = Math.min(vh - 24, active.bottom - 24) + "px";
+  };
+  // One page-wide trigger drives the check every scroll + on refresh (handles scroll 0).
+  ScrollTrigger.create({ start: 0, end: "max", onUpdate: update, onRefresh: update });
+  update();
 }
 
 /* ---- Deep-link entry: if the URL carries a chapter hash (#ch1/#ch2/#ch3 — set by

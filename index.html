@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Design Playbook — GovTech Consulting</title>
+  <title>The GTC Design Playbook — GovTech Consulting</title>
   <meta name="description" content="An outline for how we work, what we believe, and the outcomes we're agreeing to pursue together." />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
@@ -11,145 +11,104 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <!-- ScrollSmoother wrapper — pinned scenes live inside; the fixed menu/pinwheel stay outside -->
+  <!-- ScrollSmoother wrapper — the pinned hero lives inside; the fixed pinwheel stays outside -->
   <div id="smooth-wrapper">
     <div id="smooth-content">
   <main>
-    <!-- ───────────────────────── COVER 1 → REVEAL (pinned stage) ───────────────────────── -->
+    <!-- ───────────────────────── HOME (load: pinwheel aligns to lockup · scroll: books rise in) ───────────────────────── -->
     <section class="hero" id="hero">
       <div class="hero__stage" id="stage">
 
-        <p class="eyebrow eyebrow--top" data-extra>govtech consulting</p>
-
-        <div class="titleblock" id="titleblock">
-          <div class="titleblock__media">
-            <img class="titleblock__streaks" id="streaks" src="assets/title_streaks_2.png" alt="" aria-hidden="true" />
-            <img class="titleblock__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
-          </div>
+        <!-- Clouds — Rectangle_*.svg gradient blocks, blurred + gently drifting across the sky -->
+        <div class="clouds" aria-hidden="true">
+          <img class="cloud cloud--1" src="assets/Rectangle_1.svg" alt="" />
+          <img class="cloud cloud--2" src="assets/Rectangle_2.svg" alt="" />
+          <img class="cloud cloud--3" src="assets/Rectangle_3.svg" alt="" />
+          <img class="cloud cloud--4" src="assets/Rectangle_4.svg" alt="" />
+          <img class="cloud cloud--5" src="assets/Rectangle_5.svg" alt="" />
         </div>
 
-        <p class="subtitle" data-extra>
-          An outline for how we work, what we believe,<br />
-          and the outcomes we're agreeing to pursue together.
-        </p>
+        <p class="eyebrow eyebrow--top">govtech consulting</p>
 
-        <img class="arrow" id="arrow" src="assets/arrow.svg" alt="" data-extra aria-hidden="true" />
-      </div>
-    </section>
-
-    <!-- ───────────────────────── COVER 3 (intro / what this is — pinned: pinwheel rises, then aligns) ───────────────────────── -->
-    <section class="intro" id="intro">
-      <div class="intro__inner">
-        <figure class="intro__graphic" id="introGraphic">
-          <img src="assets/Align_Graphic.svg" alt="Overlapping geometric shapes forming a pinwheel" />
-        </figure>
-
-        <div class="intro__text">
-          <p class="eyebrow" data-reveal>what this is</p>
-          <h2 class="heading" data-reveal>A place to align,<br />not a place to learn.</h2>
-          <div class="body" data-reveal>
-            <p>
-              This isn't a playbook where you come to learn how to design.<br />
-              It doesn't teach craft, methods, or skills. It assumes you already have those.<br />
-              This is where we agree on how we're going to use all our design skills to get the
-              right outcome. It captures what we've agreed on: the type of work we take on, our
-              point of view, the outcomes we're aiming for, how we operate as a team, and
-              where we're going.
-            </p>
-            <p class="body__italic">Come here to align, not to learn.</p>
-          </div>
+        <!-- Centred lockup: pinwheel slot (fixed traveler aligns here) + the title -->
+        <div class="lockup-row" id="lockupRow">
+          <span class="pinwheel-slot" id="pinwheelSlot" aria-hidden="true"></span>
+          <h1 class="lockup">The GTC Design<br />Playbook</h1>
         </div>
-      </div>
 
-      <!-- Explore CTA — magnetic button component (explore variant) -->
-      <div class="intro__cta" data-reveal>
-        <div class="mag-zone mag-zone--explore" id="exploreZone">
-          <button class="mag-btn mag-btn--explore" id="exploreBtn" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu">
-            <span class="mag-btn__bg" aria-hidden="true"></span>
-            <span class="label">read the playbook</span>
+        <img class="arrow" id="arrow" src="assets/arrow.svg" alt="" aria-hidden="true" />
+
+        <!-- Section books — rise in on scroll and settle flush to the bottom (reuse the menu book system) -->
+        <div class="home-shelf" id="homeShelf" aria-label="Playbook sections">
+          <!-- decorative gray book-spines (vectors), one cluster per gap region -->
+          <div class="shelf__spines" aria-hidden="true">
+            <img class="spine" src="assets/book_element_1.svg" alt="" style="--x:-23px; --w:15px;" />
+            <img class="spine" src="assets/book_element_2.svg" alt="" style="--x:198px; --w:69px;" />
+            <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
+            <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
+            <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1028px; --w:33px;" />
+          </div>
+
+          <!-- Book 1 — interactive -->
+          <button class="book book--interactive book--1" type="button" data-book data-href="playbook.html#ch1" style="--book-x:0px;">
+            <span class="book__inner">
+              <span class="book__num">1</span>
+              <span class="book__rule" aria-hidden="true"></span>
+              <span class="book__title">Why we exist,<br />and the moment</span>
+              <span class="book__updated">Last updated:<br />2 May 2026</span>
+              <span class="book__icon">
+                <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+                <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+              </span>
+            </span>
           </button>
+
+          <!-- Book 2 — interactive (Our point of view) -->
+          <button class="book book--interactive book--2" type="button" data-book data-href="playbook.html#ch2" style="--book-x:278px;">
+            <span class="book__inner">
+              <span class="book__num">2</span>
+              <span class="book__rule" aria-hidden="true"></span>
+              <span class="book__title">Our point<br />of view</span>
+              <span class="book__updated">Last updated:<br />2 May 2026</span>
+              <span class="book__icon">
+                <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
+                <img class="book__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
+              </span>
+            </span>
+          </button>
+
+          <!-- Book 3 — interactive (Stages of a project) -->
+          <button class="book book--interactive book--3" type="button" data-book data-href="playbook.html#ch3" style="--book-x:556px;">
+            <span class="book__inner">
+              <span class="book__num">3</span>
+              <span class="book__rule" aria-hidden="true"></span>
+              <span class="book__title">Stages of<br />a project</span>
+              <span class="book__updated">Last updated:<br />2 May 2026</span>
+              <span class="book__icon">
+                <img class="book__icon-base" src="assets/menu_3.svg" alt="" />
+                <img class="book__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
+              </span>
+            </span>
+          </button>
+
+          <!-- Book 4 — coming soon (dimmed, non-interactive) -->
+          <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
+            <span class="book__inner">
+              <span class="book__num">4</span>
+              <span class="book__rule" aria-hidden="true"></span>
+              <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
+              <span class="book__icon">
+                <img class="book__icon-base" src="assets/menu_4.svg" alt="" />
+              </span>
+            </span>
+          </div>
         </div>
+
       </div>
     </section>
   </main>
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
-
-  <!-- ───────────────────────── MENU (bookshelf overlay) ───────────────────────── -->
-  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
-    <!-- Back — magnetic button component (back variant) -->
-    <div class="mag-zone mag-zone--back" id="menuCloseZone">
-      <button class="mag-btn mag-btn--back" id="menuClose" type="button" aria-label="Back to cover">
-        <span class="mag-btn__bg" aria-hidden="true"></span>
-        <span class="label">Back</span>
-      </button>
-    </div>
-
-    <p class="eyebrow menu__eyebrow">govtech consulting</p>
-    <img class="menu__title" src="assets/Opening_Title.svg" alt="The Design Playbook" />
-
-    <div class="menu__shelf" id="menuShelf" aria-label="Playbook sections">
-      <!-- decorative gray book-spines (vectors), one cluster per gap region -->
-      <div class="shelf__spines" aria-hidden="true">
-        <img class="spine" src="assets/book_element_1.svg" alt="" style="--x:-23px; --w:15px;" />
-        <img class="spine" src="assets/book_element_2.svg" alt="" style="--x:198px; --w:69px;" />
-        <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
-        <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
-        <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1028px; --w:33px;" />
-      </div>
-
-      <!-- Book 1 — interactive -->
-      <button class="book book--interactive book--1" type="button" data-book data-href="playbook.html#ch1" style="--book-x:0px;">
-        <span class="book__inner">
-          <span class="book__num">1</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">Why we exist,<br />and the moment</span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
-          </span>
-        </span>
-      </button>
-
-      <!-- Book 2 — interactive (Our point of view) -->
-      <button class="book book--interactive book--2" type="button" data-book data-href="playbook.html#ch2" style="--book-x:278px;">
-        <span class="book__inner">
-          <span class="book__num">2</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">Our point<br />of view</span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
-          </span>
-        </span>
-      </button>
-
-      <!-- Book 3 — interactive (Stages of a project) -->
-      <button class="book book--interactive book--3" type="button" data-book data-href="playbook.html#ch3" style="--book-x:556px;">
-        <span class="book__inner">
-          <span class="book__num">3</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">Stages of<br />a project</span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
-          </span>
-        </span>
-      </button>
-
-      <!-- Book 4 — coming soon (dimmed, non-interactive) -->
-      <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
-        <span class="book__inner">
-          <span class="book__num">4</span>
-          <span class="book__rule" aria-hidden="true"></span>
-          <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
-          <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
-          </span>
-        </span>
-      </div>
-    </div>
-  </div>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

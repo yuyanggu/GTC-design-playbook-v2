@@ -44,6 +44,8 @@
   --orange: #f9a518;
   --gray3: #c7c7cc;
   --book-dark: rgba(27, 31, 38, 0.72);
+  --book-grad: linear-gradient(180deg, #4f94cf 59.62%, #aed3ed 100%); /* interactive book bg */
+  --book-soon: #585a5c;    /* book 4 "coming soon" */
 
   /* Flower-petal + page accents (Figma) */
   --sky: #73aae5;          /* blue petal */
@@ -166,58 +168,62 @@ img { display: block; max-width: 100%; }
   top: 4.78vh;
   left: 0;
   right: 0;
+  z-index: 2;
   text-align: center;
   white-space: nowrap;
 }
 
-/* Title block — centred in the viewport at rest */
-.titleblock {
+/* Clouds — Rectangle_*.svg gradient blocks (0.3 opacity baked in), softly blurred and
+   slowly drifting (cloudDrift in main.js). Positions = Figma visible top-left of each. */
+.clouds {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.cloud {
+  position: absolute;
+  height: auto;
+  filter: blur(5px);
+  will-change: transform;
+}
+.cloud--1 { left: 0;       top: 0;       width: 31.25vw; }  /* R1 (0,0) blue */
+.cloud--2 { left: 14.17%;  top: 14.26vh; width: 31.25vw; }  /* R2 (204,146) orange */
+.cloud--3 { left: 45.62%;  top: 0;       width: 31.25vw; }  /* R3 (657,−67→0) orange */
+.cloud--4 { left: 57.57%;  top: 18.46vh; width: 31.25vw; }  /* R4 (829,189) orange */
+.cloud--5 { left: 66.8%;   top: 4.78vh;  width: 33.19vw; }  /* R5 (962,49) blue */
+
+/* Lockup row — pinwheel slot + title, centred as a group; shifts up on scroll (GSAP y).
+   CSS centres it; main.js sets xPercent/yPercent so GSAP owns the transform. */
+.lockup-row {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--title-w);
+  z-index: 2;
   transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.67vw, 24px);
   will-change: transform;
 }
-.titleblock__media {
-  position: relative;
-  width: 100%;
+/* Slot — the 298² square the fixed pinwheel traveler aligns to (invisible spacer). */
+.pinwheel-slot {
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(190px, 20.7vw, 298px);
+  aspect-ratio: 1 / 1;
 }
-.titleblock__title {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: auto;
-}
-/* Gradient "PLAYBOOK" (title_streaks_2.png) registered behind the crisp SVG letters:
-   top + sides match the lockup's PLAYBOOK line (x 8.97→606, y 121 of 606×230), so the
-   gradient bleeds down out of the letters. Revealed top→bottom via a FEATHERED mask
-   (soft edge, no harsh scroll line) driven by --streak-hide 100%→0%. */
-.titleblock__streaks {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  top: 52.6%;      /* PLAYBOOK top (121 / 230) */
-  width: 100%;     /* full Opening_Title width (606px) */
-  height: auto;
-  --streak-hide: 100%;
-  -webkit-mask-image: linear-gradient(to bottom,
-    #000 calc(100% - var(--streak-hide) - 6%),
-    transparent calc(100% - var(--streak-hide) + 6%));
-  mask-image: linear-gradient(to bottom,
-    #000 calc(100% - var(--streak-hide) - 20%),
-    transparent calc(100% - var(--streak-hide) + 6%));
-  pointer-events: none;
-}
-
-/* Subtitle — Figma top:665 / 1024 ≈ 64.9% (margin-auto centred, GSAP-safe) */
-.subtitle {
-  position: absolute;
-  top: 64.9vh;
-  left: 0;
-  right: 0;
-  width: min(606px, 86vw);
-  margin-inline: auto;
+/* Title — Boldonse 55 / navy / +0.55px / uppercase, two lines (Figma line-height 85px). */
+.lockup {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(30px, 3.82vw, 55px);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--midnight);
+  white-space: nowrap;
 }
 
 /* Arrow — Figma top:934 / 1024 ≈ 91.2% ; native 57 × 45 */
@@ -226,64 +232,51 @@ img { display: block; max-width: 100%; }
   top: 91.2vh;
   left: 0;
   right: 0;
+  z-index: 2;
   width: clamp(40px, 3.96vw, 57px);
   height: auto;
   margin-inline: auto;
 }
 
 /* ============================================================================
-   INTRO  (Cover 3 lower · "What this is")  · reference 1440 wide
+   HOME SHELF  (section books — rise in on scroll, settle flush to the bottom)
+   Reuses the .book / .spine system; same 1022px centred group as the menu shelf.
    ========================================================================== */
-.intro {
-  position: relative;
-  width: 100%;
-  min-height: 100svh;            /* fill the pinned viewport… */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;       /* …and vertically centre the content (no bottom deadspace) */
-  padding: clamp(64px, 9vh, 130px) 0;
+.home-shelf {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 2;
+  width: 1022px;                     /* 4×188 + 3×90 */
+  height: 340px;
+  transform: translateX(-50%);
 }
-.intro__inner {
-  width: min(85.4%, 1230px);     /* Figma content spans x:210 → 1230 of 1440 */
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: minmax(0, 396fr) minmax(0, 56fr) minmax(0, 604fr);
-  align-items: center;
-}
-/* Align graphic — Figma 396², left aligned */
-.intro__graphic {
-  grid-column: 1;
-  margin: 0;
-  width: 100%;
-  max-width: 396px;
-}
-.intro__graphic img { width: 100%; height: auto; }
+/* Home books use a smaller icon than the menu → room for the date + clear spacing. */
+.home-shelf .book__icon { width: 70px; height: 70px; }
+/* Drop book 4's "(Coming soon)" down to the same level as the dates on books 1–3. */
+.home-shelf .book__soon { margin-top: 46px; }
 
-/* Text block — Figma x:626 (col 3), width 604 */
-.intro__text {
-  grid-column: 3;
-  max-width: 604px;
-}
-.intro__text .eyebrow {
-  font-size: clamp(0.6875rem, 0.97vw, 0.875rem);
-  letter-spacing: 0.06em;
-  margin-bottom: clamp(18px, 2vw, 28px);
-}
-/* "A place to align…" — Title token: Boldonse 36 / 400 / normal / #000 */
-.intro__text .heading {
-  font-family: var(--font-display);
+/* "Last updated:" line — hidden for now (kept in markup for easy re-enable). */
+.book__updated {
+  display: none;
+  position: absolute;
+  top: 208px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
   font-weight: 400;
-  font-size: clamp(26px, 4vw, 36px);
-  line-height: normal;
-  letter-spacing: normal;
-  text-transform: none;
-  color: #000;
-  margin-bottom: clamp(22px, 2.4vw, 34px);
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: rgba(246, 242, 231, 0.85);
 }
 
 /* ============================================================================
-   PINWHEEL TRAVELER  (fixed, JS-controlled — spins in over the cover,
-   then travels into the intro slot and idles in the "wind")
+   PINWHEEL TRAVELER  (fixed, JS-controlled — rises in on load and aligns to
+   the lockup slot, then idles spinning in the "wind")
    ========================================================================== */
 .pinwheel {
   position: fixed;
@@ -300,21 +293,18 @@ img { display: block; max-width: 100%; }
 }
 .pinwheel__spin img { width: 100%; height: auto; }
 
-/* When the motion build runs, the in-flow graphic is an invisible spacer
-   (reserves the grid slot + stays the accessible element). */
-.js.motion .intro__graphic img { visibility: hidden; }
-
-/* ============================================================================
-   MOTION — initial states (JS removes them after load / on reveal)
-   ========================================================================== */
-.js [data-reveal] { opacity: 0; transform: translateY(24px); }
-.js #introGraphic { opacity: 0; }
-
-/* Accessibility — no scrub / instant end-states */
+/* Load: the eyebrow / title / clouds / arrow stay hidden on bare chalk while the
+   pinwheel rises + spins; the load timeline (main.js) reveals them once it settles.
+   Reduced motion shows them immediately. (All home-only selectors.) */
+.js .eyebrow--top,
+.js .lockup,
+.js .cloud,
+.js #arrow { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
-  .titleblock__streaks { --streak-hide: 0%; }
-  .js [data-reveal] { opacity: 1; transform: none; }
-  .js #introGraphic { opacity: 1; }
+  .js .eyebrow--top,
+  .js .lockup,
+  .js .cloud,
+  .js #arrow { opacity: 1; }
 }
 
 /* ============================================================================
@@ -358,25 +348,6 @@ img { display: block; max-width: 100%; }
   will-change: transform;
 }
 .mag-btn:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
-
-/* -- Explore variant (Figma 2008:147) — pink→gold pill, 1px inner stroke -- */
-.intro__cta {
-  margin: clamp(48px, 7vh, 88px) auto 0;  /* ~140px above the button incl. the zone's top field */
-  display: flex;
-  justify-content: center;
-}
-.mag-zone--explore { width: 340px; height: 150px; }   /* field around the wider pill */
-.mag-btn--explore { padding: 12px 24px; }
-.mag-btn--explore .mag-btn__bg {
-  background: linear-gradient(0deg, #ffa8cd 0%, #fdd193 100%);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);      /* 1px inner stroke, #000 @ 20% */
-}
-.mag-btn--explore .label {
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: 0.32px;
-  color: #000;
-}
 
 /* -- Back variant — transparent pill, midnight text + 25% midnight border -- */
 .mag-zone--back {
@@ -469,7 +440,7 @@ img { display: block; max-width: 100%; }
   padding: 0;
   border: 0;
   border-radius: 0;                  /* sharp corners */
-  background: var(--blue);
+  background: var(--book-grad);
   cursor: pointer;
   font: inherit;
   color: inherit;
@@ -477,13 +448,27 @@ img { display: block; max-width: 100%; }
   will-change: transform;
   transition: background 0.3s ease;
 }
-.book--soon { background: var(--book-dark); cursor: default; }
+.book--soon { background: var(--book-soon); cursor: default; }
 
 .book__inner {
   position: absolute;
   inset: 0;
+  z-index: 1;                  /* content sits above the orange hover-fill overlay */
   overflow: hidden;
   will-change: transform;
+}
+
+/* Orange hover fill — a separate layer faded via opacity, so the change reads as a
+   smooth cross-fade (a gradient→solid `background` transition can't interpolate). */
+.book--interactive::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--orange);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
 }
 
 .book__num {
@@ -517,17 +502,22 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-sans);
   font-weight: 700;
   font-size: 20px;
-  line-height: 1.15;
+  line-height: 1.3;
   letter-spacing: -0.4px;
   color: #fff;
 }
+/* "(Coming soon)" — italic serif, matching the "Last updated" style. */
 .book__soon {
   display: block;
   margin-top: 11px;
-  font-weight: 300;
-  font-size: 16px;
-  letter-spacing: 0.32px;
-  text-transform: uppercase;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgba(246, 242, 231, 0.85);
 }
 .book__icon {
   position: absolute;
@@ -542,29 +532,19 @@ img { display: block; max-width: 100%; }
   inset: 0;
   width: 100%;
   height: 100%;
-  transition: opacity 0.3s ease;
+  object-fit: contain;
+  transition: opacity 0.45s ease;
 }
 .book__icon-hover { opacity: 0; }
 
 /* Hover (interactive books only) — colour + icon swap. The raise (y) and sway
    (rotation) are owned by GSAP; .is-hover is set by JS and mirrored by :hover. */
 @media (hover: hover) {
-  .book--interactive:hover,
-  .book--interactive.is-hover { background: var(--orange); }
+  .book--interactive:hover::before,
+  .book--interactive.is-hover::before { opacity: 1; }
   .book--interactive:hover .book__icon-base,
   .book--interactive.is-hover .book__icon-base { opacity: 0; }
   .book--interactive:hover .book__icon-hover,
   .book--interactive.is-hover .book__icon-hover { opacity: 1; }
 }
 .book--interactive:focus-visible { outline: 3px solid var(--midnight); outline-offset: 3px; }
-
-/* ---------- Responsive: stack intro on narrow screens ---------- */
-@media (max-width: 720px) {
-  .intro__inner {
-    grid-template-columns: 1fr;
-    row-gap: clamp(32px, 8vw, 56px);
-    justify-items: start;
-  }
-  .intro__graphic { grid-column: 1; width: min(60%, 300px); }
-  .intro__text { grid-column: 1; }
-}

@@ -16,22 +16,22 @@
   <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
        One rail for the whole reader. The label + colour follow the chapter you're
        currently in (see railSync in js/chapter.js). Lives OUTSIDE #smooth-wrapper. -->
+  <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
+      <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+    </a>
+    <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" x2="21" y1="6" y2="6" /><line x1="3" x2="21" y1="12" y2="12" /><line x1="3" x2="21" y1="18" y2="18" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
-
     <p class="rail__label">why we exist, and the moment</p>
-
-    <button class="rail__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
-      <svg class="lucide" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" />
-      </svg>
-    </button>
-
-    <button class="rail__search" type="button" aria-label="Search (coming soon)">
-      <svg class="lucide" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-      </svg>
-    </button>
   </div>
 
   <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
@@ -234,8 +234,8 @@
 
     <!-- ═══════════════════════ CHAPTER 3 — Stages of a project ═══════════════════════ -->
     <section class="section chapter-panel" id="ch3"
-             data-rail="stages of a project" data-rail-fg="var(--chalk)"
-             style="--hero-bg: var(--midnight); --hero-title: var(--chalk); --accent: var(--midnight); --rail-fg: var(--chalk); --flower-aspect: 549 / 554;">
+             data-rail="stages of a project"
+             style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 549 / 554;">
      <div class="chapter-panel__scale">
 
       <section class="page-hero">
@@ -294,7 +294,6 @@
                 <ul class="toc__sub">
                   <li><a class="toc__subrow" data-toc="s-33-1" href="#s-33-1"><span class="toc__subtitle">The value of discovery</span></a></li>
                   <li><a class="toc__subrow" data-toc="s-33-2" href="#s-33-2"><span class="toc__subtitle">Subphase 1 — Uncover what is true</span></a></li>
-                  <li><a class="toc__subrow" data-toc="s-33-3" href="#s-33-3"><span class="toc__subtitle">Outcomes — Subphase 1</span></a></li>
                   <li><a class="toc__subrow" data-toc="s-33-4" href="#s-33-4"><span class="toc__subtitle">Subphase 2 — Rapid experiment</span></a></li>
                   <li><a class="toc__subrow" data-toc="s-33-5" href="#s-33-5"><span class="toc__subtitle">Experimentation cycle</span></a></li>
                 </ul>
@@ -439,16 +438,6 @@
               <li>Map data pipelines, APIs, and integration dependencies</li>
               <li>Identify what exists, what needs to be built, and what may slow things down</li>
             </ul>
-            <h4 class="subsection-head reveal" id="s-33-3">Outcomes — Subphase 1</h4>
-            <ul class="reveal">
-              <li>The real problem is understood — not the stated one, but the actual one</li>
-              <li>Value propositions, business case, user needs, and policy implications are all surfaced</li>
-              <li>Challenges and constraints are named, including technical ones</li>
-              <li>A clear, defensible view of which use cases to tackle first — and why</li>
-              <li>The team has a shared picture of what it is actually working on</li>
-            </ul>
-            <p class="reveal"><strong>Critical callout:</strong> Every discovery surfaces trade-offs. In a government context, decisions rarely have clean answers — policy constraints, siloed mandates, competing agency priorities, and resource realities all create tension. Part of the work here is naming those trade-offs honestly so the right people can make informed decisions. This stage is not about solutions; it’s about making sure the problem is real, understood, and worth solving.</p>
-
             <h4 class="subsection-head reveal" id="s-33-4">Subphase 2 — Identify what works (rapid experiment)</h4>
             <p class="reveal">We grow things, we don’t build them. Building implies a plan, a spec, a defined output. Growing means planting a seed, nurturing it through iterations, and transplanting to production only when it’s ready. Every prototype is expected to fail on the first try — that’s the point. Rapid learning beats slow certainty.</p>
             <p class="reveal"><strong>Rapid iteration.</strong> Speed is not a nice-to-have — it is the point.</p>
@@ -615,8 +604,8 @@
           <span class="book__rule" aria-hidden="true"></span>
           <span class="book__title">Stages of<br />a project</span>
           <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+            <img class="book__icon-base" src="assets/menu_3.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
           </span>
         </span>
       </button>
@@ -627,7 +616,7 @@
           <span class="book__rule" aria-hidden="true"></span>
           <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
           <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+            <img class="book__icon-base" src="assets/menu_4.svg" alt="" />
           </span>
         </span>
       </div>

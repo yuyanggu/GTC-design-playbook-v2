@@ -20,19 +20,19 @@ body { background: var(--chalk); }
 
 .rail__divider {
   position: absolute;
-  top: 0;
+  top: 96px;                   /* starts below the top header so the logo never crosses it */
   bottom: 0;
   right: 0;
   width: 1px;
   background: rgba(1, 34, 51, 0.15);
 }
 
-/* Vertical label, reads bottom → top — its top edge sits 20px below the rail top.
-   Rotated -90° about its left-top, so it grows upward; anchoring `top` at
-   (20px + text length) puts the text top at the desired 20px padding. */
+/* Vertical label, reads bottom → top — anchored to the bottom of the viewport.
+   Rotated -90° about its left-top, so it grows upward from that origin; placing the
+   origin 24px from the bottom puts the first letter 24px above the bottom edge. */
 .rail__label {
   position: absolute;
-  top: 340px;
+  top: calc(100% - 24px);      /* origin 24px from the viewport bottom */
   left: 36px;
   margin: 0;
   transform-origin: left top;
@@ -83,6 +83,43 @@ body { background: var(--chalk); }
 }
 .rail__search:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
 .lucide { display: block; }
+
+/* The rail (divider + bottom label) shows only over the chalk body — hidden
+   (instantly, no fade) while a hero covers the viewport top (JS toggles .rail--hidden). */
+.rail--hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* ---------------------------------------------------------------------------
+   Top header — logo (→ home) top-left, hamburger (opens the Menu) top-right.
+   Fixed over the coloured hero and the body; below the menu overlay (z 50).
+   --------------------------------------------------------------------------- */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(20px, 2.6vh, 30px) clamp(22px, 3vw, 44px);
+  pointer-events: none;          /* only the controls catch the pointer */
+}
+.topbar__logo,
+.topbar__menu { pointer-events: auto; }
+.topbar__logo { display: block; }
+.topbar__logo img { display: block; width: clamp(118px, 11vw, 157px); height: auto; }
+.topbar__menu {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--midnight);
+  cursor: pointer;
+}
+.topbar__menu:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
 
 /* ---------------------------------------------------------------------------
    HERO (orange cover)

@@ -16,24 +16,21 @@
        The vertical divider runs the full height; the rotated label, the hamburger
        (opens the bookshelf Menu) and the search icon ride in the rail. Lives OUTSIDE
        #smooth-wrapper so it stays viewport-anchored, like the menu/pinwheel. -->
+  <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
+      <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+    </a>
+    <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" x2="21" y1="6" y2="6" /><line x1="3" x2="21" y1="12" y2="12" /><line x1="3" x2="21" y1="18" y2="18" />
+      </svg>
+    </button>
+  </header>
+
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
-
     <p class="rail__label">why we exist, and the moment</p>
-
-    <!-- Hamburger → opens the books Menu (shared #menu, via [data-menu-open]) -->
-    <button class="rail__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
-      <svg class="lucide" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="18" y2="18" />
-      </svg>
-    </button>
-
-    <!-- Search (decorative for now) -->
-    <button class="rail__search" type="button" aria-label="Search (coming soon)">
-      <svg class="lucide" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-      </svg>
-    </button>
   </div>
 
   <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
@@ -186,8 +183,8 @@
           <span class="book__rule" aria-hidden="true"></span>
           <span class="book__title">Stages of<br />a project</span>
           <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
-            <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+            <img class="book__icon-base" src="assets/menu_3.svg" alt="" />
+            <img class="book__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
           </span>
         </span>
       </button>
@@ -199,7 +196,7 @@
           <span class="book__rule" aria-hidden="true"></span>
           <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
           <span class="book__icon">
-            <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
+            <img class="book__icon-base" src="assets/menu_4.svg" alt="" />
           </span>
         </span>
       </div>
