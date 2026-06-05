@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Playbook — Outline v0.5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814;
+    --paper: #f4efe6;
+    --paper-dim: #ebe4d5;
+    --rule: #2a2520;
+    --accent: #c8421c;
+    --accent-dim: #a63615;
+    --muted: #6b6558;
+    --highlight: #f0d87a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(200, 66, 28, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(240, 216, 122, 0.08) 0%, transparent 40%);
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 40px 120px;
+  }
+
+  /* Masthead */
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 28px;
+    margin-bottom: 56px;
+    position: relative;
+  }
+
+  .masthead::before {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+
+  .eyebrow span:last-child::before {
+    content: "●";
+    color: var(--accent);
+    margin-right: 8px;
+    font-size: 8px;
+    vertical-align: middle;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(44px, 7vw, 82px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    font-variation-settings: 'opsz' 144;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .deck {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 20px;
+    color: var(--muted);
+    margin-top: 20px;
+    max-width: 560px;
+    line-height: 1.4;
+  }
+
+  /* Preface card */
+  .preface {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 40px 44px;
+    margin-bottom: 72px;
+    position: relative;
+    border-radius: 2px;
+  }
+
+  .preface::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    border: 1px solid rgba(244, 239, 230, 0.15);
+    pointer-events: none;
+  }
+
+  .preface-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--highlight);
+    margin-bottom: 20px;
+  }
+
+  .preface h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .preface p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: rgba(244, 239, 230, 0.85);
+    margin-bottom: 14px;
+  }
+
+  .preface p:last-child {
+    margin-bottom: 0;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--highlight);
+    margin-top: 24px;
+  }
+
+  /* Section headers */
+  .section-header {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 24px;
+    align-items: baseline;
+    margin-bottom: 24px;
+    padding-top: 12px;
+  }
+
+  .section-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--accent);
+    font-variation-settings: 'opsz' 144;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  .section {
+    margin-bottom: 56px;
+    scroll-margin-top: 40px;
+  }
+
+  .section-body {
+    padding-left: 104px;
+    border-left: 1px solid rgba(42, 37, 32, 0.12);
+    margin-left: 24px;
+  }
+
+  @media (max-width: 640px) {
+    .section-body {
+      padding-left: 20px;
+      margin-left: 8px;
+    }
+    .section-header {
+      grid-template-columns: 56px 1fr;
+      gap: 16px;
+    }
+    .section-num {
+      font-size: 40px;
+    }
+    .section-title {
+      font-size: 26px;
+    }
+  }
+
+  /* Decisions block */
+  .decisions-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(200, 66, 28, 0.08);
+    border-radius: 2px;
+  }
+
+  .decisions {
+    list-style: none;
+  }
+
+  .decisions li {
+    padding: 12px 0 12px 26px;
+    position: relative;
+    border-bottom: 1px dashed rgba(42, 37, 32, 0.15);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .decisions li:last-child {
+    border-bottom: none;
+  }
+
+  .decisions li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    top: 12px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .decisions strong {
+    font-weight: 600;
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+  }
+
+  /* Sub-sections */
+  .sub {
+    margin-top: 24px;
+    padding: 20px 24px;
+    background: var(--paper-dim);
+    border-left: 3px solid var(--ink);
+  }
+
+  .sub h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 19px;
+    margin-bottom: 12px;
+  }
+
+  .sub ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .sub ul li {
+    padding: 4px 0 4px 20px;
+    position: relative;
+    font-size: 15px;
+  }
+
+  .sub ul li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  /* Stage list */
+  .stage-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 14px;
+  }
+
+  .stage-list li {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    align-items: baseline;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(42, 37, 32, 0.12);
+  }
+
+  .stage-list li:last-child {
+    border-bottom: none;
+  }
+
+  .stage-list li.stage-parallel {
+    margin-top: 14px;
+    padding: 18px 20px;
+    background: rgba(200, 66, 28, 0.07);
+    border: 1px dashed var(--accent);
+    border-radius: 2px;
+  }
+
+  .stage-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  .stage-parallel .stage-num {
+    font-size: 18px;
+  }
+
+  .stage-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .stage-moves {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .stage-detail {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(42, 37, 32, 0.2);
+  }
+
+  .stage-detail-heading {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 14px;
+    margin-bottom: 8px;
+  }
+
+  .stage-detail-heading:first-child {
+    margin-top: 0;
+  }
+
+  .stage-detail p {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .stage-detail-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 4px;
+  }
+
+  .stage-detail-list li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+    font-size: 15px;
+    line-height: 1.55;
+    border: none;
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
+    align-items: initial;
+  }
+
+  .stage-detail-list li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  .stage-callouts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 18px 0;
+  }
+
+  @media (max-width: 640px) {
+    .stage-callouts {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stage-callout {
+    padding: 14px 16px;
+    background: var(--paper);
+    border: 1px solid rgba(42, 37, 32, 0.15);
+    border-radius: 2px;
+  }
+
+  .stage-callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .stage-callout ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .stage-callout ul li {
+    padding: 3px 0 3px 14px;
+    position: relative;
+    font-size: 13px;
+    line-height: 1.45;
+    border: none;
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
+    align-items: initial;
+  }
+
+  .stage-callout ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    top: 3px;
+    color: var(--accent);
+    font-weight: bold;
+  }
+
+  /* Sub-stage */
+  .sub-stage {
+    margin-top: 14px;
+    padding: 14px 18px;
+    border-left: 2px solid var(--accent);
+    background: rgba(200, 66, 28, 0.04);
+  }
+
+  .sub-stage-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .sub-stage-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .sub-stage-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Belief list */
+  .belief-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  .belief-list li {
+    padding: 14px 0 14px 26px;
+    position: relative;
+    border-bottom: 1px dashed rgba(42, 37, 32, 0.15);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .belief-list li:last-child {
+    border-bottom: none;
+  }
+
+  .belief-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    top: 14px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .belief-list strong {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  /* Working out box */
+  .working-out {
+    margin-top: 24px;
+    padding: 20px 24px;
+    background: rgba(240, 216, 122, 0.18);
+    border: 1px dashed rgba(42, 37, 32, 0.3);
+    border-radius: 2px;
+  }
+
+  .working-out-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .working-out p {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* Overall frame */
+  .overall {
+    margin-top: 72px;
+    padding: 36px;
+    border: 2px solid var(--ink);
+    position: relative;
+  }
+
+  .overall::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: -8px;
+    bottom: -8px;
+    border: 2px solid var(--ink);
+    z-index: -1;
+  }
+
+  .overall h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* Parking lot */
+  .parking {
+    margin-top: 80px;
+    padding: 40px;
+    background: rgba(240, 216, 122, 0.22);
+    border: 1px dashed var(--ink);
+    position: relative;
+  }
+
+  .parking-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(42, 37, 32, 0.2);
+  }
+
+  .parking h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 30px;
+  }
+
+  .parking-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .parking-note {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .note {
+    padding: 18px 20px;
+    background: var(--paper);
+    margin-bottom: 14px;
+    border-left: 3px solid var(--accent);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .note-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  /* Pull quotes */
+  .pull-quote {
+    margin: 48px 0;
+    padding: 0 0 0 32px;
+    border-left: 4px solid var(--accent);
+    position: relative;
+  }
+
+  .pull-quote p {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: clamp(22px, 3.5vw, 32px);
+    line-height: 1.3;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .pull-quote .quote-attr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 12px;
+    font-style: normal;
+  }
+
+  /* Diagram placeholders */
+  .diagram-placeholder {
+    margin: 40px 0;
+    padding: 32px 36px;
+    border: 2px dashed rgba(200, 66, 28, 0.4);
+    background: rgba(200, 66, 28, 0.03);
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .diagram-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .diagram-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .diagram-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+
+  footer {
+    margin-top: 100px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(42, 37, 32, 0.2);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Smooth reveal */
+  .section, .preface, .overall, .parking {
+    animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>GovTech Consulting Team</span>
+      <span>Working Draft</span>
+    </div>
+    <h1>The Design <em>Playbook</em></h1>
+    <p class="deck">An outline for how we work, what we believe, and the outcomes we're agreeing to pursue together.</p>
+  </header>
+
+  <section class="preface">
+    <div class="preface-label">What this is</div>
+    <h2>A place to align, not a place to learn.</h2>
+    <p>This isn't a playbook where you come to learn how to design. It doesn't teach craft, methods, or skills. It assumes you already have those.</p>
+    <p>This is where we agree on how we're going to use all our design skills to get the right outcome. It captures what we've agreed on: the type of work we take on, our point of view, the outcomes we're aiming for, how we operate as a team, and where we're going.</p>
+    <p>Come here to align, not to learn.</p>
+  </section>
+
+  <!-- SECTION 01 -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2 class="section-title">Why we exist, and the moment</h2>
+    </div>
+    <div class="section-body">
+
+      <div style="margin-bottom: 36px;">
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;">1.1 Why GovTech</p>
+        <p style="margin-bottom: 16px;">Singapore's Smart Nation vision called for something deliberate: a centralised digital government capability, built in-house, so that the knowledge and direction of transformation would sit within government — not fragmented across agencies or outsourced away. GovTech was the answer to that call.</p>
+        <p>Its mandate has always been about more than technology. It's about what government can be for the people who depend on it — and what kind of future we're building together.</p>
+      </div>
+
+      <div style="margin-bottom: 36px;">
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;">1.2 The modernisation opportunity</p>
+        <p style="margin-bottom: 16px;">Singapore's national AI adoption mandate is a structural signal: the rules of what government can build, and how fast, have changed. What once took months can now be prototyped in days. The opportunity to build public services that are genuinely excellent — not just functional — is more within reach than it has ever been.</p>
+        <p>But the goal is not simply to move faster. It's to move well — with the discernment and care that public services deserve, because what's ultimately at stake are the people these services are built for. That means starting with the real problem before committing to a direction, holding the standard for quality when the ability to build is no longer the constraint, and being honest about what deserves focus when more is possible than any team can pursue at once. GTC's work sets the conditions for how agencies across Singapore develop their own capabilities — which is exactly why it has to be done carefully and well.</p>
+      </div>
+
+      <div style="margin-bottom: 36px;">
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;">1.3 The AI reality</p>
+        <p style="margin-bottom: 16px;">The conditions around us have changed, and they have changed fast. As part of a government with the foresight to lean into this moment, we have both the position and the responsibility to lead the way. Not to wait and see, but to experiment, learn, and set the standard for what design at GTC for the public can be.</p>
+        <p>AI is reshaping what is possible for design, and you will see that reflected in how we work. We acknowledge it as a reality, not a prescription. We won't tell you which tools to use, because the tools themselves are evolving faster than any document can capture. What we will say is: the craft is evolving, and it is on us to evolve with it. Good design is still about people. That hasn't changed. How we get there has.</p>
+      </div>
+
+      <div class="pull-quote">
+        <p>The craft is evolving, and it is on us to evolve with it. Good design is still about people. That hasn't changed. How we get there has.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 02 -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2 class="section-title">Our point of view</h2>
+    </div>
+    <div class="section-body">
+
+      <!-- OPENING — LOCKED -->
+      <p style="margin-bottom: 20px; font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">Opening — locked</p>
+      <p style="margin-bottom: 32px;">Every team has a point of view, whether it's written down or not. Ours starts with a belief about what's possible here — not just to do more of what's already happening, but to push what public service design can be, how it gets built, how it improves over time, and to help shape that across an entire system that touches every life. That's the scale of the opportunity. Build without finding out what's true, and you'll solve the wrong problem with confidence. Find out what's true without building to test it, and you'll leave a stack of insights that never changed anything. Both happen all the time. Neither has to. This is how we intend to work differently.</p>
+
+      <div class="diagram-placeholder">
+        <div class="diagram-label">Diagram</div>
+        <div class="diagram-title">The two failure modes</div>
+        <div class="diagram-desc">Two paths that lead nowhere: (a) build without discovery → solving the wrong problem with confidence; (b) discover without prototyping → insights that never change anything. The GTC path runs through the middle, combining both discovery and rapid experimentation into one continuous arc.</div>
+      </div>
+
+      <!-- BEAT 1 -->
+      <div style="margin-bottom: 36px;">
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;">Beat 1: Designing for Everyone</p>
+
+        <p style="margin-bottom: 16px;">Government services exist to serve the population — all of it. Not a target market, not a user segment — everyone, including those hardest to reach and those with no alternative. That's not a limitation. It's what makes this work matter at a scale that's genuinely rare. The opportunity to improve a service here is an opportunity to improve life for everyone who depends on it.</p>
+        <p style="margin-bottom: 16px;">That reach comes with a specific set of realities: policy frameworks that govern what can be built, governance structures that shape how decisions get made, and an accountability to the public that runs through every choice we make. Understanding those realities — and working within them rather than around them — is the foundation of everything that follows.</p>
+        <p style="margin-bottom: 20px;">Working inside that system means understanding how it's built. These are the realities we design within.</p>
+
+        <div class="stage-callout" style="margin-bottom: 8px;">
+          <div class="stage-callout-label">Fairness by design</div>
+          <p style="font-size: 14px; line-height: 1.6;">Government holds itself to a high standard — consistent, transparent, predictable, accessible, and accountable — because public systems have to work for everyone, without exception. A service that works for most but fails the vulnerable isn't meeting that bar. Unlike most products, government has no competition: if a service fails you, there's nowhere else to go. That's why Singapore's MDDI mandate of <span style="font-style: italic;">digital first, but not digital only</span> matters as a design principle, not just a policy direction — digital is the default, but every service decision has to account for who might be left behind. Designing for those exceptions isn't a concession. It's what fairness actually looks like in practice.</p>
+          <p style="font-size: 12px; line-height: 1.4; color: var(--muted); font-style: italic; margin-top: 8px;">Source: <a href="https://www.mddi.gov.sg/newsroom/digital-first-but-not-digital-only/" style="color: var(--muted);">mddi.gov.sg</a></p>
+        </div>
+        <div class="stage-callout" style="margin-bottom: 8px;">
+          <div class="stage-callout-label">Siloed by mandate, experienced as one</div>
+          <p style="font-size: 14px; line-height: 1.6;">Each agency has its own remit, its own rules, its own definition of success. But citizens experience one life, not separate agencies. Sitting where we do, working across them, we have a rare opportunity: to see the whole person and connect dots that institutional silos can't. That's something we should actively strive for.</p>
+        </div>
+        <div class="stage-callout" style="margin-bottom: 8px;">
+          <div class="stage-callout-label">Policy, procurement, governance — these are the brief</div>
+          <p style="font-size: 14px; line-height: 1.6;">Policy governs what can be built. Procurement governs how it gets built. Governance shapes who decides. These aren't obstacles — they're the actual shape of the problem. Two things follow. We still need to prototype and test, which means building the right sandboxes inside these constraints, not despite them. And clearing them isn't the finish line. A service can satisfy every requirement and still fail the people using it. We design to a higher bar than compliance.</p>
+        </div>
+        <div class="stage-callout" style="margin-bottom: 8px;">
+          <div class="stage-callout-label">We design for the people who deliver, not just the people who use</div>
+          <p style="font-size: 14px; line-height: 1.6;">Every public service has two sets of users: the citizens who depend on it, and the officers who deliver it. The empathy we bring to the front has to extend to the back. Officer workflows, the tools they're given, the friction they live with daily — all of it shapes what the public ends up experiencing. A service can't be better than the system the people inside it are working with.</p>
+        </div>
+      </div>
+
+      <!-- BEAT 2 -->
+      <div style="margin-bottom: 36px;">
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;">Beat 2: What we therefore believe</p>
+
+        <p style="margin-bottom: 20px;">Working in that context, with those stakes and those constraints, has shaped what we believe about how to do this work well.</p>
+
+        <ul class="belief-list">
+          <li><strong>Discovery is non-negotiable.</strong> Building without finding out what's true first is how teams solve the wrong problem with confidence. The depth and shape of discovery flexes with the project — but skipping it is never the right call.</li>
+          <li><strong>Prototyping moves upstream.</strong> Because the cost of building has dropped dramatically, prototypes no longer belong only in the build phase. They belong alongside discovery, generating real signal earlier and de-risking the decisions that matter most.</li>
+          <li><strong>Capability building is part of the work.</strong> Our job isn't only to deliver products — it's to leave partners better equipped than we found them. That means building alongside people, not just for them.</li>
+          <li><strong>Skills are shared, not owned.</strong> Service design isn't only for designers. PRDs aren't only for product managers. The boundaries between roles are becoming more permeable — and that's a feature, not a problem.</li>
+        </ul>
+
+        <div class="working-out">
+          <div class="working-out-label">What we're still working out</div>
+          <p>The boundaries between design, product, and engineering are shifting — and we think that's exciting. There's no settled answer yet on where those lines should sit, and we're not waiting for one. We're experimenting our way toward it, together, and we expect what we learn to change how we work.</p>
+        </div>
+      </div>
+
+      <!-- BEAT 3 -->
+      <div style="margin-bottom: 36px;">
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;">Beat 3: What does success look like?</p>
+
+        <p style="margin-bottom: 16px;">Success here doesn't look like conversion rates or retention metrics. It looks like working on the right problem in the first place.</p>
+        <p style="margin-bottom: 16px;">The pace of building has accelerated dramatically. But speed applied to the wrong problem is still the wrong problem — just arrived at faster. The most valuable thing we can do is slow down long enough to ask: is this actually the thing worth solving?</p>
+        <p style="margin-bottom: 16px;">That takes courage in a government context. Bureaucracy has gravity. Norms have history. Success means being willing to push back — because the people these services are built for deserve more than the default.</p>
+        <p style="margin-bottom: 20px;">As part of the Central Modernisation Office, we sit at the intersection of design, technology, and transformation. The platforms and capabilities GovTech has built are real assets — success means bringing them together meaningfully. But at the centre is still a person trying to get something done. Design is how we keep them there.</p>
+
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 15px; color: var(--muted); margin-bottom: 16px;">Concretely, that means:</p>
+
+        <ul class="belief-list">
+          <li><strong>The right problem is named.</strong> Not the stated one, not the comfortable one — the actual one.</li>
+          <li><strong>The brave call was made.</strong> Assumptions challenged, norms questioned, the brief interrogated before accepted.</li>
+          <li><strong>Technology and modernisation worked for people.</strong> The right capabilities were brought in at the right time — not for their own sake, but in service of the people the product was built for.</li>
+          <li><strong>The agency can keep going without us.</strong> Momentum built, not dependency.</li>
+          <li><strong>We modelled what good looks like.</strong> How we work becomes the template others carry forward.</li>
+        </ul>
+
+
+      </div>
+
+
+
+    </div>
+  </section>
+
+  <!-- SECTION 03 -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2 class="section-title">Stages of a project</h2>
+    </div>
+    <div class="section-body">
+      <p style="margin-bottom: 20px;"></p>
+
+      <div class="pull-quote">
+        <p>Partnership is how we work.</p>
+      </div>
+
+      <div class="sub">
+        <h3>3a. How we engage</h3>
+        <p style="margin-bottom: 16px;">Partnership is how we work. We work with agencies as partners, not service providers. Agencies bring the domain knowledge and mandate; we bring the discovery capability, technology and product domain. Together, we build something that creates impact for the public. That spirit of co-creation shapes everything about how we show up from day one.</p>
+
+        <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; margin-bottom: 8px; margin-top: 20px;">Types of projects we take on</p>
+        <p style="margin-bottom: 12px;">We work on modernisation and discovery projects where there is a genuine problem worth solving, a partner ready to work alongside us, and enough clarity to get started. We begin from a question mark and work toward a point where a build can begin with real confidence. That journey, done well, is where the most meaningful work happens.</p>
+        <p style="margin-bottom: 12px;">Before committing, we explore the funding landscape together: whether budget has been secured, what it covers, and whether it fits the scope. Getting this clarity early sets everyone up for a more honest, energised, and productive engagement.</p>
+        <p style="font-style: italic; font-size: 14px; color: var(--muted); margin-bottom: 8px;">Examples of projects we take on:</p>
+        <ul style="list-style: none; padding-left: 0; margin-bottom: 12px;">
+          <li style="padding: 4px 0 4px 18px; position: relative; font-size: 15px; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--muted);">—</span>An agency has a legacy system that is failing users and officers. We come in to discover what is actually broken, map the full service, and prototype what a better version could look like.</li>
+          <li style="padding: 4px 0 4px 18px; position: relative; font-size: 15px; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--muted);">—</span>A ministry wants to understand whether a new policy can be delivered digitally. We run discovery to validate the need, surface the constraints, and experiment with what a service could be before any build commitment is made.</li>
+          <li style="padding: 4px 0 4px 18px; position: relative; font-size: 15px; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--muted);">—</span>An agency is streamlining multiple fragmented systems and workstreams into a single platform. The product is new — and so is the way the operation needs to run. We help them discover not just what to build, but how the people, processes, and workflows around it need to be rethought alongside it.</li>
+        </ul>
+        <p style="font-size: 14px; line-height: 1.6; color: var(--muted); font-style: italic; margin-bottom: 16px;"><strong style="font-style: normal; color: var(--ink);">A note on research-heavy projects:</strong> There are exceptions. Some projects warrant a longer, deeper research phase before prototyping becomes possible — particularly where the system is complex, the stakeholders are many, or the problem space is genuinely unclear. That is fine. What matters is that the research connects to something — that it is building toward discovery and action, not sitting on its own as a deliverable.</p>
+
+        <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; margin-bottom: 8px; margin-top: 20px;">What we don't do</p>
+        <p style="margin-bottom: 12px;">We do our best work when we are part of shaping the problem from the start. We are not a vendor executing a brief, and we are not here to create dependency. We are here to build capability alongside the people we work with, so that when we leave, the work continues and gets better.</p>
+        <p style="font-style: italic; font-size: 14px; color: var(--muted); margin-bottom: 8px;">Concretely, this means we do not:</p>
+        <ul style="list-style: none; padding-left: 0; margin-bottom: 16px;">
+          <li style="padding: 8px 0 8px 18px; position: relative; font-size: 15px; line-height: 1.55; border-bottom: 1px dashed rgba(42,37,32,0.12);"><span style="position: absolute; left: 0; color: var(--muted);">—</span><strong>Take over the entire project.</strong> We are a consulting and discovery team. We are not the permanent design or engineering function for an agency. Our role is to accelerate and enable, not to run things indefinitely.</li>
+          <li style="padding: 8px 0 8px 18px; position: relative; font-size: 15px; line-height: 1.55; border-bottom: 1px dashed rgba(42,37,32,0.12);"><span style="position: absolute; left: 0; color: var(--muted);">—</span><strong>Write funding papers or investment proposals.</strong> Helping an agency make the internal case for a project is not within our scope. We can inform that thinking, but writing IB papers or procurement documents is not what we are here to do.</li>
+          <li style="padding: 8px 0 8px 18px; position: relative; font-size: 15px; line-height: 1.55; border-bottom: 1px dashed rgba(42,37,32,0.12);"><span style="position: absolute; left: 0; color: var(--muted);">—</span><strong>Run isolated research tasks without a discovery arc.</strong> We are not a research-for-hire team. If an agency needs someone to run a user test and hand back a report, that is not us. Research has to connect to discovery, hypothesis, and action — otherwise there is no point.</li>
+          <li style="padding: 8px 0 8px 18px; position: relative; font-size: 15px; line-height: 1.55; border-bottom: 1px dashed rgba(42,37,32,0.12);"><span style="position: absolute; left: 0; color: var(--muted);">—</span><strong>Deliver a prototype and walk away.</strong> Prototyping without the full discovery arc — and without building the agency's capability to take it forward — is not the model. A prototype handed over with no context, no roadmap, and no team to own it will go nowhere.</li>
+          <li style="padding: 8px 0 8px 18px; position: relative; font-size: 15px; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--muted);">—</span><strong>Design without being involved in the discovery.</strong> If the solution has already been decided and we are being asked to make it look good, that is not a project we can add real value to.</li>
+        </ul>
+
+        <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; margin-bottom: 8px; margin-top: 20px;">Where we enter</p>
+        <p style="margin-bottom: 8px;">The earlier we are part of shaping the problem, the more value the work creates. We are transparent about where we enter every engagement, so both sides start with a shared and realistic picture of what is possible.</p>
+        <p>Entering too late compromises the work. If the direction has already been locked, if the scope has been fixed without discovery, or if the agency has already committed to a build — our ability to do this well is significantly reduced. This is worth naming clearly at the start of every engagement.</p>
+
+        <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; margin-bottom: 8px; margin-top: 20px;">What an ideal project team looks like</p>
+        <p style="margin-bottom: 8px;">The question is never whether the agency has a designer or an engineer. We can fill those gaps and we are glad to. What makes a project thrive is having the right people engaged on the agency side: a clearly identified business owner, a sponsor with decision-making authority, and a shared sense of what success looks like. From day one, we look for people on the agency side who can grow into ownership over time. Capability transfer does not happen at handover. It starts at the beginning.</p>
+        <p style="font-size: 14px; line-height: 1.6; color: var(--muted); font-style: italic;"><strong style="font-style: normal; color: var(--ink);">A risk worth naming:</strong> Projects without a clearly identified business owner stall. We have seen this play out — when no one on the agency side has the authority to make decisions or the mandate to drive the work, even the best discovery and prototyping work struggles to land.</p>
+
+        <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; margin-bottom: 8px; margin-top: 20px;">Where we exit</p>
+        <p style="margin-bottom: 8px;">There are two natural exit points: after experimentation, with a validated high-confidence roadmap in the agency's hands; or after build and delivery, before ongoing support. A third path stays embedded through the support phase for projects that call for it.</p>
+        <p>We do not leave teams hanging. Our intention is always to set up the capability for the team to carry on — and that work starts from day one, not at the point of handover.</p>
+      </div>
+
+      <div class="diagram-placeholder">
+        <div class="diagram-label">Diagram</div>
+        <div class="diagram-title">The full project arc</div>
+        <div class="diagram-desc">A horizontal timeline showing all stages in sequence: Qualifying → Discovery (Subphase 1 + Subphase 2) → Building and Delivering → Support and Maintenance. Capability Building runs as a parallel track underneath the full arc. Gives the reader orientation before diving into the detail of each stage.</div>
+      </div>
+
+      <div class="sub">
+        <h3>3b. The stages</h3>
+        <ol class="stage-list">
+          <li>
+            <span class="stage-num">01</span>
+            <div class="stage-content">
+              <div class="stage-name">Qualifying</div>
+              <div class="stage-moves">Assessing the ask, framing the problem, scoping the engagement. Deciding whether the work is relevant, clear enough to take on, and whether we're the right team for it.</div>
+              <div class="stage-detail">
+                <div class="stage-detail-heading">What happens</div>
+                <p>We read the ask, understand enough about the context to have a view on it, and decide whether this is work we should take on. The depth of this stage flexes with the project. Sometimes it's a single conversation. Sometimes it's a few weeks of light sensing before we commit.</p>
+
+                <div class="stage-callouts">
+                  <div class="stage-callout">
+                    <div class="stage-callout-label">Activities</div>
+                    <ul>
+                      <li>Conversations with the partner to understand the ask</li>
+                      <li>Problem reframing sessions</li>
+                      <li>Internal discussions on fit and team shape</li>
+                      <li>Scoping the engagement</li>
+                    </ul>
+                  </div>
+                  <div class="stage-callout">
+                    <div class="stage-callout-label">Outputs</div>
+                    <ul>
+                      <li>Engagement brief</li>
+                      <li>Project plan</li>
+                      <li>One-pager with problem framing and recommendation</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="stage-detail-heading">Outcomes</div>
+                <ul class="stage-detail-list">
+                  <li>The partner walks away with a clearer read of their own problem than when they walked in.</li>
+                  <li>We and the partner share the same picture of the work. What we're doing together, and what we're not.</li>
+                  <li>The team knows its shape. Who's in, what each person holds.</li>
+                  <li>Both sides have a directional sense of effort and timeline, honest about where confidence is still low.</li>
+                  <li>A real decision has been made. We've committed, or we've declined, with reasoning.</li>
+                </ul>
+                <div class="stage-detail-heading">Critical callouts</div>
+                <ul class="stage-detail-list">
+                  <li>The stated ask is almost never the whole problem. Our job here is to hear it without accepting it at face value.</li>
+                  <li>Not taking on a project is a legitimate outcome. If it's not the right work for us, or we're not the right team, saying that clearly is more useful than a polite yes.</li>
+                  <li>Qualifying isn't discovery. We're not trying to solve the problem here. We're trying to understand it well enough to know if we should.</li>
+                  <li>Budget, scope, and timeline conversations at this stage should focus on clarifying and aligning what's needed for Stages 2 and 3. High-confidence sizing for the build typically only emerges at the end of Stage 2 or 3. Naming this up front prevents misplaced expectations later.</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li>
+            <span class="stage-num">02</span>
+            <div class="stage-content">
+              <div class="stage-name">Discovery</div>
+
+              <div class="stage-detail">
+                <p style="margin-bottom: 16px;">Every project begins with a challenge, and an opportunity to get to the real truth of it. We help agencies navigate complex problem spaces and validate the true needs of citizens and end-users, building strategic confidence before any solution is proposed. In government, the ground truth is often hidden beneath layers of interpretation. GTC's position lets us surface it fully and honestly, so that every decision that follows is outcome-focused from the start. What we uncover may point to a new product — and every new product brings with it new processes, new roles, and new ways of operating that need to be understood and designed alongside it.</p>
+
+                <div class="stage-detail-heading">The value of discovery</div>
+
+                <div class="pull-quote">
+                  <p>The speed of building has collapsed. But the cost of building the wrong thing hasn't.</p>
+                </div>
+
+                <div class="diagram-placeholder">
+                  <div class="diagram-label">Diagram</div>
+                  <div class="diagram-title">The value of discovery — from/to</div>
+                  <div class="diagram-desc">Two columns showing the shift discovery enables: Assumption-led → Insight-led; High risk → De-risked; Bloated scope → Strategic scope; Output-focused → Outcome-focused. Clean and readable, in GTC's visual language.</div>
+                </div>
+
+                <ul class="stage-detail-list">
+                  <li><strong>From assumption to insight.</strong> We find out what people actually need — not what we assume they want, or what someone in a meeting thinks is the problem.</li>
+                  <li><strong>De-risk your investment.</strong> Validate before you commit. Discovering the wrong direction early costs far less than building it.</li>
+                  <li><strong>Focus on what matters most.</strong> Rather than trying to solve everything at once, we identify the highest-impact problems to tackle first and work outward from there.</li>
+                  <li><strong>Build something that delivers.</strong> Not just a product that functions — one that genuinely improves the experience for the people who use it and the people who run it.</li>
+                </ul>
+
+                <p style="margin-top: 16px; margin-bottom: 20px;">Technology has changed what discovery can be. Prototyping and testing early is now fast, accessible, and within reach of the same people running research. Discovery is no longer just research leading to insights. It is research and experimentation running together, which is why it has two subphases that must work in tandem.</p>
+
+                <!-- SUBPHASE 1 -->
+                <div class="sub-stage">
+                  <div class="sub-stage-label">Subphase 1</div>
+                  <div class="sub-stage-name">Uncover what is true</div>
+                  <div class="sub-stage-desc" style="font-style: italic; color: var(--muted); font-size: 13px; margin-bottom: 10px;">Frame a problem</div>
+
+                  <p style="margin-bottom: 16px;">We go deep into the problem before any solution is proposed. This is where we build a shared, grounded understanding of the system, the people, and the constraints, so we know exactly what we are tackling before we commit to a direction. From what we uncover, we identify and prioritise the critical use cases with the highest frequency of use, highest impact, and most direct connection to the core problem.</p>
+
+                  <div class="stage-detail-heading">What happens</div>
+                  <p style="margin-bottom: 16px;">We work to build the fullest possible picture of the problem before any solution is proposed. Discovery here can take two forms, and both are worth understanding from the start — so that when they run together, they actively inform each other.</p>
+
+                  <div class="pull-quote">
+                    <p>The ground truth is often very different from what reaches a decision maker.</p>
+                  </div>
+
+                  <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 15px; margin-bottom: 8px;">Experience discovery — led by design</p>
+                  <ul class="stage-detail-list" style="margin-bottom: 16px;">
+                    <li>Align on goals and outcomes with the organisation and agency teams</li>
+                    <li>Analyse the landscape and draw on academic and sector research</li>
+                    <li>Run focus groups, qualitative interviews, field studies, usability testing, and quantitative surveys with citizens and end-users</li>
+                    <li>Synthesise insights, run co-creation workshops, and define user archetypes</li>
+                    <li>Develop a clear value proposition and product strategy, expressed through user journey maps and service blueprints</li>
+                    <li><strong>Map the full operational picture</strong> — the service, the workflows, the roles, and what the before and after of digital looks like for the people running it</li>
+                  </ul>
+
+                  <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 15px; margin-bottom: 8px;"></p>
+
+                  <div class="stage-callouts">
+                    <div class="stage-callout">
+                      <div class="stage-callout-label">Activities</div>
+                      <ul>
+                        <li>Service mapping and research</li>
+                        <li>Stakeholder and user interviews</li>
+                        <li>Policy and regulatory review</li>
+                        <li>Legacy system and technical discovery (runs in parallel with engineering)</li>
+                      </ul>
+                    </div>
+                    <div class="stage-callout">
+                      <div class="stage-callout-label">Artifacts</div>
+                      <ul>
+                        <li>Service map</li>
+                        <li>Research findings</li>
+                        <li>Technical discovery report</li>
+                        <li>Prioritised use case shortlist</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="stage-detail-heading">Outcomes</div>
+                  <ul class="stage-detail-list">
+                    <li>The real problem is understood — not the stated one, but the actual one</li>
+                    <li>Value propositions, business case, user needs, and policy implications are all surfaced</li>
+                    <li>Challenges and constraints are named, including technical ones</li>
+                    <li>A clear, defensible view of which use cases to tackle first — and why</li>
+                    <li>The team has a shared picture of what it is actually working on</li>
+                  </ul>
+
+                  <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 15px; margin-bottom: 8px; margin-top: 20px;">Technical discovery — led by engineering, often in parallel</p>
+                  <ul class="stage-detail-list" style="margin-bottom: 16px;">
+                    <li>Uncover the tech architecture, legacy system constraints, and technical risks</li>
+                    <li>Map data pipelines, APIs, and integration dependencies</li>
+                    <li>Identify what exists, what needs to be built, and what may slow things down</li>
+                  </ul>
+
+                  <div class="stage-detail-heading">Critical callouts</div>
+                  <ul class="stage-detail-list">
+                    <li>Every discovery surfaces trade-offs. In a government context, decisions rarely have clean answers — policy constraints, siloed mandates, competing agency priorities, and resource realities all create tension. Part of the work here is naming those trade-offs honestly so the right people can make informed decisions. This is also where cross-agency complexity becomes visible: we're not just solving for what's within one agency's control, but surfacing what a better, more connected government could look like for the people it serves.</li>
+                    <li>This stage is not about solutions. It's about making sure the problem is real, understood, and worth solving.</li>
+                  </ul>
+                </div>
+
+                <!-- SUBPHASE 2 -->
+                <div class="sub-stage" style="margin-top: 16px;">
+                  <div class="sub-stage-label">Subphase 2</div>
+                  <div class="sub-stage-name">Identify what works</div>
+                  <div class="sub-stage-desc" style="font-style: italic; color: var(--muted); font-size: 13px; margin-bottom: 10px;">Rapid experiment</div>
+
+                  <p style="margin-bottom: 12px;">In the past, we used to do mockups because we were limited by it — to validate user flows, but not with any real data. That is now long past. Now when we do prototypes, we do it to validate a hypothesis in the whole system that we are creating.</p>
+
+                  <div class="pull-quote">
+                    <p>In the past, we used to do mockups because we were limited by it. That is now long past. Now when we do prototypes, we do it to validate a hypothesis in the whole system that we are creating.</p>
+                  </div>
+
+                  <p style="margin-bottom: 16px;">We grow things, we don't build them. Building implies a plan, a spec, a defined output. Growing means planting a seed, nurturing it through iterations, and transplanting to production only when it's ready. Every prototype is expected to fail on the first try — that's the point. Rapid learning beats slow certainty.</p>
+
+                  <div class="stage-detail-heading">Three things that define this subphase</div>
+
+                  <div class="sub-stage" style="margin-bottom: 10px;">
+                    <div class="sub-stage-name" style="font-size: 15px;">Rapid iteration.</div>
+                    <div class="sub-stage-desc" style="margin-bottom: 8px;">Speed is not a nice-to-have — it is the point.</div>
+                    <ul class="stage-detail-list">
+                      <li>Prototypes are not production-ready, and they are not supposed to be</li>
+                      <li>Scalability is not the goal — a developer can rebuild a validated prototype production-ready; our value is the idea and the data, not clean code</li>
+                      <li>We aim to get the first prototype in front of real users within three weeks, then iterate in two-week cycles</li>
+                      <li>The goal is a high-confidence roadmap backed by real data and real user feedback, not a polished first attempt</li>
+                    </ul>
+                  </div>
+
+                  <div class="sub-stage" style="margin-bottom: 10px;">
+                    <div class="sub-stage-name" style="font-size: 15px;">Real validation.</div>
+                    <div class="sub-stage-desc" style="margin-bottom: 8px;">True insight comes from testing with the people who will actually use it.</div>
+                    <ul class="stage-detail-list">
+                      <li>Internal reviews and stakeholder walkthroughs are a start, but they are not validation</li>
+                      <li>Real validation means putting something in front of real users — officers, citizens, or both — in real contexts, and learning from what happens</li>
+                      <li>Every prototype needs a clear hypothesis it is testing</li>
+                      <li>Every prototype needs a clear way to measure whether it worked</li>
+                    </ul>
+                  </div>
+
+                  <div class="sub-stage" style="margin-bottom: 16px;">
+                    <div class="sub-stage-name" style="font-size: 15px;">Functional prototype.</div>
+                    <div class="sub-stage-desc" style="margin-bottom: 8px;">There is a scale of prototype fidelity, and understanding where you are on it matters. Each type has its place — and the goal is always to push toward the right end as the work matures.</div>
+                    <ul class="stage-detail-list">
+                      <li><strong>Static design.</strong> A Figma file or screen layout. Useful for exploring visual direction and early flows, but not testable in any meaningful way.</li>
+                      <li><strong>Interactive mockup.</strong> Browser-based, fully clickable, built with synthetic data. Useful for early alignment and fast to produce — but it cannot replace a real workflow, and the signal it generates is limited.</li>
+                      <li><strong>Functional prototype.</strong> Built with real or synthetic data that mirrors the real schema, testable in a real workflow, and capable of generating signal you can act on. Real users can operate it for a few days and give feedback that actually means something. This is what we are aiming for.</li>
+                    </ul>
+
+                    <div class="diagram-placeholder" style="margin-top: 16px;">
+                      <div class="diagram-label">Diagram</div>
+                      <div class="diagram-title">The prototype spectrum</div>
+                      <div class="diagram-desc">A horizontal scale from left to right: Static design → Interactive mockup → Functional prototype. Each with a short label, a one-line descriptor, and a visual marker showing where signal value increases. An arrow points right labelled "This is where we are aiming."</div>
+                    </div>
+
+                  <div class="sub-stage" style="margin-top: 16px; margin-bottom: 16px;">
+                    <div class="sub-stage-name" style="font-size: 15px;">Prototype the operation.</div>
+                    <div class="sub-stage-desc" style="margin-bottom: 8px;">Digital is only one layer of what we are building. The operations, workflows, and policy integration that sit around it need to be prototyped too — not handed off to others to figure out later.</div>
+                    <ul class="stage-detail-list">
+                      <li>Prototype new operational concepts and workflows alongside the digital product</li>
+                      <li>Collaborate across digital, ops, and policy rather than working in sequence</li>
+                      <li>Avoid the waterfall handoff where digital ships and ops scrambles to catch up</li>
+                    </ul>
+                  </div>
+
+                  <div class="stage-detail-heading">What gets in the way — and how we work through it</div>
+                  <p style="margin-bottom: 12px;">Pushing into functional prototyping is not always straightforward, and that is worth naming honestly. The constraints are real — sensitive data classifications, API access, data pipelines that are not yet in place. We treat these as challenges to actively work through, not reasons to stay at the interactive mockup stage.</p>
+                  <ul class="stage-detail-list" style="margin-bottom: 16px;">
+                    <li><strong>On the team side:</strong> Not every designer needs to build at the functional prototype level — but the team needs to be able to. That is exactly why creative technologists work alongside designers here. The same way an engineering team has front-end, back-end, and QA — not every person does everything, but together the team can.</li>
+                    <li><strong>On the data side:</strong> When real data is not yet accessible, synthetic data that mirrors the real schema is a strong and legitimate starting point. It gets us close enough to test what matters, while we work toward real access in parallel.</li>
+                  </ul>
+
+                  <div class="stage-detail-heading">What happens</div>
+                  <p style="margin-bottom: 12px;">We move from knowing what is true to finding what works. Small teams ship 1-3 rapid prototypes per project — working demos, not wireframes or slide decks — each taking 2-4 weeks. Every round generates real signal from real users, and every round gets us closer to a roadmap we can commit to with confidence.</p>
+                  <p style="margin-bottom: 16px;">What gets handed off at the end of this subphase is more than a prototype. It is working code, key decisions documented, lessons learned, real user data, and a high-confidence roadmap. The dev team takes the validated prototype and rebuilds it to production standard. That handoff model is intentional — our value is the validated idea and the confidence behind it, not production-ready code.</p>
+
+                  <div class="stage-detail-heading">The rapid experimentation cycle</div>
+
+                  <div class="diagram-placeholder">
+                    <div class="diagram-label">Diagram</div>
+                    <div class="diagram-title">The rapid experimentation cycle</div>
+                    <div class="diagram-desc">A circular looping diagram showing the three steps: Hypothesis → Build → Test → back to Hypothesis. Annotated with timing: first prototype within 3 weeks, then 2-week iteration cycles. A dotted line marks the shift point from experimenting to building.</div>
+                  </div>
+
+                  <div class="sub-stage" style="margin-bottom: 8px;">
+                    <div class="sub-stage-name" style="font-size: 15px;">Hypothesis.</div>
+                    <div class="sub-stage-desc">Start with a clear bet. Based on what we know from discovery, what do we believe could work? Frame it specifically enough that it can be tested — not a vague direction, but a concrete proposition. Just because you can build something does not mean you should. The hypothesis is what gives the prototype its purpose.</div>
+                  </div>
+                  <div class="sub-stage" style="margin-bottom: 8px;">
+                    <div class="sub-stage-name" style="font-size: 15px;">Build.</div>
+                    <div class="sub-stage-desc">Turn the hypothesis into something real. A prototype that works with real or synthetic data, in a real workflow, in front of real users. Not a mockup. Not a click-through. Something that generates actual signal. We build to prove, not just to build.</div>
+                  </div>
+                  <div class="sub-stage" style="margin-bottom: 16px;">
+                    <div class="sub-stage-name" style="font-size: 15px;">Test.</div>
+                    <div class="sub-stage-desc">Put it in front of the people who matter — officers, citizens, or both. Observe. Listen. Collect data. Then bring what you learn back to the hypothesis and start again.</div>
+                  </div>
+
+                  <p style="margin-bottom: 16px;">Each cycle sharpens the picture. What was unclear becomes clearer. What was assumed gets confirmed or challenged. Failed prototypes teach as much as successful ones — failure is learning, not a setback. The loop continues until the team reaches a point where the evidence is strong enough to commit — and that shift from experimenting to building is a meaningful moment, worth marking deliberately.</p>
+
+                  <div class="pull-quote">
+                    <p>We build to prove, not just to build.</p>
+                  </div>
+
+                  <div class="stage-callouts">
+                    <div class="stage-callout">
+                      <div class="stage-callout-label">Activities</div>
+                      <ul>
+                        <li>Hypothesis shaping</li>
+                        <li>Shipping 1-3 rapid prototypes per project (2-4 weeks each, max 2 people)</li>
+                        <li>Testing with real users — officers, citizens, or both</li>
+                        <li>Iterative rounds of experiment, learn, refine</li>
+                      </ul>
+                    </div>
+                    <div class="stage-callout">
+                      <div class="stage-callout-label">Artifacts</div>
+                      <ul>
+                        <li>Working prototype code</li>
+                        <li>Key decisions made and lessons learned (including what failed and why)</li>
+                        <li>Real user data and feedback</li>
+                        <li>High-confidence roadmap</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="stage-detail-heading">Outcomes</div>
+                  <ul class="stage-detail-list">
+                    <li>Assumptions are tested against reality, not held as givens</li>
+                    <li>The roadmap is built on confidence, not guesswork</li>
+                    <li>The team knows what works — and what doesn't — before committing to build</li>
+                    <li>Both officer and citizen perspectives have shaped what gets taken forward</li>
+                    <li>The prioritised use cases may expand or shift as experimentation reveals new insight</li>
+                  </ul>
+
+                  <div class="stage-detail-heading">Critical callouts</div>
+                  <ul class="stage-detail-list">
+                    <li>This is a loop, not a step. Expect multiple rounds of hypothesis → build → test → refine before reaching confidence.</li>
+                    <li>Prototypes are built to learn, not to ship. Fidelity increases as confidence grows, not the other way around.</li>
+                    <li>Testing should include both the people who use the service and the people who deliver it.</li>
+                    <li>If a team has no appetite to learn from failure, the prototypes won't do their job.</li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </li>
+          <li>
+            <span class="stage-num">03</span>
+            <div class="stage-content">
+              <div class="stage-name">Building and Delivering</div>
+              <div class="stage-detail">
+                <p style="font-style: italic; font-size: 13px; color: var(--muted); margin-bottom: 12px;">Note: The team hasn't run a full project through this stage yet. What follows draws on collective external experience and will be refined as we learn from our own projects.</p>
+                <p style="margin-bottom: 12px;">Discovery is done and confidence is earned. The team has made a deliberate decision to move from experimenting to building — that shift is worth naming clearly when it happens.</p>
+                <p style="margin-bottom: 12px;">This stage is predominantly engineering-led. Design's role shifts from shaping the problem and running experiments to maintaining quality, supporting the build, and ensuring what gets shipped stays true to what was validated.</p>
+                <p style="margin-bottom: 12px;">Testing and iteration don't stop here — they continue in parallel. The question changes from "does this work?" to "how do we build it well and get it into people's hands?"</p>
+                <p style="margin-bottom: 16px;">Modernisation is iterative by nature — not a single arc, but a series of slices. As one slice is built and delivered, the next one begins. That means another round of discovery, another hypothesis, another experiment before the next build. And with AI accelerating what's possible, these cycles run faster than ever — tighter loops, quicker experiments, shorter paths from insight to something real. The loop runs again and again. This is not a sign that something went wrong. It is exactly how iterative modernisation moves.</p>
+                <div class="stage-detail-heading">What we think happens here</div>
+                <ul class="stage-detail-list" style="margin-bottom: 16px;">
+                  <li>Sprint-based build and delivery cycles, led by engineering</li>
+                  <li>Design working alongside the build — not ahead of it, not behind it</li>
+                  <li>Continuous testing with real users as features ship</li>
+                  <li>Design QA to ensure what gets built matches the intent</li>
+                  <li>Iterative experimentation continuing in parallel — and potentially looping back into discovery as the project tackles the next slice of modernisation</li>
+                  <li>Capability building continues — the agency team grows in confidence through the build</li>
+                </ul>
+                <div class="stage-detail-heading">What gets handed over</div>
+                <ul class="stage-detail-list">
+                  <li>Shipped product increments</li>
+                  <li>Updated roadmap</li>
+                  <li>Documentation and release notes</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li>
+            <span class="stage-num">04</span>
+            <div class="stage-content">
+              <div class="stage-name">Support and Maintenance</div>
+              <div class="stage-detail">
+                <p style="font-style: italic; font-size: 13px; color: var(--muted); margin-bottom: 12px;">Note: Our involvement at this stage is expected to be minimal. This section will be kept brief until we have more direct experience to draw from.</p>
+                <p style="margin-bottom: 16px;">By the time a product reaches support and maintenance, the agency team should be ready to own it. Our role here is to support that transition and close the engagement well — not to run the product for them.</p>
+                <div class="stage-detail-heading">What we think happens here</div>
+                <ul class="stage-detail-list" style="margin-bottom: 16px;">
+                  <li>Light-touch support as the agency team finds their footing</li>
+                  <li>Monitoring live usage and flagging anything that needs attention</li>
+                  <li>A structured retrospective — reflecting on what the full engagement taught us and what we carry into the next project</li>
+                </ul>
+                <div class="stage-detail-heading">What gets handed over</div>
+                <ul class="stage-detail-list">
+                  <li>Handover documentation</li>
+                  <li>Exit summary</li>
+                  <li>Retrospective notes</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li class="stage-parallel">
+            <span class="stage-num">&#8718;</span>
+            <div class="stage-content">
+              <div class="stage-name">Capability Building</div>
+              <div class="stage-moves">A parallel workstream that runs from day one. One of the most lasting contributions GTC can make.</div>
+              <div class="stage-detail">
+                <p style="margin-bottom: 16px;">Capability building is not a handover activity. It is one of the most meaningful things we do. From day one, it runs in parallel with every stage of the project — because a product that works and leaves a team fully equipped to grow it is what real transformation looks like. As part of the Central Modernisation Office's broader modernisation agenda, this is one of the most lasting contributions GTC can make.</p>
+                <p style="margin-bottom: 16px;">Beyond building the team, we want to make sure what we leave behind is set up to thrive. That means the growing team has a clear vision and strategy to rally around, an agreed operating model that sets them up for how they work best, and the right metrics and value realisation frameworks so they can see and demonstrate the impact of what they are running.</p>
+                <p style="margin-bottom: 20px;">There are two exciting dimensions of capability to build: the product team that designs, builds, and iterates on the service, and the operational team that runs and sustains it.</p>
+
+                <div class="diagram-placeholder">
+                  <div class="diagram-label">Diagram</div>
+                  <div class="diagram-title">The capability building arc</div>
+                  <div class="diagram-desc">Capability building shown as a parallel track that starts at day one and runs the full length of the project. Two sub-tracks visible inside: product team and operation team. Mirrors the full project arc diagram but zoomed in on this workstream.</div>
+                </div>
+
+                <div class="stage-detail-heading">Product team</div>
+                <p style="margin-bottom: 12px;">Building the right product team on the agency side is where the long-term value of the work truly takes root — and as partners, it is something we shape together from day one. We work with our partners to identify and grow the design capability they need — not just for the project, but for everything that comes after. There are two paths to building that team, and both are worth exploring early.</p>
+                <p style="margin-bottom: 8px;">When identifying the right people, we look for more than just current skill level. The key criteria we consider:</p>
+                <ul class="stage-detail-list" style="margin-bottom: 16px;">
+                  <li><strong>Mindset fit.</strong> A genuine curiosity about the problem, openness to working in new ways, and a collaborative instinct that makes co-creation possible.</li>
+                  <li><strong>Readiness to evolve.</strong> A willingness to grow with the work — to pick up new methods, embrace new ways of designing, and adapt as technology changes what design can do.</li>
+                  <li><strong>Domain knowledge.</strong> An understanding of the agency's context, systems, and users that is hard to bring in from the outside.</li>
+                  <li><strong>Potential for ownership.</strong> The capacity and ambition to eventually lead the work, not just contribute to it.</li>
+                </ul>
+
+                <div class="sub-stage" style="margin-bottom: 10px;">
+                  <div class="sub-stage-name" style="font-size: 15px;">People on the ground (preferred)</div>
+                  <div class="sub-stage-desc">Where possible, we look for existing agency staff who meet these criteria and have the potential to grow into design, product, or engineering roles. They already carry invaluable domain knowledge and context that is hard to replicate. Spotting them early and bringing them into the work from the start means capability builds naturally and organically alongside the project — and by the time we leave, they are ready.</div>
+                  <div class="sub-stage-desc" style="margin-top: 8px;">The practical considerations are worth getting ahead of early: clearing bandwidth from BAU responsibilities and getting the right approvals for their involvement. The sooner these conversations happen with the agency, the smoother the path.</div>
+                </div>
+
+                <div class="sub-stage" style="margin-bottom: 20px;">
+                  <div class="sub-stage-name" style="font-size: 15px;">Bringing in new people</div>
+                  <div class="sub-stage-desc">When existing staff cannot be redeployed, bringing in fresh talent is a great opportunity to build exactly the capability the project needs. This calls for an early conversation around manpower: does the agency have MMF allocation to hire? If not, what are the options — augmented resources, contractors, or a longer-term GovTech commitment? Getting this clarity early means the agency is ready to move when the time comes.</div>
+                </div>
+
+                <div class="stage-detail-heading">Operation team</div>
+                <p style="margin-bottom: 12px;">A successful product needs more than a great team to build it — it needs a team ready to run it. New operational roles are often part of the picture: people who review, manage, issue, and maintain the system day to day. This is where change management comes in, and it is just as important as the product work itself.</p>
+                <p>Change management sits alongside capability building as its own workstream, covering the operational layer: what new roles are needed, how they get funded and hired, whether contractors or partners need to be brought in, and what the longer-term commitment from GovTech looks like beyond GTC's involvement.</p>
+                <p style="margin-top: 16px; font-family: 'Fraunces', serif; font-style: italic; font-size: 16px; color: var(--accent);">The goal across both dimensions is the same: when we leave, the work continues, the team is confident, and things get better over time.</p>
+
+                <div class="pull-quote" style="margin-top: 32px;">
+                  <p>When we leave, the work continues and gets better.</p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ol>
+        <p style="margin-top: 16px; font-size: 14px; color: var(--muted); font-style: italic; font-family: 'Fraunces', serif;">Discovery is one continuous loop, not two separate phases. Uncovering what is true and identifying what works happen in sequence, but often fold back on each other. Capability Building runs in parallel and can start at any point across the arc.</p>
+      </div>
+
+      <div class="sub">
+        <h3>For each stage, we capture</h3>
+        <ul>
+          <li><strong>What happens.</strong> A short narrative of the stage.</li>
+          <li><strong>Activities and Outputs.</strong> Side-by-side callouts. Activities are examples of the work. Outputs are examples of artefacts.</li>
+          <li><strong>Outcomes.</strong> What changes because of this stage.</li>
+          <li><strong>Critical callouts.</strong> Mindsets, permissions, and constraints worth naming.</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 14px; color: var(--muted); font-style: italic; font-family: 'Fraunces', serif;">Lean core for every stage. Discovery gets deeper treatment given its centrality to the POV.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04 -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2 class="section-title">How we work as a team</h2>
+    </div>
+    <div class="section-body">
+
+      <div style="background: rgba(240, 216, 122, 0.25); border: 1px solid rgba(240, 216, 122, 0.8); border-left: 4px solid var(--highlight); padding: 20px 24px; margin-bottom: 32px; border-radius: 2px;">
+        <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">⚠ To be collaborated with the design team</p>
+        <p style="font-size: 15px; line-height: 1.6;">Everything in this section is a first draft and a starting point — not a final position. The principles, rituals, and ways of working captured here need to be discussed, challenged, and agreed on together as a team before they become ours. Read it, leave comments, and bring your thoughts to the session.</p>
+      </div>
+
+      <p style="margin-bottom: 32px;">This section lives at two levels. The first is the principles we hold as a team — the commitments we make to each other about how we show up. The second is the rituals and cadences that put those principles into practice, at both the project and team level.</p>
+
+      <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin-bottom: 20px;">Principles</p>
+      <p style="margin-bottom: 16px;">We are a high trust, high agency, high independence team. These are not just words — they are the commitments we make to each other about how we show up every day.</p>
+      <ul class="belief-list">
+        <li><strong>High trust.</strong> We trust each other to do the work without needing to check in at every step. We assume good intent, give the benefit of the doubt, and believe that the people on this team are capable of making good calls. Trust is not something we talk about — it is something we demonstrate by how much room we give each other to operate.</li>
+        <li><strong>High agency.</strong> Everyone on this team has a voice and a mandate. We do not wait to be told what to do. We bring our own perspective, make our own calls, and take responsibility for the outcomes. Agency means owning your work — the good and the hard parts.</li>
+        <li><strong>High independence.</strong> We do not believe in daily standups as a default. If a project needs one, it is usually a signal that something needs to be fixed — a misalignment, a blocker, a communication gap. There are moments where a short burst makes sense, when the team is moving fast and needs to stay tightly coordinated. But those are the exception, not the rule.</li>
+        <li><strong>Mandate and space to experiment.</strong> We create the conditions for people to try things, make calls, and sometimes get it wrong. Experimentation only works if failure is genuinely okay. We learn more from a well-documented failure than from a safe, cautious decision that never taught us anything.</li>
+      </ul>
+
+      <div class="pull-quote">
+        <p>We grow things, we don't build them.</p>
+      </div>
+
+      <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin-bottom: 20px; margin-top: 40px;">Rituals and cadences</p>
+
+      <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 15px; color: var(--accent); margin-bottom: 16px;">At the project level</p>
+      <p style="margin-bottom: 16px;">Every project moves through three moments that matter beyond the work itself.</p>
+      <ul class="decisions" style="margin-bottom: 24px;">
+        <li><strong>Pre-flights</strong> are how we start. A proper kickoff — not just a calendar invite, but a shared moment to align on the problem, the team, and how we are going to work together.</li>
+        <li><strong>Mid-flights</strong> are how we stay honest. A check-in midway through the project, retro-style, to surface what is working and what needs to change before it becomes a problem.</li>
+        <li><strong>Post-flights</strong> are how we close. A wrap that captures what we learned — not just about the product, but about how the team worked.</li>
+      </ul>
+
+      <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 15px; color: var(--accent); margin-bottom: 16px;">At the team level</p>
+
+      <div class="sub" style="margin-bottom: 12px;">
+        <h3>Weekly check-in.</h3>
+        <p style="margin-bottom: 12px;">Once a week, the whole team comes together. Not to report status, but to connect — to share, support, and remind each other that we are building something together. Cross-pollination happens here, even in a short window.</p>
+        <ul>
+          <li>Frequency: weekly</li>
+          <li>Length: under 45 minutes</li>
+          <li>Format: open sharing — what is on your mind, blockers, gratitude, small wins</li>
+          <li>Not a project update session</li>
+        </ul>
+      </div>
+
+      <div class="sub" style="margin-bottom: 12px;">
+        <h3>Design critiques.</h3>
+        <p style="margin-bottom: 8px;">Done well, a critique is one of the most generative things a design team can do. The goal is honest reactions that sharpen the work — not directions, not prescriptions. Our approach is inspired by Ed Catmull's movie critique process at Pixar, famously detailed in his book Creativity, Inc.</p>
+        <p style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 10px; font-style: italic;">[Alexa to support]</p>
+        <ul>
+          <li>Three roles: presenter, critics, facilitator</li>
+          <li>Presenter sets context first</li>
+          <li>Critics share reactions and feelings, not solutions — "this makes me feel X" not "change this to Y"</li>
+          <li>Suggestions only when the presenter specifically asks</li>
+          <li>Facilitator keeps the conversation in the right register</li>
+        </ul>
+      </div>
+
+      <div class="sub" style="margin-bottom: 12px;">
+        <h3>Cross-project conversations.</h3>
+        <p style="margin-bottom: 12px;">Every designer working on a project needs a standing space to step outside it. Someone with fresh eyes will always spot what becomes invisible from the inside — assumptions, drift, missed opportunities. This is how we keep each other sharp across the whole team.</p>
+        <ul>
+          <li>Each deployed designer has a regular conversation with someone outside their project</li>
+          <li>Not a formal review — informal, open, perspective-driven</li>
+          <li>Seek out different perspectives over time — the more varied the voices, the richer the feedback</li>
+        </ul>
+      </div>
+
+      <div class="sub" style="margin-bottom: 24px;">
+        <h3>Onboarding.</h3>
+        <p style="margin-bottom: 12px;">A new team member's first two weeks will feel overwhelming. That is not a problem to solve — it is something to prepare them for. Onboarding is a team responsibility, not an HR task.</p>
+        <ul>
+          <li>Before day one, send a welcome message and make sure their first conversation is already in their calendar</li>
+          <li>Give them space to observe and ask questions before jumping into delivery</li>
+          <li>Introduce them broadly — across disciplines and seniority levels, not just their immediate project</li>
+          <li>Give them an anchor project: a small piece of work that lets them apply existing skills while learning the context</li>
+          <li>Around week four, sit down to set goals and start building a growth plan</li>
+          <li>Assign an onboarding buddy and give them the bandwidth to actually do it</li>
+          <li>Collect feedback after each onboarding and improve the next one</li>
+        </ul>
+      </div>
+
+      <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin-bottom: 20px; margin-top: 40px;">What this asks of us</p>
+      <p style="margin-bottom: 16px;">Working this way is not the easiest path. It asks something real from everyone on the team. And working in government adds another layer — the stakes are higher, the constraints are real, and the people on the other side of what we build are not users in an abstract sense. They are the public. That context deserves to be felt, not just acknowledged.</p>
+      <ul class="belief-list">
+        <li><strong>Show up with honesty, not just presence.</strong> Come to rituals prepared and genuinely engaged. Give feedback that is honest, not safe. Receive feedback without defensiveness. Share what is hard, not just what is going well.</li>
+        <li><strong>Care about work beyond your own project.</strong> Notice when a teammate could benefit from a fresh perspective and offer it without being asked. Bring your full thinking to cross-project conversations, even when you are deep in your own work.</li>
+        <li><strong>Be comfortable with uncertainty.</strong> High agency means making calls without a full picture. High independence means knowing when to keep going and when to pull someone in. Neither is always obvious — and that is okay.</li>
+        <li><strong>Stay open to evolving — experiment, and document what you learn.</strong> We learn by doing, not by waiting until we are certain. Try new tools, new processes, new ways of working — and when something works or doesn't, say so. A well-documented experiment teaches the whole team, not just the person who ran it. The way we work is not fixed, and that is a feature, not a flaw.</li>
+        <li><strong>Build others up as you go.</strong> Working with agency partners is not just about delivering — it is about leaving people more capable than we found them. That takes genuine empathy, patience, and a willingness to mentor. The best outcomes happen when our partners grow with the work, not just receive it. Make space for that, even when the project is moving fast.</li>
+        <li><strong>Navigate the system without losing sight of why.</strong> Government moves differently from the private sector. There are layers of approval, competing priorities, and processes that can slow things down. Our job is to work within that with patience and respect — while staying anchored to what we are here to do: build services that genuinely improve people's lives.</li>
+        <li><strong>Welcome the blurring lines.</strong> The lines between design, product, and engineering are shifting — and that is more opportunity than threat. What each role owns is less fixed than it has ever been. Stay curious, stay open, and lean into collaboration across those lines rather than retreating behind them. The teams that figure this out together will do the most interesting work.</li>
+        <li><strong>Hold the bigger picture.</strong> We are not just shipping products. We are building a practice, shaping a culture, and demonstrating what design in government can look like at its best. That is worth showing up fully for.</li>
+      </ul>
+
+      <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin-bottom: 20px; margin-top: 40px;">What this looks like in practice — May 2026</p>
+      <p style="margin-bottom: 16px;">This is a snapshot of how we are working right now. It will change. That is the point.</p>
+      <p style="margin-bottom: 16px;">We are a team that is actively figuring out what design looks like in an AI-enabled environment. We are not waiting for the answer to arrive — we are building it as we go. What follows is grounded in what we are actually doing today, not what we aspire to do eventually.</p>
+      <ul class="decisions" style="margin-bottom: 24px;">
+        <li><strong>Designing and thinking with AI.</strong> We use Claude as a thinking partner — for drafting, synthesising, sense-making, and pushing ideas further. It sits alongside us in the work, not apart from it. <em>[Mark — add a concrete example of how the team is using Claude on a project]</em></li>
+        <li><strong>Prototyping with real tools.</strong> We are moving beyond click-through mockups. Designers on this team are experimenting with tools like Cursor to build functional prototypes that work with real data and real workflows — not simulations. <em>[Mark — add a concrete example of a prototype built this way]</em></li>
+        <li><strong>Visualising and collaborating in Figma.</strong> Figma remains our shared canvas for design work, service mapping, and collaborative thinking. We use it across disciplines, not just within the design team. <em>[Mark — add a concrete example of how Figma is being used beyond traditional design]</em></li>
+        <li><strong>Capturing and synthesising with AI meeting tools.</strong> We use tools like Granola to capture and distil conversations — so that what we discuss in meetings actually makes it into our shared knowledge, not just someone's private notes.</li>
+        <li><strong>Working in the open.</strong> Documentation, decisions, and drafts live in shared spaces — Notion, Craft — so that the whole team can see, react, and build on what is being created. <em>[Mark — add a concrete example of a decision or draft that lived in the open and improved because of it]</em></li>
+        <li><strong>Understanding classification and sensitivity.</strong> Before bringing any AI tool into the work, designers need to understand the classification level of the project and the data they are working with. Government data comes with real sensitivity requirements — Restricted, Confidential, Official — and not all tools are cleared for all levels. This is not a one-time check at the start of a project. It is an ongoing awareness as the work evolves, new data surfaces, and new tools are considered. When in doubt, clarify before proceeding. <em>[Mark — add a concrete example of how the team navigates classification when prototyping with real data]</em></li>
+      </ul>
+      <p style="margin-bottom: 32px;">This list will look different in six months. Some of these tools will have evolved. New ones will have appeared. What will not change is the expectation that we are always paying attention, always willing to try something new, and always asking whether there is a better way.</p>
+
+      <p style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin-bottom: 20px; margin-top: 40px;">Open questions we are holding</p>
+      <p style="margin-bottom: 16px; font-style: italic; color: var(--muted); font-family: 'Fraunces', serif;">Not trying to answer these here. Acknowledging them, capturing where we stand, and leaving room to expand.</p>
+      <ul class="decisions">
+        <li>The changing role of design as AI reshapes product work</li>
+        <li>What a designer does vs. a product manager vs. an engineer, and where the lines now sit</li>
+        <li>Which roles inside a design team are critical, and which are shifting</li>
+        <li>Where design should spend more time, and where it should spend less</li>
+        <li>How the shape of product teams is changing, and what that means for us</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SECTION 05 -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2 class="section-title">Closing</h2>
+    </div>
+    <div class="section-body">
+      <p style="margin-bottom: 20px;">Short, conviction-heavy. What this team becomes if it lives these beliefs.</p>
+
+      <div class="decisions-label">Decisions made</div>
+      <ul class="decisions">
+        <li><strong>Don't end on support or team rituals.</strong> Would land flat for a doc meant to inspire.</li>
+        <li><strong>Points forward.</strong> Half a page of conviction, giving readers something to carry out.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="overall">
+    <h2>Overall decisions</h2>
+    <ul class="decisions">
+      <li><strong>Primary reader.</strong> The design team itself. This is an alignment exercise first.</li>
+      <li><strong>Secondary readers.</strong> Others in GovTech who want to understand how the team works. A separate "pitch" version may exist later for people engaging with us.</li>
+      <li><strong>Read-through, not reference.</strong> No templates, no pick-and-use guidelines. Meant to be read cover-to-cover.</li>
+      <li><strong>Target feeling.</strong> Inspired and aligned by the end.</li>
+    </ul>
+  </div>
+
+  <section class="parking">
+    <div class="parking-header">
+      <h2>Parking lot</h2>
+      <span class="parking-tag">Notes &amp; ideas</span>
+    </div>
+    <p class="parking-note">A place to drop thoughts, framings, and open questions as they come up. Triage later.</p>
+
+    <div class="note">
+      <div class="note-meta">Framing note, what this playbook is</div>
+      This isn't a playbook where you come to learn how to design. It's where we agree on how we're going to use all our design skills to get the right outcome. Not a place to learn. A place to align on outcomes, how we work, the type of projects we do, our point of view, our goal, and our vision.
+    </div>
+
+    <div class="note">
+      <div class="note-meta">Call-out for the stages section</div>
+      The stages we've laid out are a simplified version of what a project can look like. In reality, projects rarely move in a clean line. You may get to build and find yourself going back to scoping, discovery, or hypothesis shaping. You may move through framing, scoping, discovery, and shaping, only to return to framing because what you've learned means the direction has to change. This is normal. The stages are a shared model to anchor our thinking, not an idealized sequence every project must follow. Worth calling this out explicitly in the stages section so no one reads it and dismisses it as too clean for reality.
+    </div>
+
+    <div class="note">
+      <div class="note-meta">Open question, go-to-market</div>
+      Where does go-to-market strategy and execution sit in the stages? Does it live inside building and delivering, or is it a parallel thread like capability building? Needs thinking.
+    </div>
+
+    <div class="note">
+      <div class="note-meta">Open question, stages of modernization</div>
+      The stages we've described are for a project. We also need to frame stages of modernization at the program level, and how those are tracked separately from project stages. Could live in the modernization playbook or be introduced here with a pointer out.
+    </div>
+  </section>
+
+  <footer>
+    <span>Design Playbook / Outline v0.5</span>
+    <span>Working draft</span>
+  </footer>
+
+</div>
+</body>
+</html>
