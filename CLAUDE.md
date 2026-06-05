@@ -4,17 +4,25 @@ A polished, awwwards-grade **static multi-page website** for the GovTech Consult
 Design Playbook. The **cover (`index.html`) is built**: the above-the-fold cover, the pinned scroll
 transition where a colour gradient bleeds down from the `PLAYBOOK` lettering, a dedicated
 pinned beat where the **pinwheel rises in and aligns to the text**, and the intro
-"What this is" section. The intro ends in an **Explore** button (magnetic) that opens a full-screen
-**bookshelf Menu overlay**. The Menu's books now link to **interior chapter pages** — three are
-built (`why-we-exist.html`, `our-point-of-view.html`, `stages-of-a-project.html`); they all share a
-reusable page system (`css/chapter.css` + `js/chapter.js`). See "The chapter pages" below.
+"What this is" section. The intro ends in an **Explore** button (magnetic) that opens the **Menu**.
+The Menu is now a **right‑side drawer overlay** (a floating chalk card of chapter rows that swipes in
+and whose rows fall away on close) — it replaced the old full‑screen bookshelf. Its rows link to the
+**interior chapter pages** — three are built (`why-we-exist.html`, `our-point-of-view.html`,
+`stages-of-a-project.html`); they all share a reusable page system (`css/chapter.css` +
+`js/chapter.js`). See "The Menu (drawer overlay)" and "The chapter pages" below. (The old bookshelf
+`.book` system is **kept** — `index.html`'s in‑flow landing shelf still uses it.)
 
 ## Tech stack
 - **Plain HTML / CSS / vanilla JS** (ES modules). No framework, no build step.
 - **GSAP + ScrollTrigger + ScrollSmoother** — own almost all motion: page smooth-scroll
-  (`#smooth-wrapper > #smooth-content`, subtle `smooth:1`), the two pinned/scrubbed scroll scenes,
-  the scroll fades, the pinwheel rise/align, the continuous "wind" spin, the Menu (books fall
-  in / knock / raise), and the Explore button's magnetic pull. **CustomEase + CustomWiggle**
+  (`#smooth-wrapper > #smooth-content`, subtle `smooth:1`) **on chapter pages + the reader only —
+  the LANDING page (`index.html`, detected by `#hero`) opts OUT of ScrollSmoother for native, 1:1,
+  delay‑free scroll** (its hero/pinwheel pins fall back to native pinning); the pinned/scrubbed scroll
+  scenes, the scroll fades, the pinwheel rise/align/**scroll‑up to the after‑scroll header slot**, the
+  continuous "wind" spin, the **landing after‑scroll reveal** (header line‑clip wipe + body fade‑up +
+  top‑left logo), the Menu drawer (swipe‑in / interruptible / rows‑fall‑away close + hamburger→X morph),
+  the index landing shelf (books fall in / knock / raise), the **one‑direction cloud drift**, and the
+  Explore button's magnetic pull. **CustomEase + CustomWiggle**
   (now-free GSAP plugins) are vendored + registered but **currently unused** (the idle `wiggle()`
   was removed — the button is static at rest); kept for a possible hover wiggle.
 - **motion.dev (Motion One)** — used for **one** entrance only (`.titleblock__media` load-in).
@@ -31,65 +39,99 @@ Verify headlessly via **CDP** (Node 24 has global `fetch`+`WebSocket`) — see t
 debug a stale cached `chapter.js`/`chapter.css`.
 
 ## File map
-- `index.html` — two `<section>`s: `#hero` (Cover 1 → reveal stage) and `#intro` (Cover 3
-  "What this is"), plus the `#menu` bookshelf overlay (sibling of `<main>`, `hidden` by default).
-  The pinwheel that animates between the sections is **not** in the markup — JS injects a fixed
-  traveler (see below). The in-flow `#introGraphic img` stays as a hidden spacer + accessible
-  element. The intro ends with `.intro__cta` → a **magnetic button component** (`.mag-zone--explore`
-  > `#exploreBtn`). `#menu` holds the eyebrow + `Opening_Title.svg` lockup, the back button (same
-  component, `.mag-zone--back` > `#menuClose`), and `#menuShelf` → decorative `.shelf__spines` + four `.book` cards.
-  The books are now **interactive buttons that navigate** (`data-href`: 1→`why-we-exist.html`,
-  2→`our-point-of-view.html`, 3→`stages-of-a-project.html`; book 4 stays `.book--soon` "coming soon").
-  The Explore CTA and every rail hamburger carry **`data-menu-open`** (any such element opens `#menu`).
-  This same `#menu` block is **duplicated verbatim into every page** (no build step / no includes).
+- `index.html` — ONE `<section>` `#hero` (no `#intro`/`#introGraphic` anymore — home‑v2). It holds:
+  the `.clouds`, the cover `.eyebrow--top` + centred `.lockup-row` (`#pinwheelSlot` + `<h1 class="lockup">`
+  text) + `#arrow`; the **after‑scroll reveal** block `.home-logo` (top‑left `playbook_logo.svg`) +
+  `.intro-reveal` (`#pinwheelSlotScrolled` + `<h2 class="intro__head">` two clip‑wrapped `.line>span`s +
+  `.intro__body` two `<p>`s); and the in‑flow **landing shelf** (`#homeShelf` / `.home-shelf` →
+  `.shelf__spines` + four `.book` cards). The pinwheel is **not** in the markup — JS injects a fixed
+  traveler that rises on load + aligns to `#pinwheelSlot`, then on scroll glides UP to
+  `#pinwheelSlotScrolled` (see "after‑scroll intro reveal"). **`index.html` has NO `#menu` overlay**
+  and **NO topbar/rail**. Books navigate via `data-href` to `playbook.html#chN` (1→#ch1, 2→#ch2, 3→#ch3;
+  book 4 `.book--soon` "coming soon"). This is the **only** place the bookshelf `.book` system is used.
 - **Interior chapter pages** (`why-we-exist.html`, `our-point-of-view.html`, `stages-of-a-project.html`)
-  — one shared skeleton: fixed `.rail` (outside `#smooth-wrapper`) + `#smooth-wrapper > main.page`
-  (`.page-hero` cover + `.page-body` with `.toc` and `.copy`) + the duplicated `#menu` + the vendor
-  scripts and **`js/chapter.js`**. Per‑chapter differences are only: the `<body>` theme vars, rail
-  label, hero title lines, hero `<img>`, TOC rows, and copy. Copy is transcribed from
+  — one shared skeleton: a fixed `.topbar` (logo → home, hamburger `data-menu-open` → Menu) + fixed
+  `.rail` (outside `#smooth-wrapper`) + `#smooth-wrapper > main.page` (`.page-hero` cover + `.page-body`
+  with `.toc` and `.copy`) + the duplicated **`#menu` drawer** + the vendor scripts and
+  **`js/chapter.js`**. Per‑chapter differences are only: the `<body>` theme vars, rail label, hero
+  title `<span>`s, hero `<img>` src, TOC rows, and copy. Copy is transcribed from
   `playbook-content/playbook-outline__5_.html` (the source content file — reference, not served).
+  The `#menu` drawer block is **duplicated verbatim** into every page that has one (the 3 chapter
+  pages + `playbook.html`); per‑page the only difference is each row's `data-href` (standalone →
+  sibling `.html`; reader → in‑page `#chN`). Opened by **any `[data-menu-open]`** (topbar hamburger).
 - **`playbook.html`** — the **continuous reader**: the canonical chapter experience. All three
   chapters live in ONE document (each wrapped in `.section.chapter-panel > .chapter-panel__scale`,
   ids `#ch1/#ch2/#ch3`, theme vars + `data-rail`/`data-rail-fg` on the panel) so scrolling flows
-  seamlessly chapter→chapter. **Every menu now points here** (`index.html` books → `playbook.html#chN`
-  full nav; the reader's own books → in‑page `#chN`). The standalone chapter pages are kept as a
-  fallback but are no longer linked. See "The continuous reader" below.
+  seamlessly chapter→chapter. **Every menu now points here** (`index.html` landing shelf →
+  `playbook.html#chN` full nav; the reader's own `#menu` drawer rows → in‑page `#chN`). The standalone
+  chapter pages are kept as a fallback but are no longer linked. See "The continuous reader" below.
 - `css/playbook.css` — reader‑only layer (loaded after `chapter.css`): `.chapter-panel` (**black**
   backdrop — only seen during the transition) + `.chapter-panel__scale` (the scaled/faded layer;
   `border-radius:16px 16px 0 0` + `overflow:hidden` for the rounded top corners; `transform-origin:50%
   calc(100% − 10vh)` near the bottom so the shrinking card stays anchored where the next chapter meets
   it and the scale reveals black down the sides).
 - `css/chapter.css` — **shared** stylesheet for all chapter pages (loaded after `styles.css`): the
-  rail, hero, the pinned scroll‑synced TOC (+ accordion sub‑rows), and the copy type system
-  (`.copy__heading` / `.section-head` / `.subsection-head` / `.copy p` / lists / `.figure-note` /
-  `.source-note` / `.pullquote`). Themed per chapter via CSS vars (see "The chapter pages").
+  topbar, rail, hero (graphic sized `min(700px,70vw)`; title hugs the bottom‑left), the pinned
+  scroll‑synced TOC (+ accordion sub‑rows), the copy type system (`.copy__heading` / `.section-head` /
+  `.subsection-head` / `.copy p` / lists / `.figure-note` / `.figure` (drawn diagrams) /
+  `.section-divider` / `.source-note` / `.pullquote`). Themed per chapter via CSS vars (see "The
+  chapter pages").
 - `css/styles.css` — tokens (`:root`), `@font-face`, the type system, layout, `.pinwheel`
-  traveler styles, the magnetic button component, the Menu/shelf/`.book` system (**fixed px** per
-  Figma — 188px books, 90px gaps), and motion base states (`.js [data-reveal]` hidden, `.js.motion` spacer hide).
-- `js/main.js` — eight functions, all booted at the bottom (`smoothScroll()` first):
+  traveler styles, the **after‑scroll reveal** (`.home-logo` top‑left mark; `.intro-reveal` — the
+  centred pinwheel‑slot + header + body column, positioned in the band `[top:0 → bottom:340px]`
+  i.e. above the 340px shelf, `justify-content:center` so the empty space above == below; `vh`‑aware
+  `clamp`s on `.pinwheel-slot--scrolled` / `.intro__head` / `.intro__body` so it scales with viewport
+  height; `.intro__head .line{overflow:hidden;padding-block:.2em}` clip box for the line‑wipe), the
+  magnetic button component, the **Menu drawer** (`.menu__scrim` / `.menu__drawer` card + `.menu__row`
+  chapter rows), the **bookshelf `.book`/shelf/spine system** (**fixed px** per Figma — 188px books,
+  90px gaps — now used only by `index.html`'s landing shelf), and motion base states (FOUC‑hide of the
+  reveal under `.js`, shown statically under reduced motion).
+- `js/main.js` — booted at the bottom (`smoothScroll()` first). NB the home‑v2 refactor renamed the
+  hero scenes; the live functions are:
   - `smoothScroll()` — creates the GSAP **ScrollSmoother** on `#smooth-wrapper`/`#smooth-content`
-    (`smooth:1`, `smoothTouch:0`); skipped under reduced motion. The **menu does not touch the
-    smoother** — while open it hard-locks page scroll via `documentElement` overflow instead (see gotcha).
-  - `heroIntro()` — Motion One load-in for `.titleblock__media`; GSAP `from` load-in for the
-    eyebrow / subtitle / arrow (captured in `heroEntrance` so the scroll scene can kill them).
+    (`smooth:1`, `smoothTouch:0`); skipped under reduced motion **and on the LANDING page** (`#hero`
+    present) so `index.html` scrolls natively (1:1, no catch‑up lag); chapter/reader pages keep it. The
+    **menu does not touch the smoother** — while open it hard-locks page scroll via `documentElement`
+    overflow instead (see gotcha).
   - `arrowBob()` — infinite GSAP `y` bob on the arrow (independent of its opacity).
-  - `scrollScene()` — GSAP pin/scrub on `#hero` (title rises, streaks grow, extras fade out).
-  - `introReveal()` — reduced-motion-only fallback that shows the intro statically.
-  - `pinwheelScene()` — pins `#intro`; rises the pinwheel in, holds, then a timed transition
-    aligns it to the slot + reveals the text. Plus the continuous "wind" spin.
-  - `menuScene()` — open/close the `#menu` overlay (`hidden` + `<main>` `inert` + body scroll lock).
-    Opens on **any `[data-menu-open]`** (the Explore CTA *and* a chapter page's rail hamburger), not
-    just `#exploreBtn`. On open the four books **drop & settle** (`back.out`, staggered L→R); cursor
-    over `#menuShelf` **sways** every book; interactive books **raise** + turn orange + cross‑fade to
-    their `*_hover.svg` icon via `.is-hover` (now books **1, 2 & 3**). An interactive book with
-    **`data-href` navigates** on click (wired before the reduced‑motion bail so links always work).
-    `Esc` closes. **The index‑only scenes (`heroIntro`/`scrollScene`/`arrowBob`/`pinwheelScene`/
-    `introReveal`) early‑return when their elements are absent**, so loading `main.js` on a chapter
-    page is a safe no‑op for them; `smoothScroll()` + `magneticButtons()` run on every page.
+  - `cloudDrift()` — **one‑direction** sky drift: every `.cloud` flows LEFT→RIGHT at its own (widely
+    staggered, index‑spread) speed, wrapping seamlessly via a `gsap.utils.wrap` modifier; opacity is
+    position‑driven so each **fades out as it exits right / fades in entering left** (× a staggered
+    `--enter` load‑in factor raised by `loadTl`, so the two opacity owners never fight); seeded at
+    spread, desynced start positions; gentle scale "breathe". Rebuilt on resize. No‑op under reduced motion.
+  - `heroScene()` — the `index.html` hero scroll master on `#hero`/`#lockupRow`. ONE paused, reversible
+    timeline played on first scroll‑down / reversed on scroll‑up: cover (`#arrow` / `.eyebrow--top` /
+    `.lockup`) fades out, the pinwheel glides UP (`pinwheelProx.scrolled`) to the header slot, the
+    top‑left `.home-logo` fades in, the **body** copy fades up, and the landing books/spines rise. The
+    **header line‑clip wipe lives on its OWN `titleTl`** (decoupled) so its EXIT runs faster
+    (`timeScale 2.2`) than its 0.8s entrance while everything else reverses at normal speed. Hero‑only
+    (early‑returns on chapter pages); under reduced motion the after‑scroll state is shown statically.
+  - `pinwheelScene()` — builds the fixed pinwheel traveler; `place()` (per‑frame) blends its position +
+    size through `prox.{rise,align,scrolled}`: rise (below‑fold→centre) → align (centre→`#pinwheelSlot`
+    lockup, both timed by `loadTl`) → **scrolled** (lockup slot → `#pinwheelSlotScrolled`, ~120px,
+    driven on scroll by `heroScene` via the shared module `pinwheelProx`). Plus the continuous "wind" spin.
+  - `homeBooks()` — parks `#homeShelf`'s books/spines (`hbBooks`/`hbSpines`, read by `heroScene`) and
+    calls `wireBookKnockAndHover()` (cursor‑knock + hover‑raise/recolour). **The hover raise uses
+    `yPercent` (NOT `y`)** so it can't overwrite the scroll master's `y` tween — books always fall away
+    on scroll‑up even if the cursor grazes a book mid‑transition (separate transform channels).
+  - `menuScene()` — open/close the **`#menu` drawer** (`hidden` + `<main>` `inert` + body/`root`
+    scroll lock). Toggles on **any `[data-menu-open]`** (the Explore CTA *and* a chapter page's topbar
+    hamburger). Built on **one interruptible GSAP timeline** (enter → `addPause()` → exit), ported
+    from the GSAP "interruptible single timeline" demo: ENTER fades the scrim + slides the drawer in
+    from the right (`back.out`) + staggers the rows in + morphs the topbar hamburger to an **X**;
+    closing **mid‑enter reverses** (quick `timeScale(1.4)`), closing **when fully open plays forward**
+    into a distinct EXIT where the chapter **rows fall away** (random rotation, staggered from the
+    last) while the card bg (`--card-bg-o`) + scrim fade and the X morphs back. A row's **`data-href`
+    navigates** on click — in‑page `#chN` does `smoother.scrollTo` before the close, any other href is
+    a full load (wired before the reduced‑motion bail so links always work). `Esc` / scrim‑click
+    (`[data-menu-close]`) close. **The index‑only scenes (`heroScene`/`pinwheelScene`/`homeBooks`/
+    `cloudDrift`/`arrowBob`) early‑return when their elements are absent**, so loading `main.js` on a
+    chapter page is a safe no‑op for them; `smoothScroll()`, `menuScene()` + `magneticButtons()` run
+    on every page.
   - `magneticButtons()` — wires every `.mag-zone` (the magnetic button component). Static at rest;
     on hover the pill (`.mag-btn`, strength 0.4) and its `.label` (0.24) parallax toward the cursor,
-    both `overwrite:true`, returning with `elastic.out` on leave. Drives both the Explore CTA and
-    the Menu back button.
+    both `overwrite:true`, returning with `elastic.out` on leave. Drives the Explore CTA (`index.html`).
+    (The Menu's old magnetic `--back` button is gone — the drawer closes via the topbar X / scrim / Esc.)
 - `js/chapter.js` — **shared** ES module for chapter pages (loaded after `main.js`; reuses the GSAP
   plugins + ScrollSmoother it created). **Scope‑aware:** the four per‑chapter functions each take a
   `root` — on a standalone page `initChapter(document)`; on the reader each runs once **per
@@ -103,17 +145,26 @@ debug a stale cached `chapter.js`/`chapter.css`.
   pins at `start "bottom bottom"`, `pinSpacing:false`, `pinType:"transform"`, scrub; the inner
   `.chapter-panel__scale` `fromTo` scale 1→0.7 + opacity 1→0 while the next chapter scrolls up over
   it); `railSync()` — the fixed rail's label + (dark‑hero) `--rail-fg` follow the panel at viewport
-  centre; `handleDeepLink()` — on load, jump (instant) to the `#chN` in the URL hash so the menu
-  deep‑links land accurately after pin spacing is finalised. (`menuScene` in `main.js` routes a book
-  whose `data-href` starts with `#` through `smoother.scrollTo` **on click, before the close fade** —
-  no flash of the prior chapter — instead of a full nav.)
-- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `arrow.svg` (57×45), `Align_Graphic.svg` (cover pinwheel),
-  **`1_Graphic.svg`** (549×554 four‑petal flower w/ grainy‑gradient donut — hero of ch1 & ch3; **note: its
+  centre; `railReveal()` — **clips** the rail to the chalk band so the coloured heroes occlude it (the
+  rail leaves with its chapter on each chapter→chapter transition — see "The left rail"); and
+  `handleDeepLink()` — on load, jump (instant) to the `#chN` in the URL hash so the menu deep‑links
+  land accurately after pin spacing is finalised. (`menuScene` in `main.js` routes a drawer row whose
+  `data-href` starts with `#` through `smoother.scrollTo` **on click, before the close** — no flash of
+  the prior chapter — instead of a full nav.)
+- `assets/` — `Opening_Title.svg` (606×230 navy lockup), `playbook_logo.svg` (topbar logo),
+  `arrow.svg` (57×45), `Align_Graphic.svg` (cover pinwheel),
+  **`1_Graphic.svg`** (549×554 four‑petal flower w/ grainy‑gradient donut — hero of ch1; **note: its
   internal `clipPath` crops the petals to a 549×554 box — a known clipping issue**), **`2_Graphic.svg`**
-  (230×229 — ch2 hero), `title_streaks_2.png` (gradient "PLAYBOOK"; `Title_Streaks.png` older, unused),
-  `favicon.png`, `menu_1.svg`/`menu_1_hover.svg` (mono→colour flower) / `menu_2.svg`/`menu_2_hover.svg`
-  (leaf, mono→colour) — the 100×100 book icons, **`pullmark.svg`** (15² quote mark),
-  `book_element_{1..5}.svg` (gray shelf‑spine clusters, 294px tall), `fonts/`.
+  (230×229 — ch2 hero), **`3_Graphic.svg`** (600×600 — ch3 hero), `4_Graphic.svg`, `title_streaks_2.png`
+  (gradient "PLAYBOOK"; `Title_Streaks.png` older, unused), `favicon.png`,
+  `menu_{1..4}.svg`/`menu_{1..4}_hover.svg` (the mono→colour icons — used by both the drawer rows and
+  the index landing books), **`pullmark.svg`** (15² quote mark),
+  `book_element_{1..5}.svg` (gray shelf‑spine clusters, 294px tall — index shelf only), and the new
+  **chapter graphics** (filenames have spaces + en‑dashes → referenced URL‑encoded):
+  **`01 Divider.svg` / `02 Divider.svg` / `03 Divider.svg`** (per‑chapter section dividers) and the C2/C3
+  **diagrams** — `02 Diagram 1 – Two failure nodes.svg` (C2), `03 Diagram 1 – Full Project Arc.svg`,
+  `03 Diagram 2 – Discovery.svg`, `03 Diagram 3 – The prototype spectrum.svg`,
+  `03 Diagram 4 – The rapid experimentation cycle.svg` (C3). Plus `fonts/`.
 - `playbook-content/playbook-outline__5_.html` — the full playbook copy (source for chapter text; not served).
 - `vendor/` — `gsap.min.js`, `ScrollTrigger.min.js`, `ScrollSmoother.min.js`, `motion.esm.js`, `CustomEase.min.js`, `CustomWiggle.min.js`.
 - `.figma_ref/` — Figma reference screenshots for visual diffing (not shipped/served).
@@ -124,6 +175,8 @@ Figma file `DGg9Fqa2owVvSHvOvHBaTA` ("GTC Playbook Design (Copy)"). Key nodes:
 - `2:112` Desktop – Cover 1 (1440×1024) · `2:13723` Desktop – Cover 3 (1440×1428)
 - `2:18242` scroll-state title (letters + gradient streaks, 599×710) → source of `Title_Streaks.png`
 - `2008:147` Explore button · `2:22779` Menu (bookshelf, 1440×1024) · `2:22921` Menu hover (book 1 → orange)
+  — **note:** the bookshelf menu was superseded by the right‑side drawer (these nodes now match only
+  `index.html`'s landing shelf, not the live Menu).
 
 ## Design tokens
 | Token | Value |
@@ -166,7 +219,7 @@ Figma `letterSpacing` tokens are **percentages of font-size**.
 ## Scroll choreography (top → bottom)
 The page is two pinned scenes back-to-back, then the intro flows normally.
 
-1. **`#hero` pin** (`scrollScene`, `start "top top"`, `end +=1.4·vh`, `scrub: 0.6`):
+1. **`#hero` pin** (`heroScene` — formerly `scrollScene`; `start "top top"`, `end +=1.4·vh`, `scrub: 0.6`):
    - eyebrow / subtitle / arrow **fade + slide out** (`autoAlpha → 0`),
    - the title block **rises** from centre to docked-near-top (`titleDeltaY()` ≈ 8.3% of frame),
    - the gradient **streaks grow** top→bottom via `--streak-hide` 100%→0%.
@@ -218,67 +271,86 @@ Lives in `pinwheelScene()`. The element is a **JS-injected fixed traveler** appe
   - `CENTER_Y` (0.5) — resting height while centred.
   - transition `duration` (0.8s) — the align glide speed.
 
+> **Home‑v2 note:** on `index.html` the pinwheel now rises + aligns to `#pinwheelSlot` on **load**
+> (`loadTl`), and on **scroll‑down** travels UP + shrinks to `#pinwheelSlotScrolled` via
+> `pinwheelProx.scrolled` (driven by `heroScene`'s master) — see the next section. The legacy
+> `#intro` pin / `ALIGN_AT` / `transition` machinery above describes the pre‑home‑v2 cover.
+
+## The after‑scroll intro reveal (`index.html`)
+The landing's scroll‑down state is the Figma "Landing_After Scroll" (node `2043:1638`): a top‑left
+`playbook_logo.svg`, a centred **pinwheel (≈120px) → header "A place to align, not a place to learn."
+→ body copy** column, and the 4‑book shelf at the bottom. It replaces the cover lockup, which fades out.
+- **Choreography** (one reversible `heroScene` master, played on first scroll‑down, reversed on scroll‑up):
+  cover (`#arrow`/`.eyebrow--top`/`.lockup`) fades out → pinwheel glides up to the header slot + shrinks
+  (`pinwheelProx.scrolled` 0→1) → `.home-logo` fades in → header **line‑clip wipe** → `.intro__body`
+  paragraphs fade‑up → books rise. Scroll‑up reverses everything at normal speed **except** the title,
+  which exits faster (its own `titleTl`, `timeScale 2.2`).
+- **Header line‑clip:** each line is a `.line{overflow:hidden;padding-block:.2em}` wrapping a `<span>`;
+  the wipe animates the span's **px `y`** (set to the measured line height) → 0. Use px `y`, NOT
+  `yPercent` — GSAP's percent‑unit transform cache leaves a stale inline px value that won't re‑render
+  (the title stayed hidden). The `padding-block` gives Boldonse's tall caps + comma/`g` descenders room
+  so the clip doesn't cut glyph tops/bottoms.
+- **Layout (responsive, no overlap):** `.intro-reveal` is absolutely positioned in the band
+  `[top:0 → bottom:340px]` (the shelf height) and `justify-content:center`, so the empty space above the
+  block equals the space below it and it never overlaps the shelf. Sizes (`.pinwheel-slot--scrolled`,
+  `.intro__head`, `.intro__body`, gaps) use `clamp(min, min(vw, vh), max)` so the block scales with
+  viewport **height** (the earlier bug: a fixed `top:12vh` with px‑sized content ran into the books on
+  short/wide screens). Verified balanced (top gap == bottom gap) + clear of the books across 2000×1050 →
+  1280×720 via CDP.
+- **Shared state:** `pinwheelProx` (module‑level) lets `heroScene` drive the pinwheel proxy that
+  `pinwheelScene` owns. **Reduced motion:** `heroScene` bails, so CSS shows the after‑scroll composition
+  statically (cover hidden, header/body/logo shown, pinwheel parked at `#pinwheelSlotScrolled`).
+
 ## Hero "extras" fade (eyebrow / subtitle / arrow)
 These three are animated **in** on load (GSAP `from`, captured in `heroEntrance`) and **out** on
 scroll (the hero scrub, `fromTo autoAlpha 1→0`). Both are GSAP on purpose, and two safeguards
 make the fade reliable in both directions:
 - the scrub uses **`fromTo` with an explicit `autoAlpha:1` start + `immediateRender:false`**, and
-- the entrance tweens are **killed on the first scroll** (`scrollScene`'s `onUpdate`).
+- the entrance tweens are **killed on the first scroll** (`heroScene`'s `onUpdate`).
 See the gotchas for why both are necessary.
 
-## The Menu (bookshelf overlay) + Explore button
-Lives in `menuScene()` / `exploreButton()`. The Explore button (Figma `2008:147`) sits at the
-bottom of `#intro` (a `[data-reveal]` member, so it enters with the intro copy). `#menu` is a
-full-screen `position:fixed` overlay (z 50), `hidden` until opened.
+## The Menu (drawer overlay) + Explore button
+Lives in `menuScene()`. `#menu` is a `position:fixed` overlay (z 50), `hidden` until opened, holding a
+`.menu__scrim` (dimmed midnight backdrop, `data-menu-close`) + a `.menu__drawer` card. The Explore
+button (Figma `2008:147`, on `index.html`) and every chapter page's **topbar hamburger** carry
+`data-menu-open`. **The topbar is z 60 (above the menu)** so the hamburger stays clickable + morphs to
+an X over the open drawer.
 
-- **Bookshelf layout = fixed pixels** (per Figma; does not scale down). `#menuShelf` is a 1022px-wide
-  (`4×188 + 3×90`) × 340px stage, centred (`left:50%` + `translateX(-50%)`), with sharp-cornered books
-  at `--book-x` 0 / 278 / 556 / 834 px (188px wide, 90px gaps). Inner type/positions are the literal
-  Figma px (num 36/top 19, rule top 98/w 140, title 20/top 110, icon 100/bottom 22). **Spines** are the
-  `assets/book_element_{1..5}.svg` vectors (gray clusters of rects + leaning parallelograms, 294px tall,
-  bottom-aligned behind the books) — one per gap region: `_1` left of book 1, `_2/3/4` between the
-  books, `_5` right of book 4, positioned via `--x` px.
-- **Book = outer/inner.** The **whole book** (`.book`, outer) owns `y` + `rotation` for every motion —
-  fall-in, landing rock, the cursor-reactive tilt, hover raise, exit tumble — all pivoting at its base
-  (`transformOrigin:50% 100%`). `y` (raise) and `rotation` (tilt) are independent props so they compose
-  via `overwrite:"auto"`. `.book__inner` is no longer animated (kept as the content wrapper).
-- **Open/close (`menuScene`) — heavy-book physics:** open un-hides (pre-positioning books above the
-  fold to avoid a flash), sets `<main> inert` + locks scroll, fades the overlay, then `openBooks()`
-  drops each book under gravity (`power2.in`, **random** delay/duration per book), fires an
-  `impactShake()` on landing (jolts the whole shelf down a few px, `elastic.out` settle — the "thud";
-  **suppressed + settled while the cursor is over the shelf** via the `overShelf` flag, so moving the
-  mouse in right after landing doesn't ride the shake), then rocks the book about its base to rest
-  (`elastic.out(1,0.3)`). `closeBooks()` (exit) accelerates
-  every book straight **down off the bottom** (`y → vh+400`, `power2.in`) with a slight `+=` tumble,
-  random per book, then fades the overlay and `finishClose()` re-adds `hidden`/`inert` + restores focus.
-  All open tweens are tracked (`openMaster` + `bookTls`) and `killOpen()`'d if close interrupts. `Esc` closes.
-- **Cursor-reactive tilt (`knock`)**: as the cursor sweeps the shelf, each element it *enters* — **book
-  OR spine cluster** — is knocked once: it tips in the cursor's **direction of travel** (`kick =
-  clamp(±9°, dx·0.2)`, magnitude scales with sweep speed), then rocks back upright with
-  `elastic.out(1,0.3)` (same heft as the landing). A reaction, not a follow. The `pointermove` lives on
-  `#menu` (so the outer spines are reachable) gated to the shelf's vertical band; hit-testing uses
-  `offsetLeft/offsetWidth` (transform-independent) and re-fires only on entering a new element. Spines
-  are `z-index:0` behind the `z-index:1` books, so a tipping spine tucks **behind** — never overlapping.
-- **Hover raise / colour / icon**: interactive books (`.book--interactive` = 1, 2 & 3). Hover/focus
-  adds `.is-hover` (CSS turns the card `--orange` and cross-fades `.book__icon-base`→`.book__icon-hover`,
-  e.g. `menu_1.svg`→`menu_1_hover.svg`; the swap rule is generalised to `.book--interactive`, so each
-  interactive book needs a `*_hover.svg`) and GSAP raises the outer `y` (-40px). Book 4 (`.book--soon`,
-  dark) is **dimmed / non-interactive** — it still gets knocked (ambient shelf physics) but doesn't raise/recolour.
-- **Magnetic button component ("True button")**: structure is `.mag-zone` (the field) → `.mag-btn`
-  (the pill, transform target, `overflow:hidden`) → `.mag-btn__bg` (fill layer) + `.label` span.
-  `magneticButtons()` wires every `.mag-zone` once at boot. The button is **static at rest** (no
-  idle wiggle); on `mousemove`, `gsap.utils.mapRange` over the zone rect drives the magnetic pull —
-  pill at `strength` 0.4, `.label` at `labelStrength` 0.24 (lighter parallax), both `overwrite:true`;
-  `mouseleave` returns both with `elastic.out(1,0.4)`. Variants:
-  - `--explore` (Figma 2008:147): pink→peach pill (`READ THE PLAYBOOK`) in a ~340×150 field;
-    `.mag-btn__bg` carries the `linear-gradient(0deg,#ffa8cd,#fdd193)` + `box-shadow: inset 0 0 0 1px
-    rgba(0,0,0,.2)` **inner** stroke; padding `12px 24px`. (`#intro` is `min-height:100svh` + flex
-    column `justify-content:center`, so the content + CTA sit vertically centred — no bottom deadspace.)
-  - `--back` (Menu): transparent pill, `--midnight` text + `1px rgba(1,34,51,.25)` border on the bg
-    (hover fills `rgba(1,34,51,.06)`); `overflow:visible` (short label, no clip); no arrow. The
-    zone is absolute top-left in `#menu`.
-- **Reduced motion**: the menu opens instantly with books placed (no drop/sway/raise); the Explore
-  button skips the wiggle/magnetic; colour + icon swap stay (CSS `:hover`).
+- **Drawer = floating top‑right card.** `.menu__drawer` pins to the top‑right with even 16px insets,
+  **all four corners rounded** (`border-radius:16px`), auto height (sized to its contents), uniform
+  padding. The chalk panel itself is a **`::before` layer** so its opacity can fade (via the
+  GSAP‑driven `--card-bg-o`) **independently** of the rows that fall over it. Inside: a `.menu__eyebrow`
+  ("The Design Playbook") + a `.menu__list` of four `.menu__item` rows.
+- **Rows = icon left, number + title right.** `.menu__row` shows the mono `menu_N.svg` at left + `0N`
+  + the chapter title. Rows 1–3 are `<a data-href>` links (hover/focus tints them `--orange` + cross‑fades
+  to `menu_N_hover.svg` + nudges); row 4 is a non‑interactive `.menu__row--soon` ("Coming soon").
+- **Open/close = one interruptible timeline** (the GSAP "interruptible single timeline" pattern):
+  `tl` is paused, ENTER (scrim fade + drawer slide‑in from the right `back.out` + rows stagger‑in +
+  hamburger→X) then `addPause()` then EXIT. `toggle()`: opening from the pause `play()`s (or `restart()`s
+  if it was mid‑exit); closing **mid‑enter** `reverse()`s at `timeScale(1.4)` (retract fast); closing
+  **fully open** `play()`s forward into the EXIT where the **rows fall away** (`y → vh+300`,
+  `rotation: random(-22,22)`, staggered `from:"end"`, `power3.in`) while `--card-bg-o`→0 + scrim fade +
+  X→hamburger. `onComplete`/`onReverseComplete` unlock (`hidden` + clear `inert` + restore scroll/focus)
+  only if `!isOpen`. `<main> inert` + `root`/`body` `overflow:hidden` lock the page while open.
+- **Navigation:** each link row's `data-href` — in‑page `#chN` does `smoother.scrollTo(target,false)`
+  (unlock scroll first) **before the close runs** so no flash of the prior chapter; any other href is a
+  full `window.location` load. Wired before the reduced‑motion bail so links always work. `Esc` and a
+  scrim click (`[data-menu-close]`) close.
+- **Reduced motion:** the drawer appears/disappears instantly (no slide/fall); colour + icon swap stay
+  (CSS `:hover`).
+
+**The bookshelf `.book` system** (the old menu's books — fall‑in / knock / hover‑raise physics, fixed‑px
+1022px shelf, `book_element_*` spines) is **kept in `css/styles.css` and `js/main.js`** but is now used
+**only by `index.html`'s in‑flow landing shelf** (`#homeShelf`, parked by `homeBooks()`, animated by
+`heroScene()`). See git history for its physics details if reviving it.
+
+**Magnetic button component ("True button")** — `magneticButtons()` wires every `.mag-zone` (field) →
+`.mag-btn` (pill, transform target) → `.mag-btn__bg` + `.label`. Static at rest; on `mousemove`
+`gsap.utils.mapRange` drives the pull (pill `strength` 0.4, label 0.24, both `overwrite:true`),
+returning with `elastic.out(1,0.4)`. Now only the **`--explore`** variant remains (Figma 2008:147):
+pink→peach pill (`READ THE PLAYBOOK`) on `index.html`'s `#intro`; `.mag-btn__bg` carries the
+`linear-gradient(0deg,#ffa8cd,#fdd193)` + inset `1px rgba(0,0,0,.2)` stroke. (The Menu's old `--back`
+variant was removed with the bookshelf.)
 
 ## The chapter pages (interior page system)
 All chapter pages (`why-we-exist.html` = ch1, `our-point-of-view.html` = ch2, `stages-of-a-project.html`
@@ -291,8 +363,11 @@ changing only: `<body>` theme vars, rail label, hero title `<span>`s, hero `<img
   `.body-left`) at x132, and `.copy` is `margin-left:626; width:604`. (Float — **not** absolute/grid —
   so ScrollTrigger can pin it; see gotcha.)
 - **Hero** — `.page-hero` (`min-height:100vh`, bg `--hero-bg`), big Boldonse title (`--hero-title`,
-  `line-height:1.8`), and a top‑right `.hero-flower > .hero-flower__spin > img` (spins only with
-  `data-spin`; size via `--flower-aspect`).
+  `line-height:1.6`) **anchored bottom‑left** (`left:clamp(22px,3vw,44px)`, `bottom:clamp(40px,7vh,88px)`
+  — aligned with the topbar logo). The title `<span>`s stack number + title; **C2 & C3 titles are one
+  line** ("Our point of view", "Stages of a project"), C1 stays two lines. A top‑right
+  `.hero-flower > .hero-flower__spin > img` (spins only with `data-spin` — ch1 only) sized
+  `min(700px,70vw)` × `--flower-aspect` (ch1 `549/554`, ch2 `230/229`, ch3 `600/600`).
 - **TOC** (`.toc`) — pinned nav (`stickyToc`) with a `--accent` active row, a scroll‑driven
   `.toc__progress-fill`, decorative `.toc__skeleton` "spine" bars (varied widths via `--a…--f`), and
   optional **accordion sub‑rows**: each `<li>` may hold a `.toc__sub` of `.toc__subrow`s that open
@@ -301,9 +376,30 @@ changing only: `<body>` theme vars, rail label, hero title `<span>`s, hero `<img
 - **Copy blocks** (in `.copy`, accent/midnight on chalk, Source Serif body): `.copy__heading`
   (Boldonse, `--accent`, `line-height:88px`, 24px bottom margin), `.section-head` (DM Sans 600 30px,
   `--accent`, carries the TOC‑target `id`), `.subsection-head` (DM Sans 600 18px midnight), `.lead`,
-  `.copy ul/ol/li` (themed markers), `.figure-note` (renders a "Diagram — …" caption as a bordered
-  aside — **no inline graphics are drawn**), `.source-note`, `.pullquote` (+ `pullmark.svg`). Most
-  blocks carry `.reveal` for the fade‑up — **except `.toc`** (its reveal transform fought the pin).
+  `.copy ul/ol/li` (themed markers), `.figure` (a **drawn diagram** — `.figure__img` SVG capped to the
+  copy column, centred, no caption; used in C2 + C3, see below), `.figure-note` (the older text
+  "Diagram — …" aside, still used where no graphic exists, e.g. C3's "For each stage we capture"),
+  `.section-divider` (a small, subtle per‑chapter graphic `01/02/03 Divider.svg` between sections —
+  `clamp(110px,24%,150px)` wide, centred), `.source-note`, `.pullquote` (+ `pullmark.svg`). Most blocks
+  carry `.reveal` for the fade‑up — **except `.toc`** (its reveal transform fought the pin).
+- **Diagrams (C2/C3):** real SVGs from `assets/` (referenced URL‑encoded — filenames have spaces +
+  en‑dashes). C2 → "Two failure nodes" (under the `.lead`). C3 §3.1 → "Full Project Arc" sits directly
+  under "What an ideal project team looks like" (which is the **first** subsection, right under the 3.1
+  head); §3.3 → "Discovery", "Prototype spectrum", "Rapid experimentation cycle". Edits are mirrored in
+  both the standalone page and the `playbook.html` panel.
+
+## The left rail (`railReveal`)
+The fixed `.rail` (outside `#smooth-wrapper`) is just a `.rail__divider` line + a rotated `.rail__label`
+(the hamburger now lives in the `.topbar`, not the rail). It shows **only over the chalk body** and is
+**occluded by the coloured chapter heroes**: because the rail is `position:fixed` on top of everything,
+`railReveal()` (one per‑frame `ScrollTrigger` updater, in `js/chapter.js`) **clips** it to the chalk
+band between whatever heroes are on screen — `clip-path: inset(topClip 0 bottomClip 0)`, where the clips
+track each hero's intruding edge. So on a chapter→chapter transition the **incoming hero rising from the
+bottom eats the rail bottom→top** (it leaves with its chapter, just as the hero covers the rest of the
+outgoing chapter); the current hero uncovers it from the top as you enter a chapter; a hero filling the
+strip → `visibility:hidden`. The label sits **40px** above the viewport bottom (on standalone pages it
+rides up with the section's end on exit). railReveal is the **single owner** of the rail's clip, so it
+never fights `railSync` (label text/colour).
 
 ## The continuous reader (`playbook.html`)
 The canonical way to read the playbook: all three chapters stacked in one document so scrolling
@@ -378,8 +474,8 @@ shared rail + one `#menu` for the whole document; one ScrollSmoother.
   `transform: translateX(-50%)`) so GSAP can own the `transform` for animation without conflict.
 - GSAP-animated CSS custom props must be **declared with a real initial value** (e.g.
   `--streak-hide: 100%`), otherwise GSAP reads an empty start and jumps to the end value.
-- Always honour `prefers-reduced-motion`: `pinwheelScene`/`scrollScene` bail to end-states and the
-  static graphic; `introReveal` shows the copy.
+- Always honour `prefers-reduced-motion`: `pinwheelScene`/`heroScene` bail to end-states and the
+  static graphic (the old separate `introReveal` fallback was folded in during the home‑v2 refactor).
 - After font load, call `ScrollTrigger.refresh()` (metrics shift can break pin distances).
 - **ScrollSmoother:** only `#smooth-content` (the `<main>`) is transformed/smoothed; the `position:fixed`
   **menu overlay and pinwheel traveler live OUTSIDE it** (direct children of `<body>`) so fixed stays
@@ -397,31 +493,50 @@ shared rail + one `#menu` for the whole document; one ScrollSmoother.
   `float:left`). **Do NOT hand‑roll a per‑frame `gsap.ticker` follow** that re‑reads
   `getBoundingClientRect` and re‑applies the transform: it lands a frame behind the smoother and the
   nav visibly **lags**. The ScrollTrigger pin is internally synced → glued with no lag. (`stickyToc`.)
-- **Dark‑hero rail legibility.** The fixed rail overlays both the coloured hero and the chalk body.
-  The label + search default to `--midnight` (fine on light heroes + chalk); on a **dark** hero set
-  `--rail-fg:--chalk` so they don't vanish against it (they then read faint over the chalk body — an
-  accepted trade‑off; the hamburger's blue square keeps it usable throughout).
+- **Dark‑hero rail legibility.** The rail label defaults to `--midnight` (fine on the chalk body);
+  on a **dark** hero set `--rail-fg:--chalk` via `railSync`. (Mostly moot now that `railReveal` clips
+  the rail away over the heroes — but the var still themes the label where it does show.)
 - **Headless verification caveat:** GSAP's rAF ticker stalls under Chrome `--virtual-time-budget`,
   so `gsap.ticker`-driven transforms and timed timelines don't advance — the pinwheel/align/wind
   read as "stuck." Verify geometry from `ScrollTrigger` `.progress` + `getBoundingClientRect` and
   compute the expected output, not the rendered transform. (Scrub *scrubs* do apply via
   `ScrollTrigger.update()`, so the streak/title scrub is testable.) See the project memory note.
+  (Launching headless **without** `--virtual-time-budget` runs the real rAF ticker, so timed
+  timelines *do* advance — drive a scroll + wait real time, then screenshot/measure.)
+- **Two transform channels to avoid fights.** When a load/scroll tween and a hover/secondary tween
+  both target an element, put them on **different transform channels** so neither `overwrite`s the
+  other: the landing books use `y` for the scroll rise/fall and `yPercent` for the hover lift; the
+  pinwheel keeps position on the outer `.pinwheel` and rotation on the inner `.pinwheel__spin`. GSAP
+  sums `y`+`yPercent`, and `overwrite:"auto"` only kills the *same* property.
+- **Don't animate `yPercent` for a line‑clip reveal.** GSAP's percent‑unit transform cache can end
+  with `yPercent:0` in cache but a **stale inline `translate(…px)`** that never re‑renders (the
+  reveal stays hidden). Drive the wipe with **px `y`** (measured line height → 0) instead. (`heroScene`'s
+  header.)
 
 ## Status / next
-- ✅ Cover (`index.html`): Cover 1, pinned gradient-reveal scene, the pinwheel rise→align beat, Cover 3
-  "What this is". Responsive + reduced-motion. No console errors.
-- ✅ Explore button (magnetic) at the bottom of `#intro`, and the bookshelf **Menu** overlay
-  (`2:22779` / hover `2:22921`): books fall in, sway with the cursor, books **1–3** raise + turn
-  orange + swap to their colour icon; book 4 dimmed "coming soon". Back/`Esc` closes.
-- ✅ **Three chapter pages built** (Figma `2:23049` etc.) on the shared chapter system — fixed rail
-  (hamburger → Menu, lucide icons), themed coloured hero + top‑right graphic, pinned scroll‑synced
-  TOC (ch3 has accordion sub‑rows + spines), full copy from `playbook-content/`. Book 1→ch1, 2→ch2,
-  3→ch3. Responsive + reduced‑motion. No console errors.
+- ✅ Cover (`index.html`): the cover (eyebrow + lockup + rising pinwheel + arrow) and the
+  **after‑scroll intro reveal** (pinwheel travels up + shrinks, top‑left logo, header line‑clip wipe,
+  body fade‑up, books rise; Figma `2043:1638`). Native (delay‑free) scroll on the landing page.
+  One‑direction cloud drift (staggered speeds, edge fade, spread starts). Books always fall away on
+  scroll‑up (hover on `yPercent`). Balanced + non‑overlapping across screen sizes. Responsive +
+  reduced‑motion. No console errors.
+- ✅ The in‑flow **landing shelf** (books fall in, sway, raise + recolour → `playbook.html#chN`). The
+  **Menu** is a right‑side **drawer** (swipe‑in, interruptible, rows‑fall‑away close, hamburger→X) on
+  the chapter pages + reader. `Esc` / scrim / X closes.
+- ✅ **Three chapter pages built** (Figma `2:23049` etc.) on the shared chapter system — fixed topbar
+  (hamburger → Menu) + left rail (divider + label, clipped/occluded by heroes via `railReveal`), themed
+  coloured hero (700px graphic, bottom‑left title) + top‑right graphic, pinned scroll‑synced TOC (ch3
+  has accordion sub‑rows + spines), full copy from `playbook-content/` with **drawn C2/C3 diagrams** +
+  per‑chapter **section dividers**. Row 1→ch1, 2→ch2, 3→ch3. Responsive + reduced‑motion. No console errors.
 - ✅ **Continuous reader (`playbook.html`)** — the three chapters stacked in one document with the
   seamless chapter‑to‑chapter scroll effect (pin + scale/fade + cover, ported from the GSAP "stacked
   panels" demo). Per‑chapter TOC pins coexist; rail label/colour follow the active chapter; menu
   books deep‑link in (in‑page `#chN`) and `index.html`'s books now open the reader (`playbook.html#chN`).
   Verified over CDP: 3 panels, 2 transition pins (last chapter exempt), accurate deep‑link landing,
   clean menu‑click scroll, standalone pages still pass. Responsive + reduced‑motion. No console errors.
-- ⏭️ Book 4 ("How we work as a team") page not built yet. The inline **diagrams** in ch2/ch3 are
-  rendered as text `.figure-note`s, not drawn. `1_Graphic.svg` has the known petal‑clipping issue.
+- ⏭️ Chapter 4 ("How we work as a team") page not built yet (drawer row 4 is "coming soon"). C2/C3
+  diagrams are now **drawn** (real SVGs); ch1's diagrams (if any) + the C3 "for each stage" note remain
+  text `.figure-note`s. `1_Graphic.svg` has the known petal‑clipping issue. A `4_Graphic.svg` asset
+  exists but isn't placed yet.
+- ℹ️ Mirrored to a second GitHub repo `yuyanggu/GTC-design-playbook-v2` (`main`) in addition to the
+  original `origin` (`yuyanggu/GTC-Design-Playbook`, branch `feat/home-v2`).
