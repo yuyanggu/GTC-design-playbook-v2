@@ -144,6 +144,7 @@ body { background: var(--chalk); }
   font-size: clamp(2.2rem, 5.2vw, 75px);
   line-height: 1.6;                      /* number + title stack */
   color: var(--hero-title, var(--chalk));
+  z-index: 1;                            /* sits above the hero graphic */
 }
 /* Each span is one logical line; nowrap keeps single-phrase titles (C2/C3) on one row.
    C1's three short spans are unaffected. */
@@ -153,8 +154,9 @@ body { background: var(--chalk); }
   position: absolute;
   top: 0;
   right: 0;                       /* anchored to the top-right corner */
-  width: min(700px, 70vw);        /* 700px on desktop, scales down on narrow viewports */
+  width: var(--flower-w, min(700px, 70vw));   /* per-chapter; default 700px, scales down */
   aspect-ratio: var(--flower-aspect, 549 / 554);
+  z-index: 0;                     /* background layer, behind the title */
 }
 .hero-flower__spin { width: 100%; height: 100%; transform-origin: 50% 50%; will-change: transform; }
 .hero-flower img { display: block; width: 100%; height: 100%; overflow: visible; }
@@ -335,8 +337,8 @@ body { background: var(--chalk); }
   letter-spacing: -0.16px;
   color: var(--midnight);
 }
-.copy p strong { font-weight: 600; }
-.copy li strong { font-weight: 600; }   /* bold serif lead-ins on point-form bullets */
+.copy p strong { font-weight: 700; }
+.copy li strong { font-weight: 700; }   /* bold serif lead-ins on point-form bullets */
 
 /* Lead — the opening paragraph of a chapter body (a touch larger) */
 .copy .lead {
@@ -397,21 +399,21 @@ body { background: var(--chalk); }
   color: var(--accent, var(--orange));
 }
 
-/* Stage callouts — side-by-side bordered boxes (Activities / Outputs / Artifacts) */
+/* Stage callouts — side-by-side cards (Activities / Outputs / Artifacts) with a
+   serif-bold heading (no all-caps eyebrow). */
 .copy .callouts {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 1.6em 0;
+  gap: 18px;
+  margin: 2em 0;
 }
 .copy .callout {
-  border: 1px solid rgba(1, 34, 51, 0.14);
-  border-radius: 6px;
-  padding: 16px 18px;
-  background: rgba(1, 34, 51, 0.02);
+  padding: 24px 26px 22px;
+  background: rgba(1, 34, 51, 0.035);
+  border: 1px solid rgba(1, 34, 51, 0.08);
 }
 .copy .callout__label {
-  margin: 0 0 8px;
+  margin: 0 0 12px;
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: 12px;
@@ -419,7 +421,9 @@ body { background: var(--chalk); }
   text-transform: uppercase;
   color: var(--accent, var(--orange));
 }
-.copy .callout ul { margin: 0; }   /* reuse the .copy li markers */
+.copy .callout ul { margin: 0; }              /* reuse the .copy li markers */
+.copy .callout li { margin-bottom: 0.5em; }
+.copy .callout li:last-child { margin-bottom: 0; }
 
 /* Figure note — describes a diagram that isn't drawn yet (text-only aside) */
 .figure-note {
@@ -466,7 +470,7 @@ body { background: var(--chalk); }
   width: clamp(110px, 24%, 150px);
   height: auto;
   margin-inline: auto;
-  opacity: 0.6;
+  opacity: 0.2;
 }
 
 /* Source note — small muted citation */
@@ -484,7 +488,7 @@ body { background: var(--chalk); }
 .pullquote {
   display: flex;
   gap: 14px;
-  margin: 2.4em 0 0;
+  margin: 2.6em 0 2.2em;   /* breathing room below so following copy doesn't hug it */
 }
 .pullquote__mark { flex: none; margin-top: 6px; }
 .pullquote p {
@@ -492,10 +496,10 @@ body { background: var(--chalk); }
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
-  font-size: 20px;
-  line-height: 1.4;
+  font-size: 24px;
+  line-height: 1.3;
   letter-spacing: -0.2px;
-  color: #000;
+  color: var(--midnight);
 }
 
 /* ---------------------------------------------------------------------------

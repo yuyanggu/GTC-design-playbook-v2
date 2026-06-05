@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/chapter.css" />
   <link rel="stylesheet" href="css/playbook.css" />
+  <script src="js/gate.js"></script>
 </head>
 <body>
   <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
@@ -245,7 +246,7 @@
     <!-- ═══════════════════════ CHAPTER 3 — Stages of a project ═══════════════════════ -->
     <section class="section chapter-panel" id="ch3"
              data-rail="stages of a project"
-             style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600;">
+             style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600; --flower-w: 550px;">
      <div class="chapter-panel__scale">
 
       <section class="page-hero">
@@ -436,14 +437,15 @@
           <h3 class="section-head reveal" id="s-33">3.3 Discovery</h3>
           <p class="reveal">Every project begins with a challenge, and an opportunity to get to the real truth of it. We help agencies navigate complex problem spaces and validate the true needs of citizens and end-users, building strategic confidence before any solution is proposed. In government, the ground truth is often hidden beneath layers of interpretation. GTC’s position lets us surface it fully and honestly, so that every decision that follows is outcome-focused from the start. What we uncover may point to a new product — and every new product brings with it new processes, new roles, and new ways of operating that need to be understood and designed alongside it.</p>
 
+          <figure class="figure reveal">
+            <img class="figure__img" src="assets/03%20Diagram%202%20%E2%80%93%20Discovery.svg" alt="Two columns showing the shift discovery enables: Assumption-led → Insight-led; High risk → De-risked; Bloated scope → Strategic scope; Output-focused → Outcome-focused." />
+          </figure>
+
           <h4 class="subsection-head reveal" id="s-33-1">The value of discovery</h4>
           <blockquote class="pullquote reveal">
             <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
             <p>The speed of building has collapsed. But the cost of building the wrong thing hasn’t.</p>
           </blockquote>
-          <figure class="figure reveal">
-            <img class="figure__img" src="assets/03%20Diagram%202%20%E2%80%93%20Discovery.svg" alt="Two columns showing the shift discovery enables: Assumption-led → Insight-led; High risk → De-risked; Bloated scope → Strategic scope; Output-focused → Outcome-focused." />
-          </figure>
           <ul class="reveal">
             <li><strong>From assumption to insight.</strong> We find out what people actually need — not what we assume they want, or what someone in a meeting thinks is the problem.</li>
             <li><strong>De-risk your investment.</strong> Validate before you commit. Discovering the wrong direction early costs far less than building it.</li>
@@ -452,8 +454,7 @@
           </ul>
           <p class="reveal">Technology has changed what discovery can be. Prototyping and testing early is now fast, accessible, and within reach of the same people running research. Discovery is no longer just research leading to insights. It is research and experimentation running together — which is why it has two subphases that must work in tandem.</p>
 
-          <p class="source-note reveal">Subphase 1 — Frame a problem</p>
-          <h4 class="subsection-head reveal" id="s-33-2">Uncover what is true</h4>
+          <h4 class="subsection-head reveal" id="s-33-2">Subphase 1 — Uncover what is true</h4>
           <p class="reveal">We go deep into the problem before any solution is proposed. This is where we build a shared, grounded understanding of the system, the people, and the constraints, so we know exactly what we are tackling before we commit to a direction. From what we uncover, we identify and prioritise the critical use cases with the highest frequency of use, highest impact, and most direct connection to the core problem.</p>
 
           <h4 class="subsection-head reveal">What happens</h4>
@@ -471,7 +472,7 @@
             <li>Run focus groups, qualitative interviews, field studies, usability testing, and quantitative surveys with citizens and end-users</li>
             <li>Synthesise insights, run co-creation workshops, and define user archetypes</li>
             <li>Develop a clear value proposition and product strategy, expressed through user journey maps and service blueprints</li>
-            <li><strong>Map the full operational picture</strong> — the service, the workflows, the roles, and what the before and after of digital looks like for the people running it</li>
+            <li>Map the full operational picture — the service, the workflows, the roles, and what the before and after of digital looks like for the people running it</li>
           </ul>
           <p class="reveal"><strong>Technical discovery — led by engineering, often in parallel</strong></p>
           <ul class="reveal">
@@ -515,9 +516,7 @@
             <li>This stage is not about solutions. It’s about making sure the problem is real, understood, and worth solving.</li>
           </ul>
 
-          <p class="source-note reveal">Subphase 2 — Rapid experiment</p>
-          <h4 class="subsection-head reveal" id="s-33-3">Identify what works</h4>
-          <p class="reveal">In the past, we used to do mockups because we were limited by it — to validate user flows, but not with any real data. That is now long past. Now when we do prototypes, we do it to validate a hypothesis in the whole system that we are creating.</p>
+          <h4 class="subsection-head reveal" id="s-33-3">Subphase 2 — Identify what works</h4>
 
           <blockquote class="pullquote reveal">
             <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
@@ -575,7 +574,7 @@
           <p class="reveal"><strong>Hypothesis.</strong> Start with a clear bet. Based on what we know from discovery, what do we believe could work? Frame it specifically enough that it can be tested — not a vague direction, but a concrete proposition. Just because you can build something does not mean you should. The hypothesis is what gives the prototype its purpose.</p>
           <p class="reveal"><strong>Build.</strong> Turn the hypothesis into something real — a prototype that works with real or synthetic data, in a real workflow, in front of real users. Not a mockup. Not a click-through. Something that generates actual signal. We build to prove, not just to build.</p>
           <p class="reveal"><strong>Test.</strong> Put it in front of the people who matter — officers, citizens, or both. Observe, listen, collect data, then bring what you learn back to the hypothesis and start again.</p>
-          <p class="reveal">Each cycle sharpens the picture. What was unclear becomes clearer; what was assumed gets confirmed or challenged. Failed prototypes teach as much as successful ones — failure is learning, not a setback. The loop continues until the evidence is strong enough to commit, and that shift from experimenting to building is a moment worth marking deliberately.</p>
+          <p class="reveal"><strong>Each cycle sharpens the picture.</strong> What was unclear becomes clearer; what was assumed gets confirmed or challenged. Failed prototypes teach as much as successful ones — failure is learning, not a setback. The loop continues until the evidence is strong enough to commit, and that shift from experimenting to building is a moment worth marking deliberately.</p>
 
           <blockquote class="pullquote reveal">
             <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
@@ -679,10 +678,9 @@
           <p class="reveal">Beyond building the team, we want to make sure what we leave behind is set up to thrive. That means the growing team has a clear vision and strategy to rally around, an agreed operating model that sets them up for how they work best, and the right metrics and value-realisation frameworks so they can see and demonstrate the impact of what they are running.</p>
           <p class="reveal">There are two exciting dimensions of capability to build: the product team that designs, builds, and iterates on the service, and the operation team that runs and sustains it.</p>
 
-          <div class="figure-note reveal">
-            <b>Diagram — the capability building arc</b>
-            Capability building shown as a parallel track that starts at day one and runs the full length of the project, with two sub-tracks inside it: product team and operation team. It mirrors the full project arc, zoomed in on this workstream.
-          </div>
+          <figure class="figure reveal">
+            <img class="figure__img" src="assets/03%20Diagram%205%20%E2%80%93%20Capability%20building%20%E2%80%94%20a%20parallel%20workstream.svg" alt="Capability building shown as a parallel track that starts at day one and runs the full length of the project, with two sub-tracks inside it: product team and operation team." />
+          </figure>
 
           <h4 class="subsection-head reveal" id="s-36-1">Product team</h4>
           <p class="reveal">Building the right product team on the agency side is where the long-term value of the work truly takes root — and as partners, it is something we shape together from day one. We work with our partners to identify and grow the design capability they need — not just for the project, but for everything that comes after. There are two paths to building that team, and both are worth exploring early.</p>

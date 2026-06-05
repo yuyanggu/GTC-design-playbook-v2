@@ -73,6 +73,18 @@ These are the highest-value notes in the repo — preserve them.
   a **dark** hero set `--rail-fg: --chalk` via `railSync`. (Mostly moot now that `railReveal` clips
   the rail away over the heroes — but the var still themes the label where it does show.)
 
+## Fonts
+
+- **A self-hosted "variable" font must actually carry the weight axis.** The original
+  `SourceSerif4.woff2` was a regular-only file but its `@font-face` declared `font-weight: 200 900`.
+  Result: `font-weight: 600/700` rendered identically to 400 (no bold) **and** the browser wouldn't
+  synthesize faux-bold (it trusts the declared range). `document.fonts.check('700 …')` returns `true`
+  either way, so it's not a reliable test — instead render the same word at 400 vs 700 and compare
+  stroke weight, or check the file size (a real Source Serif 4 variable woff2 latin subset is ~120KB;
+  the broken regular-only one was ~48KB). The fix was to re-download the proper variable woff2 from
+  the Google Fonts CSS2 API (`...?family=Source+Serif+4:ital,opsz,wght@...,200..900`) and replace the
+  file. Bold serif (`.copy strong`, `.callout__label`) now renders.
+
 ## Headless verification
 
 - **GSAP's rAF ticker stalls under Chrome `--virtual-time-budget`**, so `gsap.ticker`-driven

@@ -19,7 +19,10 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const panels = gsap.utils.toArray(".chapter-panel");
 
-if (panels.length) {
+if (window.__GTC_LOCKED__) {
+  // Password gate active (js/gate.js): skip all chapter boot so nothing animates
+  // behind the lock. On unlock the page reloads and this runs fresh.
+} else if (panels.length) {
   // ----- Continuous reader: each chapter scoped to its own panel -----
   panels.forEach(initChapter);
   panelTransitions(panels);

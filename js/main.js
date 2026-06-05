@@ -549,19 +549,22 @@ function magneticButtons() {
 }
 
 /* ============================================================================
-   Boot
+   Boot — skipped while the password gate is locked (js/gate.js) so no animation
+   runs behind the lock; on unlock the page reloads and boots fresh.
    ========================================================================== */
-smoothScroll();   // create the smoother first so the pinned ScrollTriggers attach to it
-arrowBob();
-cloudDrift();
-pinwheelScene();  // builds the load-in (loadTl) + parks/spins the pinwheel
-homeBooks();      // parks the books/spines (hbBooks/hbSpines, read by heroScene)
-heroScene();      // one-shot scroll master (consumes hbBooks/hbSpines, completes loadTl)
-menuScene();
-magneticButtons();
+if (!window.__GTC_LOCKED__) {
+  smoothScroll();   // create the smoother first so the pinned ScrollTriggers attach to it
+  arrowBob();
+  cloudDrift();
+  pinwheelScene();  // builds the load-in (loadTl) + parks/spins the pinwheel
+  homeBooks();      // parks the books/spines (hbBooks/hbSpines, read by heroScene)
+  heroScene();      // one-shot scroll master (consumes hbBooks/hbSpines, completes loadTl)
+  menuScene();
+  magneticButtons();
 
-// Fonts can shift metrics → recompute pin distances once loaded.
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(() => ScrollTrigger.refresh());
+  // Fonts can shift metrics → recompute pin distances once loaded.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+  }
+  window.addEventListener("load", () => ScrollTrigger.refresh());
 }
-window.addEventListener("load", () => ScrollTrigger.refresh());
