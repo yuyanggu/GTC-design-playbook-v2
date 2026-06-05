@@ -182,10 +182,11 @@ img { display: block; max-width: 100%; }
   pointer-events: none;
 }
 .cloud {
+  --enter: 0;            /* load-in factor (0→1, raised by loadTl); ×edge-fade = opacity */
   position: absolute;
   height: auto;
   filter: blur(5px);
-  will-change: transform;
+  will-change: transform, opacity;
 }
 .cloud--1 { left: 0;       top: 0;       width: 31.25vw; }  /* R1 (0,0) blue */
 .cloud--2 { left: 14.17%;  top: 14.26vh; width: 31.25vw; }  /* R2 (204,146) orange */
@@ -225,6 +226,83 @@ img { display: block; max-width: 100%; }
   color: var(--midnight);
   white-space: nowrap;
 }
+
+/* Top-left brand mark — appears only in the after-scroll state (same SVG as the
+   chapter-page topbar). Hidden on the cover; faded in by heroScene's master. */
+.home-logo {
+  position: absolute;
+  top: clamp(28px, 4.7vh, 48px);
+  left: clamp(22px, 3.3vw, 48px);
+  z-index: 3;
+  width: clamp(112px, 9.9vw, 142px);
+  line-height: 0;
+}
+.home-logo img { width: 100%; height: auto; display: block; }
+
+/* After-scroll reveal column (Figma "Text Box") — pinwheel slot + header + body,
+   anchored in the band ABOVE the bottom shelf. Absolutely positioned so it never
+   disturbs the cover lockup; hidden on load, revealed by the scroll master.
+   Layout note: positioned with vh + sized with vh-aware clamps so it scales with the
+   viewport height (px-sized content at a fixed vh top is what let the body run into the
+   books on short/wide screens). `bottom` reserves the 340px shelf band + a gap, and the
+   content vertically centres in the remaining band, biased high. */
+.intro-reveal {
+  position: absolute;
+  top: 0;
+  bottom: 340px;                       /* = the bottom shelf's height, so the band is
+                                          exactly [viewport top → shelf top] and the
+                                          content centres with equal space above/below */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: min(604px, 90vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.9vh, 24px);
+  text-align: center;
+}
+/* Scrolled pinwheel slot — the target the traveler shrinks to (invisible). vh-aware so
+   it shrinks on short viewports along with the type. */
+.pinwheel-slot--scrolled {
+  width: clamp(72px, min(8.4vw, 12vh), 120px);
+  aspect-ratio: 1 / 1;
+}
+/* Header — Boldonse, two lines, each clipped for the wipe reveal. Caps at 36 (Figma) but
+   shrinks on short viewports so the block fits above the shelf. */
+.intro__head {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(22px, min(2.9vw, 4vh), 36px);
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--midnight);
+}
+/* Boldonse's tall caps + descenders (comma, g) overflow the line box, so a bare
+   overflow:hidden clip cuts the glyph tops/bottoms. Pad the clip box vertically to
+   give them room (the span push-down measures this padded height, so it still hides). */
+.intro__head .line {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.2em;
+}
+.intro__head .line > span { display: block; will-change: transform; }
+/* Body — Source Serif / 518px / centred (Figma body copy). vh-aware so it shrinks a
+   little on short viewports to keep the block clear of the shelf. */
+.intro__body {
+  width: min(518px, 100%);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(13px, min(1.1vw, 1.7vh), 16px);
+  line-height: 1.5;
+  letter-spacing: -0.32px;
+  color: #000;
+}
+.intro__body p { margin: 0; }
+.intro__body p + p { margin-top: 1.25em; }
+.intro__body em { font-style: italic; }
 
 /* Arrow — Figma top:934 / 1024 ≈ 91.2% ; native 57 × 45 */
 .arrow {
@@ -300,11 +378,21 @@ img { display: block; max-width: 100%; }
 .js .lockup,
 .js .cloud,
 .js #arrow { opacity: 0; }
+/* The after-scroll reveal is hidden on the cover state (revealed by the scroll master).
+   Hide the body's paragraphs (not the container) — the master animates the <p>s. */
+.js .home-logo,
+.js .intro__body p { opacity: 0; }
+.js .intro__head .line > span { transform: translateY(110%); }
 @media (prefers-reduced-motion: reduce) {
+  /* No scroll choreography → present the after-scroll composition statically so the
+     header/body copy is reachable. Clouds stay; the cover-only bits are hidden. */
+  .js .cloud,
+  .js .home-logo,
+  .js .intro__body p { opacity: 1; }
   .js .eyebrow--top,
   .js .lockup,
-  .js .cloud,
-  .js #arrow { opacity: 1; }
+  .js #arrow { opacity: 0; }
+  .js .intro__head .line > span { transform: none; }
 }
 
 /* ============================================================================

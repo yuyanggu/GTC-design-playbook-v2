@@ -36,6 +36,26 @@
           <h1 class="lockup">The GTC Design<br />Playbook</h1>
         </div>
 
+        <!-- After-scroll: top-left brand mark (same SVG as the chapter-page topbar);
+             fades in with the reveal. -->
+        <div class="home-logo" aria-hidden="true">
+          <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+        </div>
+
+        <!-- After-scroll reveal column: the pinwheel rises UP to its slot here, then the
+             header (line-clip wipe) + body copy fade up. Hidden on the cover state. -->
+        <div class="intro-reveal" id="introReveal">
+          <span class="pinwheel-slot pinwheel-slot--scrolled" id="pinwheelSlotScrolled" aria-hidden="true"></span>
+          <h2 class="intro__head">
+            <span class="line"><span>A place to align,</span></span>
+            <span class="line"><span>not a place to learn.</span></span>
+          </h2>
+          <div class="intro__body">
+            <p><em>Design is changing.</em> The way we work, the tools we use, the expectations we navigate all of it is shifting. This playbook captures how we think about it at GTC: our principles, our craft, and our way of working and because design never stops evolving, neither does this.</p>
+            <p>Consider it a living reference, a place to learn, revisit, and build from.</p>
+          </div>
+        </div>
+
         <img class="arrow" id="arrow" src="assets/arrow.svg" alt="" aria-hidden="true" />
 
         <!-- Section books — rise in on scroll and settle flush to the bottom (reuse the menu book system) -->

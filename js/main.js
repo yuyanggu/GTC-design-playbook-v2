@@ -23,6 +23,11 @@ const arrow = document.querySelector("#arrow");
 // first scroll so the scroll sequence never fights an in-flight entrance.
 let loadTl = null;
 
+// The pinwheel traveler's proxy (rise/align/scrolled) — owned by pinwheelScene, driven
+// on scroll by heroScene's master (it tweens `.scrolled` to glide the pinwheel UP to the
+// after-scroll header slot). Shared because the two scenes are separate functions.
+let pinwheelProx = null;
+
 // Home book + spine elements (parked below the fold by homeBooks; their rise-in is
 // authored into heroScene's one-shot master timeline).
 let hbBooks = [];
@@ -35,9 +40,15 @@ let smoother = null;
 /* ============================================================================
    0 · Smooth scrolling (GSAP ScrollSmoother) — wraps #smooth-content; the pinned
    hero rides inside it, the fixed pinwheel stays outside. Subtle (smooth:1).
+   The LANDING page (the only page with #hero) opts OUT of the smoother entirely so
+   its scroll is native + 1:1 (no catch-up lag): the hero/pinwheel pins fall back to
+   native pinning, the pinwheel traveler reads live rects either way, and index.html
+   has no #menu, so nothing there depends on `smoother`. Chapter pages + the reader
+   keep the smoother (their TOC/panel pins need its transform — see chapter.js).
    ========================================================================== */
 function smoothScroll() {
   if (reduce || !window.ScrollSmoother) return;
+  if (document.querySelector("#hero")) return;   // landing page → native scroll, no lag
   smoother = ScrollSmoother.create({
     wrapper: "#smooth-wrapper",
     content: "#smooth-content",
@@ -53,18 +64,58 @@ function arrowBob() {
   gsap.to(arrow, { y: 9, duration: 1.15, repeat: -1, yoyo: true, ease: "sine.inOut" });
 }
 
-/* ---- Clouds: a gentle "sky" float in place — each cloud drifts on x/y and
-       slowly breathes in scale, all on its own slow clock so it never repeats. ---- */
+/* ---- Clouds: a one-direction "sky" drift — every cloud flows LEFT → RIGHT at its
+       own (widely staggered) speed, wrapping off the right edge and re-entering from
+       the left. It does NOT pop at the boundary: each cloud's opacity is driven by its
+       position so it fades OUT as it slides off the right and fades back IN as it
+       enters from the left (the wrap happens while it's invisible). A gentle scale
+       "breathe" adds depth. Opacity = (load-in `--enter`, staggered by pinwheelScene's
+       loadTl) × (edge fade) so the two never fight. Rebuilt on resize. ---- */
+let cloudTweens = [];
 function cloudDrift() {
-  if (reduce) return;
-  gsap.utils.toArray(".cloud").forEach((c, i) => {
-    const dir = i % 2 ? -1 : 1;
-    gsap.set(c, { transformOrigin: "50% 50%" });
-    // Horizontal "wind" drift only (no vertical float, no rotation). Desynced amplitudes
-    // + durations so the sky never repeats; a gentle scale breathing adds depth.
-    gsap.to(c, { x: "+=" + gsap.utils.random(120, 220) * dir, duration: gsap.utils.random(8, 13), ease: "sine.inOut", repeat: -1, yoyo: true });
-    gsap.to(c, { scale: gsap.utils.random(1.08, 1.2), duration: gsap.utils.random(7, 12), ease: "sine.inOut", repeat: -1, yoyo: true });
-  });
+  if (reduce) return;   // reduced motion: clouds stay static + visible (CSS opacity)
+
+  function build() {
+    cloudTweens.forEach((t) => t.kill());
+    cloudTweens = [];
+    const vw = window.innerWidth;
+    const clouds = gsap.utils.toArray(".cloud");
+    clouds.forEach((c, i) => {
+      // Reset x so getBoundingClientRect reads the cloud's resting (CSS) left edge.
+      // opacity 0 + --enter 0: hidden until the load-in raises --enter (no flash).
+      gsap.set(c, { x: 0, opacity: 0, "--enter": 0, transformOrigin: "50% 50%" });
+      const r = c.getBoundingClientRect();
+      const L = r.left, W = r.width;
+      // Travel band: min = fully off-left (right edge at 0), max = fully off-right
+      // (left edge at vw). wrap() loops x seamlessly across that band.
+      const min = -(L + W), max = vw - L, range = max - min;
+      const wrap = gsap.utils.unitize(gsap.utils.wrap(min, max));
+      // Fade over ~one cloud-width of travel at each edge → dissolves while crossing
+      // off/on screen rather than snapping. mFrac = that distance as a fraction of band.
+      const mFrac = Math.min(0.45, (W * 1.1) / range);
+      const edgeFade = () => {
+        const p = (gsap.getProperty(c, "x") - min) / range;          // 0..1 across band
+        const e = gsap.utils.clamp(0, 1, Math.min(p, 1 - p) / mFrac); // ramp at both ends
+        gsap.set(c, { opacity: (gsap.getProperty(c, "--enter") || 0) * e });
+      };
+      // Widely staggered speeds: spread durations across the range by index, + jitter,
+      // so no two clouds share a pace (longer duration = slower).
+      const dur = gsap.utils.mapRange(0, clouds.length - 1, 22, 64, i) + gsap.utils.random(-4, 4);
+      const xTween = gsap.to(c, { x: "+=" + range, duration: dur, ease: "none", repeat: -1, modifiers: { x: wrap }, onUpdate: edgeFade });
+      // Gentle scale breathing, on its own slow clock so the sky never repeats.
+      const scaleTween = gsap.to(c, { scale: gsap.utils.random(1.08, 1.2), duration: gsap.utils.random(7, 12), ease: "sine.inOut", repeat: -1, yoyo: true });
+      // Seed starting positions: give each cloud its own evenly-spaced slice of the band
+      // (+ jitter) so they're spread across the sky from frame one instead of bunched at
+      // their CSS resting points; desync the breathe phase too for a livelier sky.
+      xTween.seek(((i + gsap.utils.random(0, 1)) / clouds.length) * dur, false);
+      scaleTween.seek(gsap.utils.random(0, scaleTween.duration()));
+      cloudTweens.push(xTween, scaleTween);
+    });
+  }
+
+  build();
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 200); });
 }
 
 /* ============================================================================
@@ -82,25 +133,45 @@ function heroScene() {
 
   if (reduce) return;               // static layout (books shown settled by homeBooks)
 
-  // Lift the group ~10vh (Figma: pinwheel/lockup move up ≈101/1024 of the frame).
-  const groupDeltaY = () => -(window.innerHeight * 0.0986);
+  // GSAP owns the reveal's hidden start states (so its cache matches the DOM and the
+  // master can animate / reverse them cleanly — a bare CSS start fights GSAP's cleanup).
+  // The header line-clip uses px `y` (each span pushed below its clipped line): GSAP's
+  // percent-unit transform cache leaves a stale inline px value that won't re-render.
+  const headSpans = gsap.utils.toArray(".intro__head .line > span");
+  headSpans.forEach((s) => gsap.set(s, { y: Math.ceil(s.parentElement.getBoundingClientRect().height) + 2 }));
+  gsap.set(".home-logo", { autoAlpha: 0, y: -8 });
+  gsap.set(".intro__body p", { autoAlpha: 0, y: 18 });
 
   // The whole transition as one timed timeline (played once on scroll, reversible).
+  // Scroll-down: the cover (arrow / eyebrow / lockup text) fades out, the pinwheel glides
+  // UP to the header slot (pinwheelProx.scrolled), the top-left logo + header (line-clip
+  // wipe) + body copy animate in, and the shelf rises. Scroll-up reverses the whole thing.
   const master = gsap.timeline({ paused: true });
   master
-    .to("#arrow", { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)        // arrow out FIRST
-    .to(row, { y: groupDeltaY, duration: 0.8, ease: "power3.inOut" }, 0.1);      // group lifts up
+    .to("#arrow", { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)                         // arrow out FIRST
+    .to([".eyebrow--top", ".lockup"], { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 0.04);  // cover text out
+  if (pinwheelProx) master.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);  // pinwheel rises up + shrinks
+  master
+    .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
+    .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78);  // body fade-up
   // …then the shelf rises in (spines first, books overshoot + settle + rock).
-  hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.32 + i * 0.05));
+  hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
   hbBooks.forEach((b, i) => {
     master
-      .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.42 + i * 0.08)
+      .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.6 + i * 0.08)
       .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
   });
 
+  // Header line-clip wipe lives on its OWN timeline (not the master) so its EXIT can run
+  // faster than its entrance without touching the other speeds. The 0.5 lead-in keeps the
+  // same in-timing as the master (header wipes in after the pinwheel/logo).
+  const titleTl = gsap.timeline({ paused: true });
+  titleTl.to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5);
+
   // Pin the hero so it holds full-screen through the transition. No scrub: scrolling
   // down past the threshold plays the master once; the FIRST upward scroll reverses it
-  // instantly (direction-based — no waiting to reach the top) at normal speed.
+  // instantly (direction-based — no waiting to reach the top). Everything reverses at
+  // normal speed EXCEPT the title text, whose exit runs faster (titleTl timeScale 2.2).
   let played = false;
   ScrollTrigger.create({
     trigger: hero,
@@ -113,9 +184,11 @@ function heroScene() {
         played = true;
         if (loadTl) { loadTl.progress(1); loadTl.kill(); loadTl = null; }  // finish the load-in first
         master.timeScale(1).play();
+        titleTl.timeScale(1).play();
       } else if (played && self.direction === -1) {
         played = false;
-        master.timeScale(1).reverse();   // fires the instant you scroll back up
+        master.timeScale(1).reverse();        // fires the instant you scroll back up
+        titleTl.timeScale(2.2).reverse();     // …but the title text snaps out faster
       }
     },
   });
@@ -145,10 +218,13 @@ function pinwheelScene() {
   gsap.set(spin, { rotation: 0 });
   trav.style.opacity = "1"; // no fade — it's hidden by sitting below the fold until it rises
 
+  const slotScrolled = document.querySelector("#pinwheelSlotScrolled");
   const lerp = (a, b, t) => a + (b - a) * t;
-  // `rise` = below-fold → viewport centre. `align` = centre → the lockup slot.
-  // Both are TIMED progresses driven by the load timeline (0 on load → 1 parked).
-  const prox = { rise: reduce ? 1 : 0, align: reduce ? 1 : 0 };
+  // `rise` = below-fold → viewport centre. `align` = centre → the lockup slot (both
+  // TIMED by the load timeline). `scrolled` = lockup slot → the after-scroll header slot
+  // (driven on scroll by heroScene's master); it also shrinks the pinwheel to ~120px.
+  const prox = { rise: reduce ? 1 : 0, align: reduce ? 1 : 0, scrolled: reduce ? 1 : 0 };
+  pinwheelProx = prox;
 
   function place() {
     const r = slot.getBoundingClientRect();
@@ -157,9 +233,16 @@ function pinwheelScene() {
     const centerY = window.innerHeight * 0.5;
     const belowY = window.innerHeight + w / 2 + 60;          // fully off-screen at rest
     const riseY = lerp(belowY, centerY, prox.rise);
-    const x = lerp(centerX, r.left + w / 2, prox.align);     // glide centre → slot
-    const y = lerp(riseY, r.top + r.height / 2, prox.align);
-    trav.style.width = w + "px";
+    let x = lerp(centerX, r.left + w / 2, prox.align);       // glide centre → lockup slot
+    let y = lerp(riseY, r.top + r.height / 2, prox.align);
+    let width = w;
+    if (slotScrolled && prox.scrolled > 0) {                 // …then up to the header slot
+      const r2 = slotScrolled.getBoundingClientRect();
+      x = lerp(x, r2.left + r2.width / 2, prox.scrolled);
+      y = lerp(y, r2.top + r2.height / 2, prox.scrolled);
+      width = lerp(w, r2.width, prox.scrolled);
+    }
+    trav.style.width = width + "px";
     trav.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
   }
   gsap.ticker.add(place);
@@ -167,9 +250,9 @@ function pinwheelScene() {
 
   if (reduce) return; // parked statically in the slot; no wind (CSS reveals the rest)
 
-  // Hide the title / eyebrow / clouds / arrow so the rise happens on bare chalk.
+  // Hide the title / eyebrow / arrow so the rise happens on bare chalk. (Clouds are
+  // owned by cloudDrift, hidden via --enter:0 there; loadTl raises --enter below.)
   gsap.set([".eyebrow--top", ".lockup", "#arrow"], { autoAlpha: 0 });
-  gsap.set(".cloud", { opacity: 0 });
 
   // --- Load-in: rise to screen centre, spin a beat, then slide into the lockup slot
   //     while the title + eyebrow + clouds animate in (group ends centred), arrow last.
@@ -179,7 +262,7 @@ function pinwheelScene() {
     .to({}, { duration: 0.8 })                                          // spin beat (empty bg)
     .addLabel("settle")
     .to(prox, { align: 1, duration: 0.85, ease: "power3.inOut" }, "settle")          // slide to slot
-    .to(".cloud", { opacity: 1, duration: 1.3, stagger: 0.07, ease: "power1.out" }, "settle")
+    .to(".cloud", { "--enter": 1, duration: 1.3, stagger: 0.07, ease: "power1.out" }, "settle")  // edge-fade multiplies this
     .to(".eyebrow--top", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, "settle+=0.1")
     .fromTo(".lockup", { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.75, ease: "power2.out" }, "settle+=0.18")
     .to("#arrow", { autoAlpha: 1, duration: 0.55, ease: "power2.out" }, "settle+=0.55");
@@ -271,9 +354,13 @@ function wireBookKnockAndHover(shelf, books) {
   host.addEventListener("pointerleave", () => { lastX = null; overIdx = -1; });
 
   // Raise + colour + icon swap (interactive books only; .book--soon opts out).
+  // The hover lift uses yPercent (≈40px), NOT y: the scroll-in/out master owns `y`,
+  // so keeping them on separate transform channels means hovering a book mid-scroll
+  // can't kill the master's y tween — the book always falls away on scroll-up.
   gsap.utils.toArray(".book--interactive", shelf).forEach((b) => {
-    const enter = () => { b.classList.add("is-hover"); gsap.to(b, { y: -40, duration: 0.4, ease: "power2.out", overwrite: "auto" }); };
-    const leave = () => { b.classList.remove("is-hover"); gsap.to(b, { y: 0, duration: 0.5, ease: "power2.out", overwrite: "auto" }); };
+    const raise = () => -(40 / b.offsetHeight) * 100;   // 40px lift as a % of book height
+    const enter = () => { b.classList.add("is-hover"); gsap.to(b, { yPercent: raise(), duration: 0.4, ease: "power2.out", overwrite: "auto" }); };
+    const leave = () => { b.classList.remove("is-hover"); gsap.to(b, { yPercent: 0, duration: 0.5, ease: "power2.out", overwrite: "auto" }); };
     b.addEventListener("mouseenter", enter);
     b.addEventListener("mouseleave", leave);
     b.addEventListener("focus", enter);
