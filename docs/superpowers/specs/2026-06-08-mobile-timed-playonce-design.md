@@ -35,8 +35,15 @@ buildTimedHero({ anticipatePin = 0 } = {})
 
 It builds, exactly as the current desktop branch does:
 - a paused `master` timeline: arrow fade-out, cover (`.eyebrow--top`/`.lockup`)
-  fade-out, `pinwheelProx.scrolled` 0→1, `.home-logo`, `.intro__body p`, spines, books
-  (back/elastic) — same eases/durations/offsets as today.
+  fade-out, `pinwheelProx.scrolled` 0→1, `.home-logo`, `.intro__body p`, the
+  `.intro__prologue` reveal at offset `1.05`, spines, books (back/elastic) — same
+  eases/durations/offsets as today.
+
+> **Preserve the in-progress prologue tweens.** The working tree has UNCOMMITTED edits
+> (separate prologue feature) that add `gsap.set(".intro__prologue", …)` in region 1 and
+> a `.to(".intro__prologue", … , 1.05)` tween into BOTH branches' timelines. The shared
+> helper MUST include both, so this refactor keeps the prologue behavior. Do not commit
+> the other prologue working-tree files; only `js/main.js`'s heroScene is in scope here.
 - a separate paused `titleTl`: the `headSpans` line-clip wipe at offset `0.5`.
 - a `ScrollTrigger.create` with `trigger: hero`, `start: "top top"`,
   `end: () => "+=" + window.innerHeight`, `pin: true`, `invalidateOnRefresh: true`, and
