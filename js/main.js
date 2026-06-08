@@ -558,6 +558,10 @@ function magneticButtons() {
    runs behind the lock; on unlock the page reloads and boots fresh.
    ========================================================================== */
 if (!window.__GTC_LOCKED__) {
+  // Ignore the resize mobile browsers fire when the address bar shows/hides — it would
+  // otherwise refresh ScrollTrigger and jump the hero pin mid-scroll. Real rotations
+  // still refresh (different event).
+  if (ScrollTrigger) ScrollTrigger.config({ ignoreMobileResize: true });
   smoothScroll();   // create the smoother first so the pinned ScrollTriggers attach to it
   arrowBob();
   cloudDrift();
