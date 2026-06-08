@@ -141,13 +141,13 @@ function heroScene() {
   headSpans.forEach((s) => gsap.set(s, { y: Math.ceil(s.parentElement.getBoundingClientRect().height) + 2 }));
   gsap.set(".home-logo", { autoAlpha: 0, y: -8 });
   gsap.set(".intro__body p", { autoAlpha: 0, y: 18 });
+  gsap.set(".intro__prologue", { autoAlpha: 0, y: 18 });   // reveals with the intro text, never on the cover
 
-  const mm = gsap.matchMedia();
-
-  // ── Desktop / fine pointer: timed play-once (unchanged behavior) ──────────────
-  // NOTE: the cover/pinwheel/logo/body/shelf tween defs below are intentionally mirrored
-  // in the coarse branch — keep the two in sync when editing eases/durations/offsets.
-  mm.add("(pointer: fine)", () => {
+  // Both pointer types use the SAME timed play-once model: one scroll past the threshold
+  // plays the whole transition at its own fixed duration (NOT mapped to scroll speed),
+  // and scrolling back to the top reverses it. Touch only differs by `anticipatePin`,
+  // which smooths the pin grab during momentum scroll. Built once, called per branch.
+  function buildTimedHero({ anticipatePin = 0 } = {}) {
     // The whole transition as one timed timeline (played once on scroll, reversible).
     const master = gsap.timeline({ paused: true });
     master
@@ -156,7 +156,8 @@ function heroScene() {
     if (pinwheelProx) master.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);
     master
       .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
-      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78);
+      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78)
+      .to(".intro__prologue", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.05);
     hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
     hbBooks.forEach((b, i) => {
       master
@@ -174,6 +175,7 @@ function heroScene() {
       start: "top top",
       end: () => "+=" + window.innerHeight,
       pin: true,
+      anticipatePin,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         if (!played && self.direction === 1 && self.progress > 0.05) {
@@ -188,49 +190,12 @@ function heroScene() {
         }
       },
     });
-  });
+  }
 
-  // ── Touch / coarse pointer: scrubbed (added in Task 3) ───────────────────────
-  mm.add("(pointer: coarse)", () => {
-    // One timeline driven directly by scroll position (scrub). The header line-clip
-    // wipe is folded in at the same 0.5 offset — no separate faster-exit titleTl,
-    // since with scrub the reverse speed already equals the drag-back speed.
-    const tl = gsap.timeline();
-    tl
-      .to("#arrow", { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
-      .to([".eyebrow--top", ".lockup"], { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 0.04);
-    if (pinwheelProx) tl.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);
-    tl
-      .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
-      .to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5)
-      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78);
-    hbSpines.forEach((s, i) => tl.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
-    hbBooks.forEach((b, i) => {
-      tl
-        .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.6 + i * 0.08)
-        .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
-    });
-
-    let loadDone = false;
-    ScrollTrigger.create({
-      trigger: hero,
-      start: "top top",
-      end: () => "+=" + window.innerHeight,
-      pin: true,
-      anticipatePin: 1,   // touch-only: smooths the pin grab during momentum scroll
-      scrub: 0.6,
-      invalidateOnRefresh: true,
-      animation: tl,
-      onUpdate: (self) => {
-        // Finish the load-in once, the moment scrubbing begins, so the pinwheel's
-        // rise/align is settled before the scrubbed `scrolled` channel drives place().
-        if (!loadDone && self.progress > 0) {
-          loadDone = true;
-          if (loadTl) { loadTl.progress(1); loadTl.kill(); loadTl = null; }
-        }
-      },
-    });
-  });
+  // Kept as a matchMedia split (not unified) so a touch-specific variant stays possible.
+  const mm = gsap.matchMedia();
+  mm.add("(pointer: fine)", () => buildTimedHero());
+  mm.add("(pointer: coarse)", () => buildTimedHero({ anticipatePin: 1 }));
 }
 
 /* ============================================================================
