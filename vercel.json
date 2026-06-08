@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/chapter-:n(\\d+)", "destination": "/playbook.html" },
+    { "source": "/chapter-:n(\\d+)/:section", "destination": "/playbook.html" }
+  ]
+}

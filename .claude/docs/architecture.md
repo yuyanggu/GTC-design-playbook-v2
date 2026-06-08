@@ -95,7 +95,17 @@ collide.
 - `tableOfContents(root)` — active row + progress fill follow scroll; accordion sub-rows; click-scroll.
 
 **Reader-only extras** (run when `.chapter-panel`s exist) — see [reader.md](reader.md):
-`panelTransitions()`, `railSync()`, `railReveal()`, `handleDeepLink()`.
+`panelTransitions()`, `railSync()`, `railReveal()`, `handleDeepLink()`, `urlSync()`.
+
+### `js/routes.js` — clean-URL route table (reader + landing)
+
+Classic `<head>` script (loaded before `gate.js`'s siblings and the modules) exposing
+`window.GTCRoutes` (`idToPath`/`pathToId`/`isReaderPath`). One `SECTION_SLUGS` table is the source of
+truth mapping `#s-XY` ids ⇄ `/chapter-N/<slug>` paths (chapters derive `/chapter-N`). Read by the
+anti-flash inline script, `handleDeepLink`/`urlSync` (`chapter.js`), and `wireNav` (`main.js`). Paths
+are server-rewritten — `vercel.json` (Vercel) + `_redirects` (Netlify/CF) map `/chapter-*` →
+`/playbook.html`; `playbook.html` carries `<base href="/">` so its relative assets survive a
+two-segment path. Full scheme + traps in [reader.md](reader.md) and [gotchas.md](gotchas.md).
 
 ## Other directories
 
