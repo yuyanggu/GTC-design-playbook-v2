@@ -142,55 +142,55 @@ function heroScene() {
   gsap.set(".home-logo", { autoAlpha: 0, y: -8 });
   gsap.set(".intro__body p", { autoAlpha: 0, y: 18 });
 
-  // The whole transition as one timed timeline (played once on scroll, reversible).
-  // Scroll-down: the cover (arrow / eyebrow / lockup text) fades out, the pinwheel glides
-  // UP to the header slot (pinwheelProx.scrolled), the top-left logo + header (line-clip
-  // wipe) + body copy animate in, and the shelf rises. Scroll-up reverses the whole thing.
-  const master = gsap.timeline({ paused: true });
-  master
-    .to("#arrow", { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)                         // arrow out FIRST
-    .to([".eyebrow--top", ".lockup"], { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 0.04);  // cover text out
-  if (pinwheelProx) master.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);  // pinwheel rises up + shrinks
-  master
-    .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
-    .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78);  // body fade-up
-  // …then the shelf rises in (spines first, books overshoot + settle + rock).
-  hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
-  hbBooks.forEach((b, i) => {
+  const mm = gsap.matchMedia();
+
+  // ── Desktop / fine pointer: timed play-once (unchanged behavior) ──────────────
+  mm.add("(pointer: fine)", () => {
+    // The whole transition as one timed timeline (played once on scroll, reversible).
+    const master = gsap.timeline({ paused: true });
     master
-      .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.6 + i * 0.08)
-      .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
+      .to("#arrow", { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
+      .to([".eyebrow--top", ".lockup"], { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 0.04);
+    if (pinwheelProx) master.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);
+    master
+      .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
+      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78);
+    hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
+    hbBooks.forEach((b, i) => {
+      master
+        .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.6 + i * 0.08)
+        .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
+    });
+
+    // Header line-clip wipe on its OWN timeline so its EXIT can run faster than entrance.
+    const titleTl = gsap.timeline({ paused: true });
+    titleTl.to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5);
+
+    let played = false;
+    ScrollTrigger.create({
+      trigger: hero,
+      start: "top top",
+      end: () => "+=" + window.innerHeight,
+      pin: true,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        if (!played && self.direction === 1 && self.progress > 0.05) {
+          played = true;
+          if (loadTl) { loadTl.progress(1); loadTl.kill(); loadTl = null; }
+          master.timeScale(1).play();
+          titleTl.timeScale(1).play();
+        } else if (played && self.direction === -1) {
+          played = false;
+          master.timeScale(1).reverse();
+          titleTl.timeScale(2.2).reverse();
+        }
+      },
+    });
   });
 
-  // Header line-clip wipe lives on its OWN timeline (not the master) so its EXIT can run
-  // faster than its entrance without touching the other speeds. The 0.5 lead-in keeps the
-  // same in-timing as the master (header wipes in after the pinwheel/logo).
-  const titleTl = gsap.timeline({ paused: true });
-  titleTl.to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5);
-
-  // Pin the hero so it holds full-screen through the transition. No scrub: scrolling
-  // down past the threshold plays the master once; the FIRST upward scroll reverses it
-  // instantly (direction-based — no waiting to reach the top). Everything reverses at
-  // normal speed EXCEPT the title text, whose exit runs faster (titleTl timeScale 2.2).
-  let played = false;
-  ScrollTrigger.create({
-    trigger: hero,
-    start: "top top",
-    end: () => "+=" + window.innerHeight,
-    pin: true,
-    invalidateOnRefresh: true,
-    onUpdate: (self) => {
-      if (!played && self.direction === 1 && self.progress > 0.05) {
-        played = true;
-        if (loadTl) { loadTl.progress(1); loadTl.kill(); loadTl = null; }  // finish the load-in first
-        master.timeScale(1).play();
-        titleTl.timeScale(1).play();
-      } else if (played && self.direction === -1) {
-        played = false;
-        master.timeScale(1).reverse();        // fires the instant you scroll back up
-        titleTl.timeScale(2.2).reverse();     // …but the title text snaps out faster
-      }
-    },
+  // ── Touch / coarse pointer: scrubbed (added in Task 3) ───────────────────────
+  mm.add("(pointer: coarse)", () => {
+    // Filled in Task 3.
   });
 }
 
