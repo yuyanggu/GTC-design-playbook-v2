@@ -20,6 +20,11 @@
   /* background: #000; */
 }
 
+/* Deep-link anti-flash: the inline head script sets this before paint when the URL
+   carries an anchor; js/chapter.js removes it once the page is positioned. Holding
+   the content hidden stops the reader flashing Chapter 1's hero before the jump. */
+html.deeplinking #smooth-content { opacity: 0; }
+
 /* The layer the transition actually scales + fades. Separate element from the
    pinned panel so ScrollTrigger's pin transform (on .chapter-panel) and our scale
    transform (here) never fight over the same `transform`.

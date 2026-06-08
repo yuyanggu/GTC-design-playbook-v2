@@ -417,25 +417,30 @@ function menuScene() {
   }
   function focusDrawer() { if (drawer) drawer.focus({ preventScroll: true }); }
 
-  // Navigation: a chapter row's data-href. In-page (#chN) smooth-scrolls in the reader
-  // and closes without a flash; any other href is a full page load.
+  // Navigation: a chapter row's data-href is a clean path (/chapter-2). On the reader,
+  // where that path's anchor exists in-page, smooth-scroll to it and close without a
+  // flash; from the landing (anchor absent) it's a full page load to the reader. A
+  // legacy "#id" href still works as an in-page jump.
   function wireNav(closeFn) {
     gsap.utils.toArray(".menu__row[data-href]", menu).forEach((row) => {
       const href = row.getAttribute("data-href");
       if (!href) return;
       row.addEventListener("click", (e) => {
         e.preventDefault();
-        if (href.charAt(0) === "#") {
-          const target = document.querySelector(href);
-          if (!target) return;
+        const id = (window.GTCRoutes && window.GTCRoutes.pathToId(href)) ||
+                   (href.charAt(0) === "#" ? href.slice(1) : null);
+        const target = id && document.getElementById(id);
+        if (target) {
           root.style.overflow = "";
           document.body.style.overflow = "";
           const sm = smoother || (window.ScrollSmoother && window.ScrollSmoother.get());
-          if (sm) sm.scrollTo(target, false);
+          const pos = target.classList.contains("chapter-panel") ? "top top" : "top 120px";
+          if (sm) sm.scrollTo(target, false, pos);
           else target.scrollIntoView();
           closeFn();
+          // urlSync (js/chapter.js) rewrites the address bar to the clean path as the jump settles.
         } else {
-          window.location.href = href;
+          window.location.href = href; // landing → reader, or any non-in-page target
         }
       });
     });

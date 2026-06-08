@@ -42,11 +42,17 @@ There is a `.claude/launch.json` config named `gtc-static` for the preview tooli
 headlessly via **CDP** — see [gotchas.md](.claude/docs/gotchas.md) (headless verification) and the
 project memory `headless-motion-verification`.
 
+> **Reader clean URLs need a rewriting host.** The reader is served at clean paths
+> (`/chapter-2/designing-for-everyone`) via `vercel.json` / `_redirects` rewriting `/chapter-*` →
+> `/playbook.html`. Plain `http.server` doesn't rewrite, so locally open `/playbook.html` directly
+> (deep-path reloads only resolve once deployed, or behind a rewrite shim). See
+> [reader.md](.claude/docs/reader.md) → "Clean URLs & deep-linking".
+
 ## Status / next
 
 - ✅ **Landing (`index.html`)** — animated cover (eyebrow + lockup + rising pinwheel + arrow) and the
   after-scroll intro reveal (Figma `2043:1638`); native delay-free scroll; one-direction cloud drift;
-  in-flow landing shelf (books fall in, sway, raise + recolour → `playbook.html#chN`).
+  in-flow landing shelf (books fall in, sway, raise + recolour → clean reader paths `/chapter-N`).
 - ✅ **Menu** — right-side drawer (swipe-in, interruptible, rows-fall-away close, hamburger→X) on the
   chapter pages + reader. `Esc` / scrim / X closes.
 - ✅ **Three chapter pages** on the shared chapter system — themed hero, pinned scroll-synced TOC

@@ -59,18 +59,61 @@ Each chapter's `stickyToc` pin ends at its `.page-body` bottom — i.e. just bef
 transition pin begins — so the two don't overlap. Three TOC pins + two transition pins +
 ScrollSmoother all live in one document without conflict.
 
-## Menu deep-linking
+## Clean URLs & deep-linking
 
-The reader's drawer rows carry in-page `data-href="#chN"`; `menuScene` does
-`smoother.scrollTo(target, false)` **on click, before the close fade runs** (unlocking page scroll
-first) — so the closing overlay uncovers the destination already in place, with **no flash of the
-chapter you were on**. (Scrolling *after* the fade — the obvious order — showed the old chapter for a
-beat, then jumped.) Arriving with a `#chN` hash from another page (the `index.html` books are
-`playbook.html#chN`) is handled by `handleDeepLink()` on load, which jumps instantly after pin
-spacing is finalised. Both land you at the chapter top; scrolling on runs the next transition normally.
+The reader uses **path URLs, not hashes**: `/chapter-2`, `/chapter-2/designing-for-everyone`
+(section level — subsections scroll-track but the URL stays at the section). The scheme lives in
+**`js/routes.js`** (`window.GTCRoutes`, a classic `<head>` script loaded before everything, like
+`gate.js`): a single `SECTION_SLUGS` table maps `s-XY` ids ⇄ slugs (chapters derive `/chapter-N`
+from `chN`). To add/rename a section, edit that table — it's the source of truth. `GTCRoutes` exposes
+`idToPath`, `pathToId`, `isReaderPath`.
+
+Three pieces make paths work:
+
+- **Server rewrite** — `vercel.json` (`rewrites`) + `_redirects` (Netlify/CF) serve `/playbook.html`
+  for any `/chapter-*` path. **Without a rewriting host a direct visit/reload 404s** — plain
+  `python3 -m http.server` does NOT rewrite, so locally open `/playbook.html` (scroll-spy still
+  updates the address bar in-session); deep-path reloads only resolve once deployed. To test paths
+  locally, run a rewrite shim (a tiny `SimpleHTTPRequestHandler` that maps `/chapter-*` →
+  `playbook.html`).
+- **`<base href="/">`** in `playbook.html` `<head>` — a section path is two segments deep, so without
+  it every relative asset (`css/…`, `js/…`, `assets/…`) would resolve against `/chapter-2/` and 404.
+  CSS-internal `url()`s are unaffected (they resolve against the stylesheet URL). TOC rows keep
+  `href="#s-XX"`, harmless because every click is `preventDefault`-intercepted.
+- **The JS** — `handleDeepLink()` resolves `location.pathname` via `GTCRoutes` (legacy `#hash` still
+  works as a fallback and **auto-upgrades** to a clean path on first scroll). `urlSync()` is a single
+  scroll-spy ScrollTrigger that `replaceState`s the deepest in-view anchor (chapters + section heads
+  only) — `replaceState` so it neither pollutes history nor triggers a browser scroll that would
+  fight ScrollSmoother. It holds off writing until `urlWriteEnabled` flips true (after the initial
+  deep-link resolves) so its first frame can't clobber the incoming URL.
+
+### Anti-flash on entry (`handleDeepLink` + `revealDeepLink`)
+
+Arriving on a deep target used to flash Chapter 1's hero before jumping. Now a pre-paint inline
+script adds `html.deeplinking` (CSS hides `#smooth-content`) whenever the path is a reader path (or a
+legacy hash is present, and not gated). `handleDeepLink()` then **converges**: poll-and-correct the
+live rect to the target (offset 0 for a `.chapter-panel`, 120px for a section head — matching
+`scroll-margin-top`), because (a) ScrollSmoother/native scroll ignore the `panelTransitions` pins so
+a cold jump undershoots, and (b) the smoother silently no-ops `scrollTo` for a few hundred ms after
+load until it's ready. Once landed it fades the content in; a longstop (`setTimeout(revealDeepLink,
+3200)`) guarantees the page can never stay hidden. Section heads carry the `.reveal` entrance
+(`translateY(24px)`, a transform that shifts the rect but not layout), so the target is snapped to
+its resting state (`gsap.set({opacity:1, y:0})`) before converging — otherwise it lands 24px low.
+
+### Menu / book navigation
+
+The reader's drawer rows carry `data-href="/chapter-N"`; the `index.html` books carry the same.
+`wireNav` (`menuScene`) resolves the path via `GTCRoutes`: when the anchor exists in-page (the
+reader) it `smoother.scrollTo`s **before the close fade runs** (unlocking page scroll first) — the
+closing overlay uncovers the destination already in place, **no flash of the chapter you were on**;
+`urlSync` then rewrites the address bar to the clean path. When the anchor is absent (the landing) it
+falls through to a full page load to `/chapter-N` (rewritten to the reader, where `handleDeepLink`
+takes over).
 
 ## Reduced motion
 
-`panelTransitions` bails, so the chapters simply stack and scroll natively (no scale/fade);
-deep-link falls back to `scrollIntoView`. The standalone chapter files remain as a deeper fallback
-(no longer linked from any menu).
+`panelTransitions` bails, so the chapters simply stack and scroll natively (no scale/fade); the
+deep-link converge uses the `window.scrollTo` branch (smoother off). `urlSync` still runs (plain
+ScrollTrigger, no smoother needed). The standalone chapter files remain as a deeper fallback (no
+longer linked from any menu); they don't load `routes.js`, so their `urlSync` falls back to `#id`
+hashes.

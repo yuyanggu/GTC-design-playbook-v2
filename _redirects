@@ -1,0 +1,3 @@
+# Netlify / Cloudflare Pages: serve the reader for clean chapter paths (200 = rewrite,
+# URL stays put). Vercel uses vercel.json instead. See js/routes.js for the scheme.
+/chapter-*  /playbook.html  200

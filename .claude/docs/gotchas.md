@@ -67,6 +67,29 @@ These are the highest-value notes in the repo — preserve them.
   `getBoundingClientRect` and re-applies the transform: it lands a frame behind the smoother and the
   nav visibly **lags**. The ScrollTrigger pin is internally synced → glued with no lag. (`stickyToc`.)
 
+## Clean URLs (reader)
+
+Full scheme + rationale in [reader.md](reader.md) ("Clean URLs & deep-linking"). The traps:
+
+- **Paths need a rewriting host.** The reader is served at `/chapter-2/designing-for-everyone` only
+  because `vercel.json` / `_redirects` rewrite `/chapter-*` → `/playbook.html`. Plain
+  `python3 -m http.server` won't — a direct deep-path load 404s locally. Open `/playbook.html` in dev,
+  or run a rewrite shim to test paths.
+- **`<base href="/">` is load-bearing.** A two-segment path makes relative assets resolve against
+  `/chapter-2/` → 404. The `<base>` in `playbook.html` fixes it. Don't remove it, and keep any new
+  in-page `href` either absolute or `preventDefault`-intercepted (a bare `#foo` resolves to `/#foo`
+  under a base).
+- **`smoother.scrollTo` is dead for the first few hundred ms after load** — it silently no-ops until
+  the smoother's rAF loop is ready. `handleDeepLink` polls-and-corrects (converge) rather than calling
+  it once; don't "simplify" it to a single `scrollTo` or cold deep-links land at the top.
+- **`.reveal` shifts the rect, not the layout.** Its `translateY(24px)` makes a section head's
+  `getBoundingClientRect()` read 24px low until the entrance fires. Snap the deep-link target to
+  `{opacity:1, y:0}` before measuring, or it lands 24px short of the 120px offset.
+- **Scroll-spy must not write the URL too early.** `urlSync` gates on `urlWriteEnabled` (set after the
+  initial `handleDeepLink`); without the gate its first frame at scroll 0 overwrites the incoming
+  `/chapter-2` with `/chapter-1`. Uses `replaceState` (not `pushState`/`location.hash`) so it never
+  triggers a browser scroll that fights ScrollSmoother.
+
 ## Theming
 
 - **Dark-hero rail legibility.** The rail label defaults to `--midnight` (fine on the chalk body); on

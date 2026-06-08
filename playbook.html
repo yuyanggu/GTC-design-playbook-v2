@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Clean reader paths (/chapter-2/designing-for-everyone) are server-rewritten to
+       this file, so the document URL can be two segments deep. <base href="/"> keeps
+       every relative asset below resolving from the site root, not from that path. -->
+  <base href="/" />
   <title>The Design Playbook — GovTech Consulting</title>
   <meta name="description" content="The GTC Design Playbook, read end to end: why we exist, our point of view, and the stages of a project — one continuous, seamless scroll." />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -12,6 +16,20 @@
   <link rel="stylesheet" href="css/chapter.css" />
   <link rel="stylesheet" href="css/playbook.css" />
   <script src="js/gate.js"></script>
+  <script src="js/routes.js"></script>
+  <script>
+    // Pre-paint: when deep-linking to a chapter/section path (or legacy #hash), hold the
+    // content hidden so the reader never flashes Chapter 1's hero before jumping.
+    // js/chapter.js positions the page, then reveals it (see handleDeepLink).
+    (function () {
+      try { history.scrollRestoration = "manual"; } catch (e) {}
+      if (window.__GTC_LOCKED__) return; // gate covers the page; nothing to hide
+      var deep =
+        (window.GTCRoutes && window.GTCRoutes.isReaderPath(location.pathname)) ||
+        (location.hash && location.hash.length > 1);
+      if (deep) document.documentElement.classList.add("deeplinking");
+    })();
+  </script>
 </head>
 <body>
   <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
@@ -19,7 +37,7 @@
        currently in (see railSync in js/chapter.js). Lives OUTSIDE #smooth-wrapper. -->
   <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
   <header class="topbar">
-    <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
+    <a class="topbar__logo" href="/" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
     </a>
     <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
@@ -727,7 +745,7 @@
       <p class="menu__eyebrow">The Design Playbook</p>
       <ul class="menu__list">
         <li class="menu__item">
-          <a class="menu__row" data-href="#ch1" href="#ch1">
+          <a class="menu__row" data-href="/chapter-1" href="/chapter-1">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
               <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
@@ -739,7 +757,7 @@
           </a>
         </li>
         <li class="menu__item">
-          <a class="menu__row" data-href="#ch2" href="#ch2">
+          <a class="menu__row" data-href="/chapter-2" href="/chapter-2">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_2.svg" alt="" />
               <img class="menu__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
@@ -751,7 +769,7 @@
           </a>
         </li>
         <li class="menu__item">
-          <a class="menu__row" data-href="#ch3" href="#ch3">
+          <a class="menu__row" data-href="/chapter-3" href="/chapter-3">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_3.svg" alt="" />
               <img class="menu__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
