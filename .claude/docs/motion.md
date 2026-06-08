@@ -35,6 +35,14 @@ The **header wipe lives on its own `titleTl`** so its EXIT runs faster (`timeSca
 0.8s entrance while everything else reverses at normal speed. `heroScene` early-returns on chapter
 pages; under reduced motion it bails and CSS shows the after-scroll state statically.
 
+> **Touch devices scrub.** `heroScene` branches with `gsap.matchMedia()`: `(pointer: fine)`
+> keeps the timed play-once master above; `(pointer: coarse)` builds one timeline (master
+> tweens + the title wipe folded in at 0.5) attached to a `scrub: 0.6`, `anticipatePin: 1`
+> pinned ScrollTrigger so the transition tracks the finger 1:1 in both directions. The
+> load-in (`loadTl`) is force-completed on the first scrub frame. Globally,
+> `ScrollTrigger.config({ ignoreMobileResize: true })` stops the mobile address bar's
+> show/hide resize from refreshing the pin mid-scroll.
+
 > **Legacy (pre-home-v2 cover).** The old landing was two pinned scenes back-to-back:
 > a scrubbed `#hero` pin (eyebrow/subtitle/arrow fade out, title block rises, streaks grow) then a
 > separate `#intro` pin that ran the pinwheel rise → hold → timed align/reveal (`RISE_END`,
