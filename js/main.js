@@ -145,6 +145,8 @@ function heroScene() {
   const mm = gsap.matchMedia();
 
   // ── Desktop / fine pointer: timed play-once (unchanged behavior) ──────────────
+  // NOTE: the cover/pinwheel/logo/body/shelf tween defs below are intentionally mirrored
+  // in the coarse branch — keep the two in sync when editing eases/durations/offsets.
   mm.add("(pointer: fine)", () => {
     // The whole transition as one timed timeline (played once on scroll, reversible).
     const master = gsap.timeline({ paused: true });
@@ -215,7 +217,7 @@ function heroScene() {
       start: "top top",
       end: () => "+=" + window.innerHeight,
       pin: true,
-      anticipatePin: 1,
+      anticipatePin: 1,   // touch-only: smooths the pin grab during momentum scroll
       scrub: 0.6,
       invalidateOnRefresh: true,
       animation: tl,
