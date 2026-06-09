@@ -1,8 +1,3 @@
-# Generic auto-detecting Dockerfile for Rabbit Deploy / Northflank.
-# Detects and serves: Next.js (standalone + standard), Vite/CRA static builds,
-# Express/Node backends, Replit-style apps, and plain static HTML. Serves on port 3000.
-# Copy this to a new project's repo root as `Dockerfile`. No edits needed for common stacks.
-
 # Build stage
 FROM node:22-alpine AS builder
 
@@ -27,7 +22,7 @@ RUN if [ -f package.json ]; then \
 RUN if [ -f package.json ]; then \
       if [ -f package-lock.json ]; then \
         npm ci --ignore-scripts 2>/dev/null || { \
-          echo "package-lock.json out of sync, regenerating with npm install..."; \
+          echo "⚠️  package-lock.json out of sync, regenerating with npm install..."; \
           rm -f package-lock.json; \
           npm install --ignore-scripts 2>/dev/null || npm install --legacy-peer-deps --ignore-scripts; \
         }; \
@@ -44,9 +39,10 @@ RUN if [ -f package.json ]; then \
 RUN rm -rf .next dist build
 
 # Build-time placeholder env vars for common auth/db libraries.
+# During next build, route modules are imported for page data collection.
 # Auth libraries (better-auth, Auth.js, NextAuth) crash if their URL/secret
-# env vars are undefined during build. These placeholders prevent that.
-# Harmless for non-Next.js apps; cleared in the production stage.
+# env vars are undefined. These placeholders prevent that.
+# They are harmless for non-Next.js apps and are cleared in the production stage.
 ENV BUILD_MODE=1
 ENV BETTER_AUTH_URL=http://localhost:3000
 ENV BETTER_AUTH_SECRET=build-placeholder
@@ -112,9 +108,13 @@ WORKDIR /app
 # Copy built app and production dependencies from builder
 COPY --from=builder /app ./
 
-# For Next.js standalone: set up the standalone server without overwriting .next/ manifests.
-# Standalone output lives in .next/standalone/ but does NOT include manifests, .next/static/, or public/.
-# Selectively copy standalone's server.js and node_modules, then merge its .next/server/ into the existing .next/.
+# For Next.js standalone: set up the standalone server without overwriting .next/ manifests
+# Standalone output lives in .next/standalone/ but does NOT include:
+#   - .next/routes-manifest.json, build-manifest.json, and other manifests
+#   - .next/static/ (static assets)
+#   - public/ (public assets)
+# So we selectively copy standalone's server.js and node_modules, then merge
+# its .next/server/ into the existing .next/ which already has manifests and static.
 RUN if [ -f .app-type ] && [ "$(cat .app-type)" = "nextjs-standalone" ]; then \
       cp .next/standalone/server.js . && \
       if [ -d .next/standalone/node_modules ]; then \
