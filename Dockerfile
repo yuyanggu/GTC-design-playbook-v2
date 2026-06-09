@@ -137,7 +137,7 @@ RUN APP_TYPE=$(cat .app-type) && \
 RUN APP_TYPE=$(cat .app-type) && \
     printf '#!/bin/sh\n' > /entrypoint.sh && \
     if [ "$APP_TYPE" = "static-html" ]; then \
-      printf 'exec serve . -s -l 3000\n' >> /entrypoint.sh; \
+      printf 'exec serve . -l 3000\n' >> /entrypoint.sh; \
     elif [ "$APP_TYPE" = "nextjs-standalone" ]; then \
       printf 'exec node server.js\n' >> /entrypoint.sh; \
     elif [ "$APP_TYPE" = "nextjs" ]; then \
