@@ -1,7 +1,6 @@
 {
-  "$schema": "https://json.schemastore.org/serve.json",
   "rewrites": [
-    { "source": "/chapter-:n(\\d+)", "destination": "/playbook.html" },
-    { "source": "/chapter-:n(\\d+)/:section", "destination": "/playbook.html" }
+    { "source": "/chapter-:n", "destination": "/playbook.html" },
+    { "source": "/chapter-:n/:section", "destination": "/playbook.html" }
   ]
 }
