@@ -41,7 +41,9 @@ if (window.__GTC_LOCKED__) {
     handleDeepLink();        // land on the chapter named in the URL hash (menu deep-link)
     urlWriteEnabled = true;  // from here, scrolling may rewrite the URL
   });
-} else if (document.querySelector(".page-hero")) {
+} else if (document.querySelector(".page-hero, .page-body.foreword")) {
+  // .page-body.foreword → the standalone Foreword page (no hero). Reader panels
+  // are handled by the branch above, so this only matches the standalone file.
   // ----- Standalone chapter page: scope to the whole document -----
   initChapter(document);
   railReveal();
