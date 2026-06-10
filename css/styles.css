@@ -851,7 +851,7 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
     display: flex;
     align-items: center;
     gap: clamp(10px, 3.4vw, 18px);
-    padding-block: clamp(20px, 5.5vw, 28px);
+    padding-block: 32px;
     padding-inline: clamp(16px, 5vw, 26px);
     /* Horizontal gradient — lightest on the left, deepening to the right. */
     background: linear-gradient(90deg, #aed3ed 0%, #4f94cf 47.12%);
@@ -866,39 +866,37 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   a.home-card:focus-visible { outline: 3px solid var(--midnight); outline-offset: 3px; }
 
   .home-card__icon {
-    position: relative;
-    flex: 0 0 auto;
-    width: clamp(46px, 14vw, 66px);
-    height: clamp(46px, 14vw, 66px);
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
   }
   .home-card__icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
   .home-card__num {
     flex: 0 0 auto;
-    min-width: 38px;
+    min-width: 28px;
     text-align: center;
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: 36px;
+    font-size: 32px;
     line-height: 1;
     color: var(--chalk);
   }
-  /* Vertical divider between the number and the title — thick, near full-height with
-     a small, equal gap top and bottom. */
+  /* Vertical divider — fixed 40px tall, centred in the card. */
   .home-card__rule {
-    flex: 0 0 auto;
-    align-self: stretch;
+    flex: 0 0 3px;
     width: 3px;
-    margin-block: 12px;
+    height: 40px;
+    align-self: center;
     background: rgba(246, 242, 231, 0.55);
   }
   .home-card__body { flex: 1 1 auto; min-width: 0; }
   .home-card__title {
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: clamp(16px, 5vw, 22px);
+    font-size: clamp(15px, 4.2vw, 20px);
     line-height: 1.25;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.3px;
     color: #fff;
   }
   .home-card__soon {
