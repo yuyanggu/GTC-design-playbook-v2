@@ -178,6 +178,35 @@ body { background: var(--chalk); }
 /* display:contents → toc/flowercol participate directly in the canvas layout. */
 .body-left { display: contents; }
 
+/* ---------------------------------------------------------------------------
+   FOREWORD (chapter 0) — chalk page, no hero, no TOC (Figma 2146:5238).
+   Title sits top-left on chalk (clearing the fixed topbar); a full-width orb
+   banner; then the standard offset .copy column. min-height keeps the panel
+   taller than one viewport so its chapter-to-chapter transition into C1 reads.
+   --------------------------------------------------------------------------- */
+.chapter-panel--foreword .page-body.foreword,
+.page-body.foreword.chapter-panel--foreword {
+  min-height: 100vh;
+  padding-top: clamp(96px, 12vh, 140px);   /* clears the topbar logo/hamburger */
+}
+.foreword__title {
+  margin: 0 0 0 clamp(20px, 5vw, 78px);    /* hug the left, ~78px gutter at 1440 (Figma) */
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5.2vw, 75px);
+  line-height: 1.6;
+  color: var(--midnight);
+}
+.foreword__graphic {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: clamp(24px, 4vh, 40px) 0;        /* banner sits between title and copy */
+}
+/* The copy column keeps the shared .copy offset; just trim its top padding so it
+   follows the banner rather than the (absent) hero band. */
+.foreword__copy { padding-top: clamp(32px, 5vh, 78px); }
+
 /* ----- Table of contents (left column — pinned to follow scroll) -----
    Floated (in normal flow) so ScrollTrigger can pin it — CSS sticky/fixed can't
    survive the ScrollSmoother transform, and pinning fails on absolute/grid/flex
