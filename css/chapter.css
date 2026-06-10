@@ -187,19 +187,71 @@ body { background: var(--chalk); }
   width: 328px;
   margin-left: 132px;
 }
-.toc__label {
-  margin: 0 0 9px;
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-size: 16px;
+/* Chapter switcher — four cells that jump between chapters (same behaviour as the
+   menu). The cell for the chapter you're in is accent-filled and shows its colour
+   icon; the others are grey with the mono icon. Cell 4 is "coming soon" (inert). */
+.toc__chapters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  width: 100%;
+  margin: 0 0 32px;
+}
+.toc__chapter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100px;
+  padding: 9px 0 14px;
+  background: #b8bdb9;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+.toc__chapter:hover { background: #a9aea4; }
+.toc__chapter:focus-visible { outline: 3px solid var(--midnight); outline-offset: 2px; }
+.toc__chapter-num {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
   line-height: 1;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
   color: var(--midnight);
 }
+.toc__chapter-icon {
+  position: relative;
+  flex: 1;
+  width: 38px;
+  margin-top: 8px;
+}
+.toc__chapter-icon img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s ease;
+}
+.toc__chapter-icon-hover { opacity: 0; }
+/* Current chapter — accent fill, colour icon, no jump. */
+.toc__chapter.is-current { background: var(--accent, var(--orange)); pointer-events: none; }
+.toc__chapter.is-current .toc__chapter-icon-base { opacity: 0; }
+.toc__chapter.is-current .toc__chapter-icon-hover { opacity: 1; }
+/* Chapter 4 — not built yet (mirrors the menu's "coming soon" row). */
+.toc__chapter--soon { pointer-events: none; }
+
+/* Chapter title — the big display title for the chapter you're reading. */
+.toc__chapter-title {
+  margin: 0 0 24px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--accent, var(--orange));
+}
+
 .toc__progress {
   position: relative;
-  width: 161px;
+  width: 100%;
   height: 11px;
   border-radius: 10px;
   background: var(--skeleton);
@@ -216,70 +268,51 @@ body { background: var(--chalk); }
 }
 .toc__list {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 18px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
 }
-.toc__list li { display: flex; flex-direction: column; gap: 5px; }
+.toc__list > li { display: flex; flex-direction: column; padding: 14px 0; }
+.toc__list > li + li { border-top: 1px solid rgba(1, 34, 51, 0.14); }
 
-/* Resting rows are a quiet, low-contrast index so the prose leads; only the active
-   row carries the accent fill (white text) to mark where you are. */
+/* Rows are a quiet index (no fill); the active row simply turns accent-coloured. */
 .toc__row {
   display: flex;
   align-items: center;
   gap: 14px;
-  width: 305px;
-  height: 54px;
-  padding: 0 18px;
-  background: rgba(1, 34, 51, 0.05);
   text-decoration: none;
-  transition: background 0.3s ease;
 }
-.toc__row:hover { background: rgba(1, 34, 51, 0.09); }
-.toc__row.is-active { background: var(--accent, var(--orange)); }
-.toc__row:focus-visible { outline: 3px solid var(--midnight); outline-offset: 2px; }
+.toc__row:focus-visible,
+.toc__subrow:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
 .toc__num {
   flex: none;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 15px;
   line-height: 1;
-  color: rgba(1, 34, 51, 0.45);
+  color: var(--midnight);
 }
-.toc__rule { flex: none; width: 1px; height: 42px; background: rgba(1, 34, 51, 0.18); }
+.toc__rule { flex: none; width: 1px; height: 34px; background: rgba(1, 34, 51, 0.5); }
 .toc__title {
   font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
   line-height: 1.1;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.32px;
   text-transform: uppercase;
-  color: rgba(1, 34, 51, 0.6);
+  color: var(--midnight);
 }
-/* Active row → white content over the accent fill. */
+/* Active row → accent-coloured number + title. */
 .toc__row.is-active .toc__num,
-.toc__row.is-active .toc__title { color: #fff; }
-.toc__row.is-active .toc__rule { background: rgba(255, 255, 255, 0.65); }
+.toc__row.is-active .toc__title { color: var(--accent, var(--orange)); }
 
-/* skeleton placeholder bars */
-.toc__skeleton {
-  display: block;
-  width: 305px;
-  height: 15px;
-  background: var(--skeleton);
-}
-.toc__skeleton--b { width: 293px; margin-left: 12px; }
-.toc__skeleton--e { width: 293px; margin-left: 12px; }
-.toc__skeleton--f { width: 281px; margin-left: 18px; }
-
-/* Sub-section rows — thinner "stacked books" under a section; accordion-opened
-   only for the section you're reading (height animated by JS). Same row language
-   as the main rows, just slimmer + indented + a lighter resting shade. */
+/* Sub-section rows — accordion-opened only for the section you're reading (height
+   animated by JS). A small accent diamond marks each; the active sub-row is full
+   midnight, the rest dimmed. */
 .toc__sub {
   list-style: none;
-  margin: 0;
+  margin: 8px 0 0;
   padding: 0;
   height: 0;            /* collapsed by default; JS animates to auto */
   overflow: hidden;
@@ -288,27 +321,27 @@ body { background: var(--chalk); }
 .toc__subrow {
   display: flex;
   align-items: center;
-  width: 285px;                       /* narrower; right edge aligns with main rows */
-  min-height: 34px;                   /* slimmer than the 60px main row */
-  margin: 5px 0 0 20px;               /* stack gap + indent under the parent */
-  padding: 6px 14px;
-  background: rgba(1, 34, 51, 0.035); /* lighter still than the main resting row */
+  gap: 12px;
+  padding: 6px 0 6px 50px;
   text-decoration: none;
-  transition: background 0.25s ease;
 }
-.toc__subrow:hover { background: rgba(1, 34, 51, 0.07); }
-.toc__subrow.is-active { background: var(--accent, var(--orange)); }
-.toc__subrow:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
+.toc__subrow::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  background: var(--accent, var(--orange));
+}
 .toc__subtitle {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 12px;
-  line-height: 1.15;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  color: rgba(1, 34, 51, 0.55);
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.28px;
+  color: rgba(1, 34, 51, 0.4);
 }
-.toc__subrow.is-active .toc__subtitle { color: #fff; }
+.toc__subrow.is-active .toc__subtitle { color: var(--midnight); }
 
 /* ----- Body copy (right column) ----- */
 .copy {
@@ -543,7 +576,7 @@ body { background: var(--chalk); }
     margin: 0 auto 56px;
     padding-left: 84px;
   }
-  .toc__row, .toc__skeleton { width: 100%; max-width: 305px; }
+  .toc__chapters, .toc__chapter-title, .toc__progress { max-width: 360px; }
   .copy {
     margin-left: 0;
     width: auto;

@@ -57,7 +57,36 @@
 
        <div class="body-left">
         <nav class="toc" aria-label="Table of contents">
-          <p class="toc__label">table of contents</p>
+          <div class="toc__chapters" aria-label="Jump to chapter">
+            <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1" aria-label="Chapter 1: Why we exist, and the moment">
+              <span class="toc__chapter-num">1</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_1.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_1_hover.svg" alt="" />
+              </span>
+            </a>
+            <span class="toc__chapter is-current" aria-current="true" aria-label="Chapter 2: Our point of view">
+              <span class="toc__chapter-num">2</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_2.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_2_hover.svg" alt="" />
+              </span>
+            </span>
+            <a class="toc__chapter" data-href="/chapter-3" href="/chapter-3" aria-label="Chapter 3: Stages of a project">
+              <span class="toc__chapter-num">3</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_3.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_3_hover.svg" alt="" />
+              </span>
+            </a>
+            <span class="toc__chapter toc__chapter--soon" aria-disabled="true" aria-label="Chapter 4: How we work as a team (coming soon)">
+              <span class="toc__chapter-num">4</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_4.svg" alt="" />
+              </span>
+            </span>
+          </div>
+          <p class="toc__chapter-title">Our point of view</p>
           <div class="toc__progress" aria-hidden="true">
             <span class="toc__progress-fill"></span>
           </div>
@@ -69,8 +98,12 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">Designing for everyone</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--a" aria-hidden="true"></span>
-              <span class="toc__skeleton toc__skeleton--b" aria-hidden="true"></span>
+              <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-21-1" href="#s-21-1"><span class="toc__subtitle">Fairness by design</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-21-2" href="#s-21-2"><span class="toc__subtitle">Siloed by mandate, experienced as one</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-21-3" href="#s-21-3"><span class="toc__subtitle">Policy, procurement, governance</span></a></li>
+                <li><a class="toc__subrow" data-toc="s-21-4" href="#s-21-4"><span class="toc__subtitle">Designing for those who deliver</span></a></li>
+              </ul>
             </li>
             <li>
               <a class="toc__row" data-toc="s-22" href="#s-22">
@@ -78,7 +111,9 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">What we believe</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--c" aria-hidden="true"></span>
+              <ul class="toc__sub">
+                <li><a class="toc__subrow" data-toc="s-22-1" href="#s-22-1"><span class="toc__subtitle">What we’re still working out</span></a></li>
+              </ul>
             </li>
             <li>
               <a class="toc__row" data-toc="s-23" href="#s-23">
@@ -86,15 +121,12 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">What success looks like</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--d" aria-hidden="true"></span>
-              <span class="toc__skeleton toc__skeleton--e" aria-hidden="true"></span>
             </li>
           </ul>
         </nav>
        </div><!-- /.body-left -->
 
         <article class="copy">
-          <h2 class="copy__heading reveal">Our point<br />of view</h2>
 
           <p class="lead reveal">Every team has a point of view, whether it’s written down or not. Ours starts with a belief about what’s possible here — not just to do more of what’s already happening, but to push what public service design can be, how it gets built, how it improves over time, and to help shape that across an entire system that touches every life. That’s the scale of the opportunity. Build without finding out what’s true, and you’ll solve the wrong problem with confidence. Find out what’s true without building to test it, and you’ll leave a stack of insights that never changed anything. Both happen all the time. Neither has to. This is how we intend to work differently.</p>
 
@@ -108,17 +140,17 @@
           <p class="reveal">That reach comes with a specific set of realities: policy frameworks that govern what can be built, governance structures that shape how decisions get made, and an accountability to the public that runs through every choice we make. Understanding those realities — and working within them rather than around them — is the foundation of everything that follows.</p>
           <p class="reveal">Working inside that system means understanding how it’s built. These are the realities we design within.</p>
 
-          <h4 class="subsection-head reveal">Fairness by design</h4>
+          <h4 class="subsection-head reveal" id="s-21-1">Fairness by design</h4>
           <p class="reveal">Government holds itself to a high standard — consistent, transparent, predictable, accessible, and accountable — because public systems have to work for everyone, without exception. A service that works for most but fails the vulnerable isn’t meeting that bar. Unlike most products, government has no competition: if a service fails you, there’s nowhere else to go. That’s why Singapore’s MDDI mandate of <em>digital first, but not digital only</em> matters as a design principle, not just a policy direction — digital is the default, but every service decision has to account for who might be left behind. Designing for those exceptions isn’t a concession. It’s what fairness actually looks like in practice.</p>
           <span class="source-note reveal">Source: mddi.gov.sg</span>
 
-          <h4 class="subsection-head reveal">Siloed by mandate, experienced as one</h4>
+          <h4 class="subsection-head reveal" id="s-21-2">Siloed by mandate, experienced as one</h4>
           <p class="reveal">Each agency has its own remit, its own rules, its own definition of success. But citizens experience one life, not separate agencies. Sitting where we do, working across them, we have a rare opportunity: to see the whole person and connect dots that institutional silos can’t. That’s something we should actively strive for.</p>
 
-          <h4 class="subsection-head reveal">Policy, procurement, governance — these are the brief</h4>
+          <h4 class="subsection-head reveal" id="s-21-3">Policy, procurement, governance — these are the brief</h4>
           <p class="reveal">Policy governs what can be built. Procurement governs how it gets built. Governance shapes who decides. These aren’t obstacles — they’re the actual shape of the problem. Two things follow. We still need to prototype and test, which means building the right sandboxes inside these constraints, not despite them. And clearing them isn’t the finish line. A service can satisfy every requirement and still fail the people using it. We design to a higher bar than compliance.</p>
 
-          <h4 class="subsection-head reveal">We design for the people who deliver, not just the people who use</h4>
+          <h4 class="subsection-head reveal" id="s-21-4">We design for the people who deliver, not just the people who use</h4>
           <p class="reveal">Every public service has two sets of users: the citizens who depend on it, and the officers who deliver it. The empathy we bring to the front has to extend to the back. Officer workflows, the tools they’re given, the friction they live with daily — all of it shapes what the public ends up experiencing. A service can’t be better than the system the people inside it are working with.</p>
 
           <!-- 2.2 -->
@@ -134,7 +166,7 @@
             <li><strong>Skills are shared, not owned.</strong> Service design isn’t only for designers. PRDs aren’t only for product managers. The boundaries between roles are becoming more permeable — and that’s a feature, not a problem.</li>
           </ul>
 
-          <h4 class="subsection-head reveal">What we’re still working out</h4>
+          <h4 class="subsection-head reveal" id="s-22-1">What we’re still working out</h4>
           <p class="reveal">The boundaries between design, product, and engineering are shifting — and we think that’s exciting. There’s no settled answer yet on where those lines should sit, and we’re not waiting for one. We’re experimenting our way toward it, together, and we expect what we learn to change how we work.</p>
 
           <!-- 2.3 -->

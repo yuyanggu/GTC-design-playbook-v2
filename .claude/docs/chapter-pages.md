@@ -31,11 +31,27 @@ only, via `heroFlowerSpin`) sized `min(700px,70vw)` × `--flower-aspect` (ch1 `5
 
 ## TOC (`.toc`)
 
-Pinned nav (`stickyToc`) with a `--accent` active row, a scroll-driven `.toc__progress-fill`,
-decorative `.toc__skeleton` "spine" bars (varied widths via `--a…--f`), and optional **accordion
-sub-rows**: each `<li>` may hold a `.toc__sub` of `.toc__subrow`s that open only while that section
-is active (`tableOfContents` animates its `height`). Active main/sub track scroll off each heading's
-id (`#s-31`, `#s-31-1`, …). Titles + sub-titles are DM Sans **600**.
+Pinned nav (`stickyToc`). Top to bottom (redesign, Figma `2118:4187`):
+
+- **`.toc__chapters`** — a 4-cell chapter switcher (grid of 4) that jumps between chapters, same
+  behaviour as the drawer menu (`chapterSwitch` in `js/chapter.js`). The current chapter's cell is
+  `.is-current` (accent fill + the colour icon `menu_N_hover.svg`, `pointer-events:none` → no-op);
+  the others are grey with the mono `menu_N.svg`. Cell 4 is `.toc__chapter--soon` (inert, mirrors the
+  menu's "coming soon" row). Link cells carry `data-href="/chapter-N"`; `chapterSwitch` resolves via
+  `GTCRoutes.pathToId` → `smoother.scrollTo` in-page (reader), else a full load to `/chapter-N`
+  (standalone pages, where `GTCRoutes` is absent).
+- **`.toc__chapter-title`** — the chapter title, Boldonse 24px `--accent` (full titles; ch1 wraps to
+  two lines).
+- **`.toc__progress` / `.toc__progress-fill`** — scroll-driven progress bar (grey track + accent fill).
+- **`.toc__list`** — section rows separated by thin horizontal rules (`li + li` border-top). Each
+  `.toc__row` is num (Boldonse) + vertical `.toc__rule` + `.toc__title` (DM Sans **700**, uppercase,
+  `-0.32px`); the active row turns `--accent` (no fill). Optional **accordion sub-rows**: each `<li>`
+  may hold a `.toc__sub` of `.toc__subrow`s (accent diamond bullet + Source Serif 14px) that open only
+  while that section is active (`tableOfContents` animates its `height`); the active sub-row is full
+  midnight, the rest dimmed. Active main/sub track scroll off each heading's id (`#s-31`, `#s-31-1`, …).
+
+The old `.toc__label` ("table of contents") and `.toc__skeleton` book-spine bars were **dropped** in
+the redesign.
 
 ## Copy blocks (in `.copy`, accent/midnight on chalk, Source Serif body)
 

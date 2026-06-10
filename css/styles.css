@@ -381,14 +381,16 @@ img { display: block; max-width: 100%; }
 /* The after-scroll reveal is hidden on the cover state (revealed by the scroll master).
    Hide the body's paragraphs (not the container) — the master animates the <p>s. */
 .js .home-logo,
-.js .intro__body p { opacity: 0; }
+.js .intro__body p,
+.js .intro__prologue { opacity: 0; }
 .js .intro__head .line > span { transform: translateY(110%); }
 @media (prefers-reduced-motion: reduce) {
   /* No scroll choreography → present the after-scroll composition statically so the
      header/body copy is reachable. Clouds stay; the cover-only bits are hidden. */
   .js .cloud,
   .js .home-logo,
-  .js .intro__body p { opacity: 1; }
+  .js .intro__body p,
+  .js .intro__prologue { opacity: 1; }
   .js .eyebrow--top,
   .js .lockup,
   .js #arrow { opacity: 0; }

@@ -60,6 +60,34 @@ function initChapter(root) {
   copyReveals(root);
   stickyToc(root);
   tableOfContents(root);
+  chapterSwitch(root);
+}
+
+/* ---- Chapter switcher: the 4-cell grid at the top of the TOC jumps between
+   chapters, same behaviour as the menu (wireNav in js/main.js). On the reader,
+   where the target chapter exists in-page, smooth-scroll to it; on a standalone
+   page (no in-page anchor / no GTCRoutes) fall through to a full load to
+   /chapter-N. The current chapter's cell + the "coming soon" cell carry no
+   data-href, so they're inert. ---- */
+function chapterSwitch(root) {
+  const cells = gsap.utils.toArray(root.querySelectorAll(".toc__chapter[data-href]"));
+  if (!cells.length) return;
+  const smoother = window.ScrollSmoother && window.ScrollSmoother.get();
+  cells.forEach((cell) => {
+    const href = cell.getAttribute("data-href");
+    cell.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = window.GTCRoutes && window.GTCRoutes.pathToId(href);
+      const target = id && document.getElementById(id);
+      if (target) {
+        if (smoother) smoother.scrollTo(target, true, "top top");
+        else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+        // urlSync (below) rewrites the address bar to the clean path as the jump settles.
+      } else {
+        window.location.href = href; // standalone page → full load to the reader
+      }
+    });
+  });
 }
 
 /* ---- Hero flower: endless "wind" spin with organic gusts (mirrors pinwheel) ---- */

@@ -9,6 +9,7 @@
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/prologue.css" />
   <script src="js/gate.js"></script>
 </head>
 <body>
@@ -55,6 +56,7 @@
             <p><em>Design is changing.</em> The way we work, the tools we use, the expectations we navigate all of it is shifting. This playbook captures how we think about it at GTC: our principles, our craft, and our way of working and because design never stops evolving, neither does this.</p>
             <p>Consider it a living reference, a place to learn, revisit, and build from.</p>
           </div>
+          <button class="intro__prologue" type="button" data-prologue-open>Prologue</button>
         </div>
 
         <img class="arrow" id="arrow" src="assets/arrow.svg" alt="" aria-hidden="true" />
@@ -131,11 +133,42 @@
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
 
+  <!-- Prologue — first-visit note overlay (js/prologue.js); hidden until opened. -->
+  <div class="prologue" id="prologue" role="dialog" aria-modal="true" aria-labelledby="prologueTitle" hidden>
+    <div class="prologue__scrim" aria-hidden="true"></div>
+    <div class="prologue__stage">
+    <div class="prologue__note" role="document">
+      <button class="prologue__close" type="button" aria-label="Close prologue"></button>
+      <h2 class="prologue__title" id="prologueTitle">PROLOGUE</h2>
+      <img class="prologue__orbs" src="assets/prologue.webp" alt="" aria-hidden="true" />
+      <div class="prologue__cols">
+        <div class="prologue__col">
+          <h4 class="prologue__head">For us, the GTC Design Team</h4>
+          <p class="prologue__text">This playbook is for us, the GovTech Consulting Design team. We focus on a specific part of design: discovery and creating the conditions for action. Not building, not developing. We work upstream, where the problem gets defined and the direction gets set. If you’re on the team, this is your document.</p>
+        </div>
+        <div class="prologue__col">
+          <h4 class="prologue__head">Open for a reason</h4>
+          <p class="prologue__text">Because good thinking gets sharper with honest reactions. We made it public so anyone can read it, push back on it, or bring it up over a meal. That kind of conversation is exactly what we’re hoping for.</p>
+        </div>
+        <div class="prologue__col">
+          <h4 class="prologue__head">Not a methods guide</h4>
+          <p class="prologue__text">You won’t find research techniques or workshop instructions here. What you will find is our point of view: on what design actually is and where it’s going, on why discovery is changing more dramatically than most people realise, on why prototyping means building to test and not building to release, on how the lines between design, product, and engineering are shifting, and on what it means to do all of this in government, for the public, at this particular moment in time.</p>
+        </div>
+        <div class="prologue__col">
+          <h4 class="prologue__head">Always in draft</h4>
+          <p class="prologue__text">This is not an excuse to leave things unfinished. It’s a declaration that we are in a moment of genuine flux, learning by doing, testing what we believe, and updating this as we go. Every project is a prototype. So is this.</p>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
   <script src="vendor/ScrollSmoother.min.js"></script>
   <script src="vendor/CustomEase.min.js"></script>
   <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/prologue.js"></script>
 </body>
 </html>

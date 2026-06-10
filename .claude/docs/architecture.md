@@ -93,6 +93,9 @@ collide.
 - `copyReveals(root)` — `ScrollTrigger.batch` fade-up of `.reveal`.
 - `stickyToc(root)` — the pinned TOC nav (see [gotchas.md](gotchas.md): pinning under ScrollSmoother).
 - `tableOfContents(root)` — active row + progress fill follow scroll; accordion sub-rows; click-scroll.
+- `chapterSwitch(root)` — the TOC's 4-cell chapter switcher jumps between chapters (in-page on the
+  reader via `GTCRoutes`/`smoother.scrollTo`, else a full load to `/chapter-N`); same behaviour as the
+  menu's `wireNav`.
 
 **Reader-only extras** (run when `.chapter-panel`s exist) — see [reader.md](reader.md):
 `panelTransitions()`, `railSync()`, `railReveal()`, `handleDeepLink()`, `urlSync()`.

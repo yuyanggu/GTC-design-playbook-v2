@@ -62,7 +62,36 @@
        <div class="body-left">
         <!-- Table of contents (scroll-synced, sticky) -->
         <nav class="toc" aria-label="Table of contents">
-          <p class="toc__label">table of contents</p>
+          <div class="toc__chapters" aria-label="Jump to chapter">
+            <span class="toc__chapter is-current" aria-current="true" aria-label="Chapter 1: Why we exist, and the moment">
+              <span class="toc__chapter-num">1</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_1.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_1_hover.svg" alt="" />
+              </span>
+            </span>
+            <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2" aria-label="Chapter 2: Our point of view">
+              <span class="toc__chapter-num">2</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_2.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_2_hover.svg" alt="" />
+              </span>
+            </a>
+            <a class="toc__chapter" data-href="/chapter-3" href="/chapter-3" aria-label="Chapter 3: Stages of a project">
+              <span class="toc__chapter-num">3</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_3.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_3_hover.svg" alt="" />
+              </span>
+            </a>
+            <span class="toc__chapter toc__chapter--soon" aria-disabled="true" aria-label="Chapter 4: How we work as a team (coming soon)">
+              <span class="toc__chapter-num">4</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_4.svg" alt="" />
+              </span>
+            </span>
+          </div>
+          <p class="toc__chapter-title">Why we exist, and the moment</p>
           <div class="toc__progress" aria-hidden="true">
             <span class="toc__progress-fill"></span>
           </div>
@@ -74,8 +103,6 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">Why we exist, and the moment</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--a" aria-hidden="true"></span>
-              <span class="toc__skeleton toc__skeleton--b" aria-hidden="true"></span>
             </li>
             <li>
               <a class="toc__row" data-toc="s-12" href="#s-12">
@@ -83,7 +110,6 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">The modernisation opportunity</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--c" aria-hidden="true"></span>
             </li>
             <li>
               <a class="toc__row" data-toc="s-13" href="#s-13">
@@ -91,9 +117,6 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">The A.I. reality</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--d" aria-hidden="true"></span>
-              <span class="toc__skeleton toc__skeleton--e" aria-hidden="true"></span>
-              <span class="toc__skeleton toc__skeleton--f" aria-hidden="true"></span>
             </li>
           </ul>
         </nav>
@@ -101,7 +124,6 @@
 
         <!-- Body copy -->
         <article class="copy">
-          <h2 class="copy__heading reveal">Why we exist,<br />and the moment</h2>
 
           <h3 class="section-head reveal" id="s-11">1.1 Why GovTech</h3>
           <p class="reveal">Singapore&rsquo;s Smart Nation vision called for something deliberate: a centralised digital government capability, built in-house, so that the knowledge and direction of transformation would sit within government &mdash; not fragmented across agencies or outsourced away. GovTech was the answer to that call.</p>

@@ -57,7 +57,36 @@
 
        <div class="body-left">
         <nav class="toc" aria-label="Table of contents">
-          <p class="toc__label">table of contents</p>
+          <div class="toc__chapters" aria-label="Jump to chapter">
+            <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1" aria-label="Chapter 1: Why we exist, and the moment">
+              <span class="toc__chapter-num">1</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_1.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_1_hover.svg" alt="" />
+              </span>
+            </a>
+            <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2" aria-label="Chapter 2: Our point of view">
+              <span class="toc__chapter-num">2</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_2.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_2_hover.svg" alt="" />
+              </span>
+            </a>
+            <span class="toc__chapter is-current" aria-current="true" aria-label="Chapter 3: Stages of a project">
+              <span class="toc__chapter-num">3</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_3.svg" alt="" />
+                <img class="toc__chapter-icon-hover" src="assets/menu_3_hover.svg" alt="" />
+              </span>
+            </span>
+            <span class="toc__chapter toc__chapter--soon" aria-disabled="true" aria-label="Chapter 4: How we work as a team (coming soon)">
+              <span class="toc__chapter-num">4</span>
+              <span class="toc__chapter-icon" aria-hidden="true">
+                <img class="toc__chapter-icon-base" src="assets/menu_4.svg" alt="" />
+              </span>
+            </span>
+          </div>
+          <p class="toc__chapter-title">Stages of a project</p>
           <div class="toc__progress" aria-hidden="true">
             <span class="toc__progress-fill"></span>
           </div>
@@ -76,7 +105,6 @@
                 <li><a class="toc__subrow" data-toc="s-31-4" href="#s-31-4"><span class="toc__subtitle">What an ideal project team looks like</span></a></li>
                 <li><a class="toc__subrow" data-toc="s-31-5" href="#s-31-5"><span class="toc__subtitle">Where we exit</span></a></li>
               </ul>
-              <span class="toc__skeleton toc__skeleton--a" aria-hidden="true"></span>
             </li>
             <li>
               <a class="toc__row" data-toc="s-32" href="#s-32">
@@ -84,7 +112,6 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">Qualifying</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--b" aria-hidden="true"></span>
             </li>
             <li>
               <a class="toc__row" data-toc="s-33" href="#s-33">
@@ -98,7 +125,6 @@
                 <li><a class="toc__subrow" data-toc="s-33-3" href="#s-33-3"><span class="toc__subtitle">Subphase 2 — Identify what works</span></a></li>
                 <li><a class="toc__subrow" data-toc="s-33-4" href="#s-33-4"><span class="toc__subtitle">The rapid experimentation cycle</span></a></li>
               </ul>
-              <span class="toc__skeleton toc__skeleton--f" aria-hidden="true"></span>
             </li>
             <li>
               <a class="toc__row" data-toc="s-34" href="#s-34">
@@ -106,7 +132,6 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">Building &amp; delivering</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--c" aria-hidden="true"></span>
             </li>
             <li>
               <a class="toc__row" data-toc="s-35" href="#s-35">
@@ -114,7 +139,6 @@
                 <span class="toc__rule" aria-hidden="true"></span>
                 <span class="toc__title">Support &amp; maintenance</span>
               </a>
-              <span class="toc__skeleton toc__skeleton--e" aria-hidden="true"></span>
             </li>
             <li>
               <a class="toc__row" data-toc="s-36" href="#s-36">
@@ -126,14 +150,12 @@
                 <li><a class="toc__subrow" data-toc="s-36-1" href="#s-36-1"><span class="toc__subtitle">Product team</span></a></li>
                 <li><a class="toc__subrow" data-toc="s-36-2" href="#s-36-2"><span class="toc__subtitle">Operation team</span></a></li>
               </ul>
-              <span class="toc__skeleton toc__skeleton--d" aria-hidden="true"></span>
             </li>
           </ul>
         </nav>
        </div><!-- /.body-left -->
 
         <article class="copy">
-          <h2 class="copy__heading reveal">Stages of<br />a project</h2>
           <p class="lead reveal">Partnership is how we work. We work with agencies as partners, not service providers. Agencies bring the domain knowledge and mandate; we bring the discovery capability, technology and product domain. Together, we build something that creates impact for the public. That spirit of co-creation shapes everything about how we show up from day one.</p>
 
           <!-- 3.1 -->
