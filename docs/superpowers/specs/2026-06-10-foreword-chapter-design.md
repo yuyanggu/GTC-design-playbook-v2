@@ -39,9 +39,9 @@ headings + Source Serif 16px body) — i.e. the **same offset column** as every 
 | `css/chapter.css` | **add** a small `.foreword*` block (title, banner, copy tweaks, min-height, responsive). |
 | `js/routes.js` | **add** `ch0 ⇄ /foreword` special case; extend `isReaderPath` to match `/foreword`. |
 | `foreword.html` | **new** standalone fallback page (no hero, no TOC). |
-| `index.html` | **remove** `#prologue` markup + `<link>`/`<script>`; repurpose the `.intro__prologue` button into a "Foreword" link to `/foreword`. |
+| `index.html` | **remove** `#prologue` markup + `<link>`/`<script>` **and** the `.intro__prologue` button entirely. |
 | `css/prologue.css`, `js/prologue.js`, `assets/prologue.webp` | **delete** (unused after removal). |
-| `js/main.js`, `css/styles.css` | keep the `.intro__prologue` reveal animation/styles (the element survives as a link); no other prologue refs exist. |
+| `js/main.js`, `css/styles.css` | **remove** the `.intro__prologue` reveal tween (`main.js`) and opacity rules (`styles.css`) — the element is gone. |
 
 ## 1. Reader panel (`playbook.html`)
 
@@ -141,11 +141,14 @@ wrapper. Rail label "foreword". Like the other standalone pages it's an unlinked
 - `playbook.html`: remove the `#prologue` block, `css/prologue.css` `<link>`, `js/prologue.js`
   `<script>`; convert the menu row (above).
 - `index.html`: remove the `#prologue` block, `css/prologue.css` `<link>`, `js/prologue.js`
-  `<script>`; change the `.intro__prologue` element from a `data-prologue-open` button to an
-  `<a class="intro__prologue" href="/foreword">Foreword</a>` (keeps the `main.js` reveal tween and
-  `styles.css` opacity rules, which key off the `.intro__prologue` class).
+  `<script>`, **and** the `.intro__prologue` button (line 59) entirely.
+- `js/main.js`: remove the two `.intro__prologue` tween lines (the `gsap.set` + the `.to`).
+- `css/styles.css`: remove the two `.intro__prologue` opacity rules.
 - Delete `css/prologue.css`, `js/prologue.js`, `assets/prologue.webp`.
 - Leave the prologue spec docs in place as historical record.
+
+The Foreword is then reachable from the reader **drawer menu**, the **standalone page**, and the
+**landing books** (wired by the user) — no entry point is lost by removing the intro button.
 
 ## Verification
 
