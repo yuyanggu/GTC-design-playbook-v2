@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foreword — The Design Playbook</title>
+  <meta name="description" content="Foreword to the GTC Design Playbook." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/chapter.css" />
+  <script src="js/gate.js"></script>
+</head>
+<body>
+  <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
+       The vertical divider runs the full height; the rotated label, the hamburger
+       (opens the bookshelf Menu) and the search icon ride in the rail. Lives OUTSIDE
+       #smooth-wrapper so it stays viewport-anchored, like the menu/pinwheel. -->
+  <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
+      <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+    </a>
+    <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line class="bar bar-top" x1="3" y1="7" x2="21" y2="7" /><line class="bar bar-mid" x1="3" y1="12" x2="21" y2="12" /><line class="bar bar-bot" x1="3" y1="17" x2="21" y2="17" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="rail" aria-label="Section navigation">
+    <span class="rail__divider" aria-hidden="true"></span>
+    <p class="rail__label">foreword</p>
+  </div>
+
+  <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main class="playbook">
+        <section class="page-body foreword chapter-panel--foreword">
+          <div class="page-body__canvas">
+            <h1 class="foreword__title reveal">Foreword</h1>
+            <img class="foreword__graphic reveal" src="assets/foreword_Graphic.png"
+                 width="1440" height="291" alt="" />
+            <article class="copy foreword__copy">
+              <h2 class="subsection-head reveal">For us, the GTC Design Team</h2>
+              <p class="reveal">This playbook is for us, the GovTech Consulting Design team. We focus on a specific part of design: discovery and creating the conditions for action. Not building, not developing. We work upstream, where the problem gets defined and the direction gets set. If you&rsquo;re on the team, this is your document.</p>
+
+              <h2 class="subsection-head reveal">Open for a reason</h2>
+              <p class="reveal">Because good thinking gets sharper with honest reactions. We made it public so anyone can read it, push back on it, or bring it up over a meal. That kind of conversation is exactly what we&rsquo;re hoping for.</p>
+
+              <h2 class="subsection-head reveal">Not a methods guide</h2>
+              <p class="reveal">You won&rsquo;t find research techniques or workshop instructions here. What you will find is our point of view: on what design actually is and where it&rsquo;s going, on why discovery is changing more dramatically than most people realise, on why prototyping means building to test and not building to release, on how the lines between design, product, and engineering are shifting, and on what it means to do all of this in government, for the public, at this particular moment in time.</p>
+
+              <h2 class="subsection-head reveal">Always in draft</h2>
+              <p class="reveal">This is not an excuse to leave things unfinished. It&rsquo;s a declaration that we are in a moment of genuine flux, learning by doing, testing what we believe, and updating this as we go. Every project is a prototype. So is this.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
+
+  <!-- ───────────────────────── MENU (bookshelf overlay) — shared with index.html ───────────────────────── -->
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
+    <!-- Right-side drawer: scrim (click-to-close) + chalk card of chapter rows. Swipes in
+         from the right; on close the rows fall away (see menuScene in js/main.js). The
+         close control is the topbar hamburger (morphs to an X) / the scrim / Esc. -->
+    <div class="menu__scrim" data-menu-close aria-hidden="true"></div>
+    <nav class="menu__drawer" aria-label="Chapters" tabindex="-1">
+      <p class="menu__eyebrow">The Design Playbook</p>
+      <ul class="menu__list">
+        <li class="menu__item">
+          <a class="menu__row" data-href="why-we-exist.html" href="why-we-exist.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">01</span>
+              <span class="menu__title">Why we exist, and the moment</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_2.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">02</span>
+              <span class="menu__title">Our point of view</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="stages-of-a-project.html" href="stages-of-a-project.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_3.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">03</span>
+              <span class="menu__title">Stages of a project</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <span class="menu__row menu__row--soon" aria-disabled="true">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">04</span>
+              <span class="menu__title">How we work as a team</span>
+              <span class="menu__soon">Coming soon</span>
+            </span>
+          </span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
+  <script src="vendor/CustomEase.min.js"></script>
+  <script src="vendor/CustomWiggle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/chapter.js"></script>
+</body>
+</html>
