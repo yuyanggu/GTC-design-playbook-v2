@@ -141,13 +141,12 @@ function heroScene() {
   headSpans.forEach((s) => gsap.set(s, { y: Math.ceil(s.parentElement.getBoundingClientRect().height) + 2 }));
   gsap.set(".home-logo", { autoAlpha: 0, y: -8 });
   gsap.set(".intro__body p", { autoAlpha: 0, y: 18 });
-  gsap.set(".intro__prologue", { autoAlpha: 0, y: 18 });   // reveals with the intro text, never on the cover
 
   // Both pointer types use the SAME timed play-once model: one scroll past the threshold
   // plays the whole transition at its own fixed duration (NOT mapped to scroll speed),
   // and scrolling back to the top reverses it. Touch only differs by `anticipatePin`,
   // which smooths the pin grab during momentum scroll. Built once, called per branch.
-  function buildTimedHero({ anticipatePin = 0 } = {}) {
+  function buildTimedHero({ anticipatePin = 0, mobile = false } = {}) {
     // The whole transition as one timed timeline (played once on scroll, reversible).
     const master = gsap.timeline({ paused: true });
     master
@@ -156,18 +155,48 @@ function heroScene() {
     if (pinwheelProx) master.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);
     master
       .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
-      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78)
-      .to(".intro__prologue", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.05);
-    hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
-    hbBooks.forEach((b, i) => {
-      master
-        .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.6 + i * 0.08)
-        .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
-    });
+      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78);
+    // Books/spines only rise on desktop — on mobile the shelf is replaced by the cards.
+    if (!mobile) {
+      hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
+      hbBooks.forEach((b, i) => {
+        master
+          .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.6 + i * 0.08)
+          .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
+      });
+    }
 
     // Header line-clip wipe on its OWN timeline so its EXIT can run faster than entrance.
     const titleTl = gsap.timeline({ paused: true });
     titleTl.to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5);
+
+    // Mobile: NO pin and NO reverse. The reveal plays ONCE on the first bit of scroll,
+    // then scroll stays fully native straight into the cards below — so there's no pin
+    // jank and the page can't snap the reader back up. The fixed pinwheel fades out as
+    // the hero scrolls off so it doesn't hang over the cards.
+    if (mobile) {
+      ScrollTrigger.create({
+        trigger: hero,
+        start: "top+=48 top",
+        once: true,
+        onEnter: () => {
+          if (loadTl) { loadTl.progress(1); loadTl.kill(); loadTl = null; }
+          master.timeScale(1).play();
+          titleTl.timeScale(1).play();
+        },
+      });
+      const pw = document.querySelector(".pinwheel");
+      if (pw) {
+        ScrollTrigger.create({
+          trigger: hero,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+          onUpdate: (self) => { pw.style.opacity = String(Math.max(0, 1 - self.progress * 1.7)); },
+        });
+      }
+      return;
+    }
 
     let played = false;
     ScrollTrigger.create({
@@ -192,10 +221,12 @@ function heroScene() {
     });
   }
 
-  // Kept as a matchMedia split (not unified) so a touch-specific variant stays possible.
+  // matchMedia split: mobile (≤768px) = un-pinned play-once reveal; desktop keeps the
+  // pinned reversible scene (coarse pointer adds anticipatePin to smooth the pin grab).
   const mm = gsap.matchMedia();
-  mm.add("(pointer: fine)", () => buildTimedHero());
-  mm.add("(pointer: coarse)", () => buildTimedHero({ anticipatePin: 1 }));
+  mm.add("(max-width: 768px)", () => buildTimedHero({ mobile: true }));
+  mm.add("(min-width: 768.01px) and (pointer: fine)", () => buildTimedHero());
+  mm.add("(min-width: 768.01px) and (pointer: coarse)", () => buildTimedHero({ anticipatePin: 1 }));
 }
 
 /* ============================================================================
@@ -290,8 +321,23 @@ function pinwheelScene() {
 function homeBooks() {
   const shelf = document.querySelector("#homeShelf");
   if (!shelf) return;
+
   hbBooks = gsap.utils.toArray(".book", shelf);
   hbSpines = gsap.utils.toArray(".spine", shelf);
+
+  // Mobile (≤768px): the shelf is hidden (CSS) and the static .home-cards take over —
+  // no scaling, no parking, no knock/hover physics. The cards are plain <a> links.
+  if (window.matchMedia("(max-width: 768px)").matches) return;
+
+  // Scale the whole 1300px shelf down to fit narrow viewports (origin bottom-centre,
+  // set in CSS) so all five books stay visible + centred. Runs under reduced motion too.
+  const SHELF_W = 1300;
+  const fitShelf = () => {
+    const scale = Math.min(1, (window.innerWidth - 32) / SHELF_W);
+    shelf.style.setProperty("--shelf-scale", scale.toFixed(4));
+  };
+  fitShelf();
+  window.addEventListener("resize", fitShelf);
 
   // Navigation (always wired — works under reduced motion too).
   hbBooks.forEach((b) => {

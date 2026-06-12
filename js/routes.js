@@ -38,6 +38,10 @@
   var byId = {};   // id → path
   var byPath = {}; // path → id
 
+  // ch0 is the Foreword — it opts out of the /chapter-N scheme and lives at /foreword.
+  byId["ch0"] = "/foreword";
+  byPath["/foreword"] = "ch0";
+
   ["ch1", "ch2", "ch3"].forEach(function (cid) {
     var path = "/chapter-" + cid.slice(2);
     byId[cid] = path;
@@ -59,6 +63,9 @@
     pathToId: function (path) { return byPath[norm(path)] || null; },
     // True for any reader path (/chapter-2, /chapter-2/anything). Used by the
     // anti-flash inline script, which can't query the DOM yet.
-    isReaderPath: function (path) { return /^\/chapter-\d+(\/|$)/.test(norm(path)); },
+    isReaderPath: function (path) {
+      var p = norm(path);
+      return p === "/foreword" || /^\/chapter-\d+(\/|$)/.test(p);
+    },
   };
 })();

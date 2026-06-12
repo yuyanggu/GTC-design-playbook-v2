@@ -325,9 +325,12 @@ img { display: block; max-width: 100%; }
   left: 50%;
   bottom: 0;
   z-index: 2;
-  width: 1022px;                     /* 4×188 + 3×90 */
+  width: 1300px;                     /* 5×188 + 4×90 */
   height: 340px;
-  transform: translateX(-50%);
+  /* --shelf-scale is set by fitShelf() in main.js so the whole shelf scales down to
+     fit narrow viewports (origin bottom-centre → stays centred + flush to the floor). */
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) scale(var(--shelf-scale, 1));
 }
 /* Home books use a smaller icon than the menu → room for the date + clear spacing. */
 .home-shelf .book__icon { width: 70px; height: 70px; }
@@ -639,7 +642,7 @@ a.menu__row:focus-visible .menu__icon-hover { opacity: 1; }
 
 .book__num {
   position: absolute;
-  top: 19px;
+  top: 30px;
   left: 0;
   right: 0;
   text-align: center;
@@ -802,4 +805,108 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 }
 @media (prefers-reduced-motion: reduce) {
   .gtc-gate--shake .gtc-gate__card { animation: none; }
+}
+
+/* ============================================================================
+   MOBILE LANDING (≤768px) — replace the rising-books shelf with a static vertical
+   stack of horizontal cards (icon · number · divider · title), each with a CSS
+   "spine ledge" below it. No hover/physics (that all stays desktop-only). The hero
+   keeps its cover → intro-reveal scroll story; the cards flow in a normal section
+   below it (js/main.js plays the reveal once, then leaves scroll fully native).
+   ========================================================================== */
+
+/* Desktop: the mobile cards section is not rendered. */
+.home-cards { display: none; }
+
+@media (max-width: 768px) {
+  /* Cover lockup — stack the pinwheel ABOVE the title so the wide "THE GTC DESIGN"
+     line gets the full width and can't run off the edge. Side padding as a safety net. */
+  .lockup-row {
+    flex-direction: column;
+    gap: clamp(10px, 3vw, 18px);
+    max-width: 100vw;
+    padding-inline: 20px;
+    text-align: center;
+  }
+  .pinwheel-slot { width: clamp(92px, 24vw, 128px); }
+  .lockup { font-size: clamp(20px, 6.4vw, 30px); line-height: 1.32; }
+
+  /* After-scroll reveal centres in the FULL hero (no shelf band to reserve below). */
+  .intro-reveal { bottom: 0; width: min(560px, 86vw); }
+
+  /* The desktop rising-books shelf is replaced by the cards below. */
+  .home-shelf { display: none; }
+
+  /* ---- The stacked cards ---- */
+  .home-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin: 0;
+    padding: 6px clamp(16px, 5vw, 28px) clamp(48px, 12vw, 80px);
+    background: var(--chalk);
+  }
+  .home-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 3.4vw, 18px);
+    padding-block: 32px;
+    padding-inline: clamp(16px, 5vw, 26px);
+    /* Horizontal gradient — lightest on the left, deepening to the right. */
+    background: linear-gradient(90deg, #aed3ed 0%, #4f94cf 47.12%);
+    color: #fff;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.18s ease, filter 0.18s ease;
+  }
+  .home-card--soon { background: var(--book-soon); }
+  /* Press feedback (no hover/physics) for the interactive cards. */
+  a.home-card:active { transform: scale(0.985); filter: brightness(1.04); }
+  a.home-card:focus-visible { outline: 3px solid var(--midnight); outline-offset: 3px; }
+
+  .home-card__icon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+  }
+  .home-card__icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .home-card__num {
+    flex: 0 0 auto;
+    min-width: 28px;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--chalk);
+  }
+  /* Vertical divider — fixed 40px tall, centred in the card. */
+  .home-card__rule {
+    flex: 0 0 3px;
+    width: 3px;
+    height: 40px;
+    align-self: center;
+    background: rgba(246, 242, 231, 0.55);
+  }
+  .home-card__body { flex: 1 1 auto; min-width: 0; }
+  .home-card__title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(15px, 4.2vw, 20px);
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+    color: #fff;
+  }
+  .home-card__soon {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(13px, 4vw, 16px);
+    color: rgba(246, 242, 231, 0.85);
+  }
+
 }

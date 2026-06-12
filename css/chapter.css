@@ -178,6 +178,39 @@ body { background: var(--chalk); }
 /* display:contents → toc/flowercol participate directly in the canvas layout. */
 .body-left { display: contents; }
 
+/* ---------------------------------------------------------------------------
+   FOREWORD (chapter 0) — chalk page, no hero, no TOC (Figma 2146:5238).
+   The fixed left rail IS visible here (no coloured hero hides it), so the title
+   and banner must clear it: --fw-rail mirrors the .rail width (94px desktop,
+   64px ≤1180). The banner starts flush with the rail divider and runs to the
+   canvas's right edge (capped at the 1440 canvas); the title is indented 24px
+   further in. Both track the rail so they never overlap it on resize. min-height
+   keeps the panel taller than one viewport so its transition into C1 reads.
+   --------------------------------------------------------------------------- */
+.chapter-panel--foreword .page-body.foreword,
+.page-body.foreword.chapter-panel--foreword {
+  --fw-rail: 94px;                         /* mirrors .rail width (see @media 1180) */
+  min-height: 100vh;
+  padding-top: clamp(96px, 12vh, 140px);   /* clears the topbar logo/hamburger */
+}
+.foreword__title {
+  margin: 0 0 0 calc(var(--fw-rail) + 24px);   /* clears the rail + a 24px gutter */
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5.2vw, 75px);
+  line-height: 1.6;
+  color: var(--midnight);
+}
+.foreword__graphic {
+  display: block;
+  margin: clamp(24px, 4vh, 40px) 0 clamp(24px, 4vh, 40px) var(--fw-rail);  /* flush with the rail divider */
+  width: calc(100% - var(--fw-rail));      /* runs to the canvas right edge (≤1440 cap) */
+  height: auto;
+}
+/* The copy column keeps the shared .copy offset; just trim its top padding so it
+   follows the banner rather than the (absent) hero band. */
+.foreword__copy { padding-top: clamp(32px, 5vh, 78px); }
+
 /* ----- Table of contents (left column — pinned to follow scroll) -----
    Floated (in normal flow) so ScrollTrigger can pin it — CSS sticky/fixed can't
    survive the ScrollSmoother transform, and pinning fails on absolute/grid/flex
@@ -187,99 +220,128 @@ body { background: var(--chalk); }
   width: 328px;
   margin-left: 132px;
 }
-.toc__label {
-  margin: 0 0 9px;
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-size: 16px;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--midnight);
+/* Inner scroll viewport — on desktop (pinned) the stack is capped to the viewport
+   and slides under soft fade masks while JS keeps the active row centred
+   (tableOfContents). The mask only applies while the stack actually overflows
+   (.is-overflowing, toggled by JS), so short chapters keep crisp edges. */
+.toc__scroll { position: relative; }
+@media (min-width: 1181px) {
+  .toc__scroll {
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .toc__scroll::-webkit-scrollbar { display: none; }
+  .toc__scroll.is-overflowing {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+  }
 }
-.toc__progress {
-  position: relative;
-  width: 161px;
-  height: 11px;
-  border-radius: 10px;
-  background: var(--skeleton);
-  overflow: hidden;
-}
-.toc__progress-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 38%;                  /* start; JS tracks scroll */
-  border-radius: 10px;
-  background: var(--accent, var(--orange));
-}
-.toc__list {
+
+/* Chapter stack — every chapter is a quiet text row; the one you're reading turns
+   accent and carries its section list nested beneath it. Rows with a data-href
+   jump between chapters (chapterSwitch, same behaviour as the menu); the current
+   row + the "coming soon" row are inert. */
+.toc__chapters {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
 }
-.toc__list li { display: flex; flex-direction: column; gap: 5px; }
+.toc__chapters > li { padding: 16px 0; }
+.toc__chapters > li + li { border-top: 1px solid rgba(1, 34, 51, 0.14); }
+.toc__chapter {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  text-decoration: none;
+  color: rgba(1, 34, 51, 0.42);
+  transition: color 0.25s ease;
+}
+a.toc__chapter:hover { color: var(--midnight); }
+.toc__chapter:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
+.toc__chapter-num {
+  flex: none;
+  min-width: 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1;
+}
+.toc__chapter-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.5;
+}
+/* Current chapter — accent, inert (you are here). */
+.toc__chapter.is-current { color: var(--accent, var(--orange)); pointer-events: none; }
+/* Chapter 4 — not built yet (mirrors the menu's "coming soon" row). */
+.toc__chapter--soon { pointer-events: none; }
+.toc__chapter-soon {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 7px 2px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  vertical-align: 3px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
-/* Resting rows are a quiet, low-contrast index so the prose leads; only the active
-   row carries the accent fill (white text) to mark where you are. */
+/* Section list — nested under the current chapter's row. */
+.toc__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0 0 0 26px;
+  display: flex;
+  flex-direction: column;
+}
+.toc__list > li { display: flex; flex-direction: column; padding: 14px 0; }
+.toc__list > li + li { border-top: 1px solid rgba(1, 34, 51, 0.14); }
+
+/* Rows are a quiet index (no fill); the active row simply turns accent-coloured. */
 .toc__row {
   display: flex;
   align-items: center;
   gap: 14px;
-  width: 305px;
-  height: 54px;
-  padding: 0 18px;
-  background: rgba(1, 34, 51, 0.05);
   text-decoration: none;
-  transition: background 0.3s ease;
 }
-.toc__row:hover { background: rgba(1, 34, 51, 0.09); }
-.toc__row.is-active { background: var(--accent, var(--orange)); }
-.toc__row:focus-visible { outline: 3px solid var(--midnight); outline-offset: 2px; }
+.toc__row:focus-visible,
+.toc__subrow:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
 .toc__num {
   flex: none;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 15px;
   line-height: 1;
-  color: rgba(1, 34, 51, 0.45);
+  color: var(--midnight);
 }
-.toc__rule { flex: none; width: 1px; height: 42px; background: rgba(1, 34, 51, 0.18); }
+.toc__rule { flex: none; width: 1px; height: 34px; background: rgba(1, 34, 51, 0.5); }
 .toc__title {
   font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
   line-height: 1.1;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.32px;
   text-transform: uppercase;
-  color: rgba(1, 34, 51, 0.6);
+  color: var(--midnight);
 }
-/* Active row → white content over the accent fill. */
+/* Active row → accent-coloured number + title. */
 .toc__row.is-active .toc__num,
-.toc__row.is-active .toc__title { color: #fff; }
-.toc__row.is-active .toc__rule { background: rgba(255, 255, 255, 0.65); }
+.toc__row.is-active .toc__title { color: var(--accent, var(--orange)); }
 
-/* skeleton placeholder bars */
-.toc__skeleton {
-  display: block;
-  width: 305px;
-  height: 15px;
-  background: var(--skeleton);
-}
-.toc__skeleton--b { width: 293px; margin-left: 12px; }
-.toc__skeleton--e { width: 293px; margin-left: 12px; }
-.toc__skeleton--f { width: 281px; margin-left: 18px; }
-
-/* Sub-section rows — thinner "stacked books" under a section; accordion-opened
-   only for the section you're reading (height animated by JS). Same row language
-   as the main rows, just slimmer + indented + a lighter resting shade. */
+/* Sub-section rows — accordion-opened only for the section you're reading (height
+   animated by JS). A small accent diamond marks each; the active sub-row is full
+   midnight, the rest dimmed. */
 .toc__sub {
   list-style: none;
-  margin: 0;
+  margin: 8px 0 0;
   padding: 0;
   height: 0;            /* collapsed by default; JS animates to auto */
   overflow: hidden;
@@ -288,27 +350,196 @@ body { background: var(--chalk); }
 .toc__subrow {
   display: flex;
   align-items: center;
-  width: 285px;                       /* narrower; right edge aligns with main rows */
-  min-height: 34px;                   /* slimmer than the 60px main row */
-  margin: 5px 0 0 20px;               /* stack gap + indent under the parent */
-  padding: 6px 14px;
-  background: rgba(1, 34, 51, 0.035); /* lighter still than the main resting row */
+  gap: 12px;
+  padding: 6px 0 6px 38px;
   text-decoration: none;
-  transition: background 0.25s ease;
 }
-.toc__subrow:hover { background: rgba(1, 34, 51, 0.07); }
-.toc__subrow.is-active { background: var(--accent, var(--orange)); }
-.toc__subrow:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
+.toc__subrow::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  background: var(--accent, var(--orange));
+}
 .toc__subtitle {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 12px;
-  line-height: 1.15;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  color: rgba(1, 34, 51, 0.55);
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.28px;
+  color: rgba(1, 34, 51, 0.4);
 }
-.toc__subrow.is-active .toc__subtitle { color: #fff; }
+.toc__subrow.is-active .toc__subtitle { color: var(--midnight); }
+
+/* ----- Mobile section bar (≤768px) -----
+   On phones the inline TOC disappears and a fixed bar pinned to the viewport
+   bottom takes over: ◀ [ 3.1 · how we engage ] ▶. Its markup lives OUTSIDE
+   #smooth-wrapper (fixed elements can't survive the ScrollSmoother transform);
+   js/chapter.js (mobileTocBar) builds the heading list from the .toc navs,
+   drives the label, and wires the arrows + the slide-up sheet. */
+.toc-bar, .toc-sheet { display: none; }
+
+@media (max-width: 768px) {
+  .toc { display: none; }
+  /* Keep the page end (footer block) clear of the fixed bar. */
+  .page { padding-bottom: 56px; }
+
+  /* Fixed 56px — NOT env(safe-area-inset-bottom): that inset is 0 while mobile
+     Chrome's toolbar is shown but jumps to the gesture-nav height once it
+     retracts on scroll, which would make the bar grow taller mid-scroll. */
+  .toc-bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 46;            /* above the rail (40) + sheet (45), below the menu (50) */
+    display: flex;
+    align-items: stretch;
+    height: 56px;
+    background: var(--midnight);
+    color: var(--chalk);
+  }
+  .toc-bar[hidden] { display: none; }
+  .toc-bar__arrow {
+    flex: none;
+    width: 56px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .toc-bar__arrow:disabled { opacity: 0.3; cursor: default; }
+  .toc-bar__arrow svg { display: block; }
+  .toc-bar__label {
+    flex: 1;
+    min-width: 0;             /* lets the title ellipsise instead of overflowing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+    border: 0;
+    border-inline: 1px solid rgba(246, 242, 231, 0.16);
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .toc-bar__num {
+    flex: none;
+    font-family: var(--font-display);
+    font-size: 13px;
+    line-height: 1;
+    color: var(--bar-accent, var(--orange));
+  }
+  .toc-bar__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.26px;
+    text-transform: uppercase;
+  }
+
+  /* Slide-up TOC sheet — the stacked-chapter index (same .toc__* rows as the
+     desktop TOC) on a chalk panel anchored just above the bar; a scrim covers
+     the page behind. Opened by tapping the bar label. */
+  .toc-sheet {
+    display: block;
+    position: fixed;
+    inset: 0 0 56px 0;       /* sits flush on top of the fixed 56px bar */
+    z-index: 45;
+    pointer-events: none;
+  }
+  .toc-sheet__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(1, 34, 51, 0.45);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .toc-sheet__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: min(70vh, 100%);
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 14px 22px 20px;
+    background: var(--chalk);
+    border-radius: 14px 14px 0 0;
+    transform: translateY(102%);
+    transition: transform 0.34s cubic-bezier(0.32, 0.72, 0.25, 1);
+  }
+  .toc-sheet__panel::-webkit-scrollbar { display: none; }
+  .toc-sheet.is-open { pointer-events: auto; }
+  .toc-sheet.is-open .toc-sheet__scrim { opacity: 1; }
+  .toc-sheet.is-open .toc-sheet__panel { transform: translateY(0); }
+  /* Inside the sheet every chapter's sub-rows are simply open (no accordion). */
+  .toc-sheet .toc__sub { height: auto; }
+
+  /* --- Top bar on mobile ---------------------------------------------------
+     Free the logo + hamburger from the bar's own stacking context so the open
+     menu card can sit BETWEEN them: the wide drawer slides OVER the logo
+     (z 44, under the menu's 50) while the hamburger/X stays on top (z 60, so
+     it's always tappable). To do that the bar itself must stop being a fixed
+     stacking context (→ position:static); the logo + button are pinned
+     individually instead. A soft chalk scrim (::before) sits behind both so
+     scrolling body copy fades out under them rather than clashing; topbarScrim()
+     (js/chapter.js) switches it off whenever a coloured hero fills the top band
+     (dark logo on colour, no text to mask — a chalk fade would just show as a
+     band there). */
+  .topbar {
+    position: static;
+    display: block;
+    padding: 0;
+  }
+  /* A soft chalk fade behind the logo/hamburger so scrolling body copy fades out
+     under them instead of clashing; switched off over a coloured hero
+     (html.topbar-clear) where the dark logo sits on colour with no text to mask. */
+  .topbar::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(180px + env(safe-area-inset-top));
+    z-index: 42;
+    background: linear-gradient(
+      to bottom,
+      var(--chalk) 0,
+      var(--chalk) 20%,
+      rgba(246, 242, 231, 0) 90%
+    );
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  html.topbar-clear .topbar::before { opacity: 0; }
+
+  .topbar__logo {
+    position: fixed;
+    top: clamp(20px, 2.6vh, 30px);
+    left: clamp(22px, 3vw, 44px);
+    z-index: 44;            /* above the rail (40), below the menu (50) */
+  }
+  .topbar__menu {
+    position: fixed;
+    top: clamp(20px, 2.6vh, 30px);
+    right: clamp(22px, 3vw, 44px);
+    /* Match the logo block's height (wordmark aspect 157:44) and keep the icon
+       centred, so the hamburger holds its current vertical alignment now that
+       the flex bar no longer centres the two together. */
+    height: calc(clamp(118px, 11vw, 157px) * 44 / 157);
+    z-index: 60;            /* above the menu (50) → the X stays on top + tappable */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-sheet__scrim, .toc-sheet__panel { transition: none; }
+}
 
 /* ----- Body copy (right column) ----- */
 .copy {
@@ -362,7 +593,7 @@ body { background: var(--chalk); }
 
 /* Sub-section heading — named sub-points within a section (secondary to .section-head) */
 .subsection-head {
-  margin: 1.5em 0 0.5em;
+  margin: 2em 0 0.5em;
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: clamp(1.25rem, 1.6vw, 1.375rem);   /* H4 — 22px max, rem-based */
@@ -530,6 +761,9 @@ body { background: var(--chalk); }
 @media (max-width: 1180px) {
   .rail { width: 64px; }
   .rail__label { display: none; }
+  /* Foreword: track the narrower rail so the title/banner still clear it. */
+  .chapter-panel--foreword .page-body.foreword,
+  .page-body.foreword.chapter-panel--foreword { --fw-rail: 64px; }
   .rail__menu { top: 24px; width: 64px; height: 64px; }
   .rail__search { bottom: 28px; }
 
@@ -543,7 +777,6 @@ body { background: var(--chalk); }
     margin: 0 auto 56px;
     padding-left: 84px;
   }
-  .toc__row, .toc__skeleton { width: 100%; max-width: 305px; }
   .copy {
     margin-left: 0;
     width: auto;
@@ -561,4 +794,34 @@ body { background: var(--chalk); }
      width (left + right) so wrapping engages, and re-enable normal wrapping. */
   .page-hero__title { right: clamp(22px, 5vw, 44px); }
   .page-hero__title span { white-space: normal; }
+}
+
+/* Reader on mobile (≤768): drop the left rail and let the copy run the full width
+   with even side padding (matching the logo's inset) instead of being indented to
+   clear the rail. After the ≤1180/≤680 blocks so it overrides their rail offsets. */
+@media (max-width: 768px) {
+  .rail { display: none; }
+
+  /* Size the hero to the *small* viewport (svh) — plain 100vh on mobile is the
+     largest viewport (toolbar hidden), so with the toolbar showing the hero
+     overflows and its bottom-anchored title drops below the fold. svh is stable
+     (never reflows as the toolbar slides) and keeps the title on-screen. */
+  .page-hero { min-height: 100svh; }
+  /* Lift the bottom-anchored title clear of the fixed 56px section bar now that
+     the hero ends exactly at the viewport bottom. */
+  .page-hero__title { bottom: calc(56px + clamp(16px, 3vh, 32px)); }
+
+  .copy {
+    margin-inline: 0;
+    max-width: none;
+    padding-left: clamp(22px, 5vw, 32px);
+    padding-right: clamp(22px, 5vw, 32px);
+  }
+
+  /* Foreword (ch0): no rail to clear → drop the gutter; the title lines up with the
+     copy and the banner runs full-bleed. */
+  .chapter-panel--foreword .page-body.foreword,
+  .page-body.foreword.chapter-panel--foreword { --fw-rail: 0px; }
+  .foreword__title { margin-left: clamp(22px, 5vw, 32px); }
+  .foreword__graphic { margin-left: 0; width: 100%; }
 }

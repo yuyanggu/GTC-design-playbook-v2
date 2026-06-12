@@ -67,11 +67,26 @@
             <img class="spine" src="assets/book_element_2.svg" alt="" style="--x:198px; --w:69px;" />
             <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
             <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
-            <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1028px; --w:33px;" />
+            <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:1031px; --w:72px;" />
+            <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1306px; --w:33px;" />
           </div>
 
+          <!-- Book 0 — Foreword (interactive) -->
+          <button class="book book--interactive book--0" type="button" data-book data-href="/playbook.html" style="--book-x:0px;">
+            <span class="book__inner">
+              <span class="book__num">0</span>
+              <span class="book__rule" aria-hidden="true"></span>
+              <span class="book__title">Foreword</span>
+              <span class="book__updated">Last updated:<br />2 May 2026</span>
+              <span class="book__icon">
+                <img class="book__icon-base" src="assets/menu_0.svg" alt="" />
+                <img class="book__icon-hover" src="assets/menu_0_hover.svg" alt="" aria-hidden="true" />
+              </span>
+            </span>
+          </button>
+
           <!-- Book 1 — interactive -->
-          <button class="book book--interactive book--1" type="button" data-book data-href="/chapter-1" style="--book-x:0px;">
+          <button class="book book--interactive book--1" type="button" data-book data-href="/chapter-1" style="--book-x:278px;">
             <span class="book__inner">
               <span class="book__num">1</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -85,7 +100,7 @@
           </button>
 
           <!-- Book 2 — interactive (Our point of view) -->
-          <button class="book book--interactive book--2" type="button" data-book data-href="/chapter-2" style="--book-x:278px;">
+          <button class="book book--interactive book--2" type="button" data-book data-href="/chapter-2" style="--book-x:556px;">
             <span class="book__inner">
               <span class="book__num">2</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -99,7 +114,7 @@
           </button>
 
           <!-- Book 3 — interactive (Stages of a project) -->
-          <button class="book book--interactive book--3" type="button" data-book data-href="/chapter-3" style="--book-x:556px;">
+          <button class="book book--interactive book--3" type="button" data-book data-href="/chapter-3" style="--book-x:834px;">
             <span class="book__inner">
               <span class="book__num">3</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -113,7 +128,7 @@
           </button>
 
           <!-- Book 4 — coming soon (dimmed, non-interactive) -->
-          <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:834px;">
+          <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:1112px;">
             <span class="book__inner">
               <span class="book__num">4</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -127,9 +142,49 @@
 
       </div>
     </section>
+
+    <!-- Mobile playbook cards — shown ≤768px in place of the rising-books shelf. Static,
+         tap-to-navigate (no hover/physics); each card has a CSS spine ledge below it.
+         Hidden on desktop, where #homeShelf is used instead. -->
+    <nav class="home-cards" aria-label="Playbook sections">
+      <a class="home-card" href="/playbook.html">
+        <span class="home-card__icon"><img src="assets/menu_0.svg" alt="" /></span>
+        <span class="home-card__num">0</span>
+        <span class="home-card__rule" aria-hidden="true"></span>
+        <span class="home-card__body"><span class="home-card__title">Foreword</span></span>
+      </a>
+      <a class="home-card" href="/chapter-1">
+        <span class="home-card__icon"><img src="assets/menu_1.svg" alt="" /></span>
+        <span class="home-card__num">1</span>
+        <span class="home-card__rule" aria-hidden="true"></span>
+        <span class="home-card__body"><span class="home-card__title">Why we exist, and the moment</span></span>
+      </a>
+      <a class="home-card" href="/chapter-2">
+        <span class="home-card__icon"><img src="assets/menu_2.svg" alt="" /></span>
+        <span class="home-card__num">2</span>
+        <span class="home-card__rule" aria-hidden="true"></span>
+        <span class="home-card__body"><span class="home-card__title">Our point of view</span></span>
+      </a>
+      <a class="home-card" href="/chapter-3">
+        <span class="home-card__icon"><img src="assets/menu_3.svg" alt="" /></span>
+        <span class="home-card__num">3</span>
+        <span class="home-card__rule" aria-hidden="true"></span>
+        <span class="home-card__body"><span class="home-card__title">Stages of a project</span></span>
+      </a>
+      <div class="home-card home-card--soon" aria-disabled="true">
+        <span class="home-card__icon"><img src="assets/menu_4.svg" alt="" /></span>
+        <span class="home-card__num">4</span>
+        <span class="home-card__rule" aria-hidden="true"></span>
+        <span class="home-card__body">
+          <span class="home-card__title">How we work as a team</span>
+          <span class="home-card__soon">Coming soon</span>
+        </span>
+      </div>
+    </nav>
   </main>
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
+
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

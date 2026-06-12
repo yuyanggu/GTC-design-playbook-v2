@@ -7,6 +7,8 @@ flows seamlessly from chapter to chapter. Builds on the shared chapter system
 
 ## Structure
 
+The reader opens with a **Foreword panel** (`#ch0`, `.chapter-panel--foreword`) before `#ch1`. It has no coloured hero and no TOC — just a chalk background with a top-left `.foreword__title`, a full-width orb banner (`.foreword__graphic`), and the standard `.copy` column. Its clean path is **`/foreword`** (a special-case in `routes.js`, not `/chapter-0`). It transitions into `#ch1` exactly like any other panel, and inherits `panelTransitions`, `railSync`, `railReveal`, `urlSync`, and `copyReveals` with no changes to those functions.
+
 Each chapter is the standalone skeleton (hero + body) wrapped in `.section.chapter-panel` (id `#chN`,
 theme vars + `data-rail` label + optional `data-rail-fg` on dark heroes) → `.chapter-panel__scale`
 (the layer the transition animates). One shared rail + one `#menu` + one ScrollSmoother for the

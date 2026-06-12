@@ -34,6 +34,8 @@ if (window.__GTC_LOCKED__) {
   railSync(panels);
   railReveal();
   urlSync(); // reflect the deepest in-view anchor in the URL as you scroll
+  mobileTocBar();
+  topbarScrim();
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => {
@@ -41,11 +43,15 @@ if (window.__GTC_LOCKED__) {
     handleDeepLink();        // land on the chapter named in the URL hash (menu deep-link)
     urlWriteEnabled = true;  // from here, scrolling may rewrite the URL
   });
-} else if (document.querySelector(".page-hero")) {
+} else if (document.querySelector(".page-hero, .page-body.foreword")) {
+  // .page-body.foreword → the standalone Foreword page (no hero). Reader panels
+  // are handled by the branch above, so this only matches the standalone file.
   // ----- Standalone chapter page: scope to the whole document -----
   initChapter(document);
   railReveal();
   urlSync();
+  mobileTocBar();
+  topbarScrim();
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => {
@@ -60,6 +66,34 @@ function initChapter(root) {
   copyReveals(root);
   stickyToc(root);
   tableOfContents(root);
+  chapterSwitch(root);
+}
+
+/* ---- Chapter switcher: the 4-cell grid at the top of the TOC jumps between
+   chapters, same behaviour as the menu (wireNav in js/main.js). On the reader,
+   where the target chapter exists in-page, smooth-scroll to it; on a standalone
+   page (no in-page anchor / no GTCRoutes) fall through to a full load to
+   /chapter-N. The current chapter's cell + the "coming soon" cell carry no
+   data-href, so they're inert. ---- */
+function chapterSwitch(root) {
+  const cells = gsap.utils.toArray(root.querySelectorAll(".toc__chapter[data-href]"));
+  if (!cells.length) return;
+  const smoother = window.ScrollSmoother && window.ScrollSmoother.get();
+  cells.forEach((cell) => {
+    const href = cell.getAttribute("data-href");
+    cell.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = window.GTCRoutes && window.GTCRoutes.pathToId(href);
+      const target = id && document.getElementById(id);
+      if (target) {
+        if (smoother) smoother.scrollTo(target, true, "top top");
+        else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+        // urlSync (below) rewrites the address bar to the clean path as the jump settles.
+      } else {
+        window.location.href = href; // standalone page → full load to the reader
+      }
+    });
+  });
 }
 
 /* ---- Hero flower: endless "wind" spin with organic gusts (mirrors pinwheel) ---- */
@@ -124,9 +158,9 @@ function stickyToc(root) {
    under the section you're currently reading, and the active sub-row tracks scroll. ---- */
 function tableOfContents(root) {
   const lis = gsap.utils.toArray(root.querySelectorAll(".toc__list > li"));
-  const fill = root.querySelector(".toc__progress-fill");
   if (!lis.length) return;
   const smoother = window.ScrollSmoother && window.ScrollSmoother.get();
+  const scroller = root.querySelector(".toc__scroll");
 
   // Section model: main row + head, plus optional sub-rows + their heads.
   const sections = lis
@@ -148,7 +182,8 @@ function tableOfContents(root) {
 
   const hasSubs = sections.some((s) => s.subEl);
 
-  // Accordion: only the active section's sub-list is open.
+  // Accordion: only the active section's sub-list is open. Opening/closing changes
+  // the stack's height, so the fade mask is re-checked once the heights settle.
   let expanded = -1;
   function expand(i, animate) {
     if (i === expanded || !hasSubs) return;
@@ -156,36 +191,73 @@ function tableOfContents(root) {
     sections.forEach((s, idx) => {
       if (!s.subEl) return;
       const to = idx === i ? "auto" : 0;
-      if (animate) gsap.to(s.subEl, { height: to, duration: 0.34, ease: "power2.out", overwrite: true });
+      if (animate) gsap.to(s.subEl, { height: to, duration: 0.34, ease: "power2.out", overwrite: true, onComplete: syncOverflow });
       else gsap.set(s.subEl, { height: to });
     });
+    if (!animate) syncOverflow();
   }
 
+  // Follow-scroll: the TOC's inner viewport (.toc__scroll) is capped on desktop, so
+  // keep the active (sub-)row vertically centred in it. The target is recomputed
+  // every frame while the tween runs, so it stays true even while the accordion is
+  // still animating heights beneath it. Inner scrollTop never fights the pin.
+  let followTween = null;
+  function follow(el) {
+    if (!scroller || !el || scroller.scrollHeight <= scroller.clientHeight + 1) return;
+    const from = scroller.scrollTop;
+    const state = { p: 0 };
+    if (followTween) followTween.kill();
+    followTween = gsap.to(state, {
+      p: 1,
+      duration: reduce ? 0 : 0.5,
+      ease: "power2.out",
+      onUpdate: () => {
+        const rowTop = el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+        const target = gsap.utils.clamp(0, scroller.scrollHeight - scroller.clientHeight,
+          rowTop - (scroller.clientHeight - el.offsetHeight) / 2);
+        scroller.scrollTop = from + (target - from) * state.p;
+      },
+    });
+  }
+  // The fade mask only makes sense while the stack overflows its cap.
+  const syncOverflow = () => {
+    if (scroller) scroller.classList.toggle("is-overflowing", scroller.scrollHeight > scroller.clientHeight + 1);
+  };
+  syncOverflow();
+  ScrollTrigger.addEventListener("refresh", syncOverflow);
+
   const linePos = () => window.innerHeight * 0.42;
+  let curMain = -1, curSub = -1;
   function update() {
     const L = linePos();
     let main = 0;
     sections.forEach((s, i) => { if (s.head.getBoundingClientRect().top <= L) main = i; });
-    sections.forEach((s, i) => s.row.classList.toggle("is-active", i === main));
+    sections.forEach((s, i) => {
+      s.row.classList.toggle("is-active", i === main);
+      if (i !== main) s.subRows.forEach((r) => r.classList.remove("is-active")); // no stale marks in collapsed lists
+    });
     expand(main, true);
     const sec = sections[main];
+    let sub = -1;
     if (sec.subRows.length) {
-      let sub = 0;
+      sub = 0;
       sec.subHeads.forEach((h, j) => { if (h && h.getBoundingClientRect().top <= L) sub = j; });
       sec.subRows.forEach((r, j) => r.classList.toggle("is-active", j === sub));
     }
+    if (main !== curMain || sub !== curSub) {
+      curMain = main;
+      curSub = sub;
+      follow(sub >= 0 ? sec.subRows[sub] : sec.row);
+    }
   }
 
-  // Progress fill across the body, with a small visible baseline at the top.
+  // Active-row + accordion tracking across the body as you scroll.
   const body = root.querySelector(".page-body");
   ScrollTrigger.create({
     trigger: body,
     start: "top top",
     end: "bottom bottom",
-    onUpdate: (self) => {
-      if (fill) fill.style.width = (8 + self.progress * 92).toFixed(1) + "%";
-      update();
-    },
+    onUpdate: update,
   });
   expand(0, false); // initial accordion state
   update();
@@ -205,6 +277,237 @@ function tableOfContents(root) {
       r.addEventListener("click", (e) => { e.preventDefault(); scrollToEl(s.subHeads[j]); })
     );
   });
+}
+
+/* ============================================================================
+   Mobile section bar (≤768px) — fixed at the viewport bottom (markup lives
+   outside #smooth-wrapper; position:fixed can't survive the smoother transform).
+   The label shows the heading you're reading; ◀ ▶ step heading-to-heading
+   (sections + subsections — and across chapters in the reader); tapping the
+   label slides up a sheet with the full stacked-chapter index. The heading list
+   is built from the .toc navs' [data-toc] rows, so the desktop TOC markup stays
+   the single source of truth. One instance per document (not per panel).
+   ========================================================================== */
+function mobileTocBar() {
+  const bar = document.querySelector(".toc-bar");
+  if (!bar) return;
+  const numEl = bar.querySelector(".toc-bar__num");
+  const titleEl = bar.querySelector(".toc-bar__title");
+  const prevBtn = bar.querySelector(".toc-bar__arrow--prev");
+  const nextBtn = bar.querySelector(".toc-bar__arrow--next");
+  const label = bar.querySelector(".toc-bar__label");
+  const sheet = document.querySelector(".toc-sheet");
+  const panel = sheet && sheet.querySelector(".toc-sheet__panel");
+  const smoother = window.ScrollSmoother && window.ScrollSmoother.get();
+
+  // The chapter accent shown in the bar — resolved per heading from its panel
+  // (reader) or the page body (standalone).
+  const accentOf = (el) => {
+    const scope = el.closest(".chapter-panel") || document.body;
+    return getComputedStyle(scope).getPropertyValue("--accent").trim() || "var(--orange)";
+  };
+
+  // Heading entries in document order. The reader's foreword panel has no TOC,
+  // so it contributes a hand-rolled first entry.
+  const entries = [];
+  const foreword = document.getElementById("ch0");
+  if (foreword) entries.push({ el: foreword, num: "0", title: "Foreword", accent: accentOf(foreword) });
+  document.querySelectorAll(".toc").forEach((nav) => {
+    let num = "";
+    nav.querySelectorAll(".toc__row[data-toc], .toc__subrow[data-toc]").forEach((row) => {
+      const el = document.getElementById(row.dataset.toc);
+      if (!el) return;
+      const own = row.querySelector(".toc__num");
+      if (own) num = own.textContent.trim(); // sub-rows inherit their section's number
+      const text = row.querySelector(".toc__title, .toc__subtitle") || row;
+      entries.push({ el, num, title: text.textContent.trim(), accent: accentOf(el) });
+    });
+  });
+  if (!entries.length) return;
+  bar.hidden = false;
+
+  // ----- label + arrows follow scroll (same 42%-line rule as the desktop TOC) -----
+  let active = -1;
+  function render() {
+    const en = entries[active];
+    numEl.textContent = en.num;
+    titleEl.textContent = en.title;
+    bar.style.setProperty("--bar-accent", en.accent);
+    prevBtn.disabled = active <= 0;
+    nextBtn.disabled = active >= entries.length - 1;
+  }
+  let queued = false;
+  function pick() {
+    queued = false;
+    const line = window.innerHeight * 0.42;
+    let cur = 0;
+    entries.forEach((en, i) => { if (en.el.getBoundingClientRect().top <= line) cur = i; });
+    if (cur !== active) { active = cur; render(); }
+  }
+  const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(pick); } };
+  ScrollTrigger.create({ start: 0, end: "max", onUpdate: schedule, onRefresh: schedule });
+  pick();
+
+  let settleTimer = null;
+  function jumpTo(i) {
+    const en = entries[gsap.utils.clamp(0, entries.length - 1, i)];
+    // Chapter tops land flush; section heads clear the rail by their 120px scroll-margin.
+    const offset = en.el.classList.contains("chapter-panel") ? 0 : 120;
+    clearTimeout(settleTimer);
+    if (!smoother) {
+      const y = en.el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
+      return;
+    }
+    smoother.scrollTo(en.el, !reduce, `top ${offset}px`);
+    // The reader's chapter transitions pin with pinSpacing:false — they consume
+    // scroll without moving layout — so one rect-measured scrollTo undershoots
+    // when the jump crosses them (handleDeepLink converges for the same reason).
+    // Once the motion stops, re-aim until the heading sits at its offset; any
+    // user input cancels so the correction never fights a manual scroll.
+    let ticks = 30;       // overall budget (long smooth scrolls eat ticks while moving)
+    let corrections = 6;  // re-aim budget once stopped
+    let last = NaN;
+    const cancel = () => clearTimeout(settleTimer);
+    window.addEventListener("wheel", cancel, { once: true, passive: true });
+    window.addEventListener("touchstart", cancel, { once: true, passive: true });
+    (function settle() {
+      settleTimer = setTimeout(() => {
+        if (--ticks < 0) return;
+        const cur = smoother.scrollTop();
+        const moving = !(Math.abs(cur - last) < 1);
+        last = cur;
+        if (!moving) {
+          const delta = en.el.getBoundingClientRect().top - offset;
+          if (Math.abs(delta) <= 3 || --corrections < 0) return;
+          smoother.scrollTo(cur + delta, !reduce);
+        }
+        settle();
+      }, 220);
+    })();
+  }
+  prevBtn.addEventListener("click", () => { closeSheet(); jumpTo(active - 1); });
+  nextBtn.addEventListener("click", () => { closeSheet(); jumpTo(active + 1); });
+
+  // ----- slide-up sheet: the full stacked-chapter index -----
+  if (!panel) return;
+  panel.appendChild(buildSheetIndex());
+
+  function buildSheetIndex() {
+    const ul = document.createElement("ul");
+    ul.className = "toc__chapters";
+    if (foreword) {
+      const li = document.createElement("li");
+      li.innerHTML =
+        '<a class="toc__chapter" data-target="ch0" href="/foreword">' +
+        '<span class="toc__chapter-num">0</span>' +
+        '<span class="toc__chapter-name">Foreword</span></a>';
+      li.style.setProperty("--accent", accentOf(foreword));
+      ul.appendChild(li);
+    }
+    // One li per chapter. Prefer the li that carries the chapter's section list —
+    // each .toc nav expands its own chapter, so in the reader every chapter comes
+    // out expanded; on a standalone page only the current one does.
+    const navs = gsap.utils.toArray(".toc");
+    navs[0].querySelectorAll(".toc__chapters > li").forEach((li) => {
+      const num = li.querySelector(".toc__chapter-num").textContent.trim();
+      let source = li;
+      for (const nav of navs) {
+        const cand = gsap.utils.toArray(".toc__chapters > li", nav).find(
+          (l) => l.querySelector(".toc__chapter.is-current") &&
+                 l.querySelector(".toc__chapter-num").textContent.trim() === num
+        );
+        if (cand) { source = cand; break; }
+      }
+      const clone = source.cloneNode(true);
+      // The live TOC's state rides along on clones (inline accordion heights,
+      // is-active / is-current marks) — reset: in the sheet all sub-lists are
+      // simply open, every chapter row starts muted (syncSheetActive highlights
+      // the one you're in), and each block keeps its own chapter accent.
+      clone.querySelectorAll(".toc__sub").forEach((s) => s.removeAttribute("style"));
+      clone.querySelectorAll(".is-active").forEach((r) => r.classList.remove("is-active"));
+      clone.querySelectorAll(".is-current").forEach((r) => r.classList.remove("is-current"));
+      clone.style.setProperty("--accent", accentOf(source));
+      ul.appendChild(clone);
+    });
+    return ul;
+  }
+
+  function syncSheetActive() {
+    const id = entries[active] && entries[active].el.id;
+    let activeRow = null;
+    panel.querySelectorAll(".toc__row, .toc__subrow").forEach((r) => {
+      const on = r.dataset.toc === id;
+      r.classList.toggle("is-active", on);
+      if (on) activeRow = r;
+    });
+    // Highlight the chapter you're in (its row, in its own accent).
+    panel.querySelectorAll(".toc__chapter").forEach((c) => {
+      const li = c.closest("li");
+      const here = (id === "ch0" && c.dataset.target === "ch0") || (activeRow && li.contains(activeRow));
+      c.classList.toggle("is-current", !!here);
+      if (here && !activeRow) activeRow = c;
+    });
+    return activeRow;
+  }
+  function openSheet() {
+    const activeRow = syncSheetActive();
+    sheet.classList.add("is-open");
+    label.setAttribute("aria-expanded", "true");
+    if (activeRow) activeRow.scrollIntoView({ block: "center", behavior: "instant" });
+  }
+  function closeSheet() {
+    if (!sheet || !sheet.classList.contains("is-open")) return;
+    sheet.classList.remove("is-open");
+    label.setAttribute("aria-expanded", "false");
+  }
+  label.addEventListener("click", () => (sheet.classList.contains("is-open") ? closeSheet() : openSheet()));
+  sheet.querySelector(".toc-sheet__scrim").addEventListener("click", closeSheet);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+  // Sheet rows: section/sub rows jump in-page; chapter rows resolve like the
+  // menu (in-page in the reader via GTCRoutes, full load on standalone pages).
+  panel.addEventListener("click", (e) => {
+    const row = e.target.closest("[data-toc], [data-target], [data-href]");
+    if (!row) return;
+    e.preventDefault();
+    closeSheet();
+    const id = row.dataset.toc || row.dataset.target;
+    if (id) {
+      const i = entries.findIndex((en) => en.el.id === id);
+      if (i >= 0) jumpTo(i);
+      return;
+    }
+    const chapterId = window.GTCRoutes && window.GTCRoutes.pathToId(row.dataset.href);
+    const target = chapterId && document.getElementById(chapterId);
+    if (target) {
+      if (smoother) smoother.scrollTo(target, !reduce, "top top");
+      else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    } else {
+      window.location.href = row.dataset.href;
+    }
+  });
+}
+
+/* ---- Top-bar scrim toggle: the soft chalk fade behind the logo/hamburger (mobile,
+   CSS) keeps scrolling body copy from clashing with them — but over a coloured
+   chapter hero the top band is empty with a dark logo, so a chalk fade would read as
+   a band. Switch it off (html.topbar-clear) whenever a hero fills the top band.
+   Cheap probe of the hero rects on scroll; mirrors railReveal's top-edge logic. ---- */
+function topbarScrim() {
+  const root = document.documentElement;
+  const heroes = gsap.utils.toArray(".page-hero");
+  if (!heroes.length) return; // no hero (e.g. standalone foreword) → chalk scrim always fits
+  const PROBE = 64;           // a line just below the bar
+  const update = () => {
+    const overHero = heroes.some((h) => {
+      const r = h.getBoundingClientRect();
+      return r.top <= PROBE && r.bottom >= PROBE;
+    });
+    root.classList.toggle("topbar-clear", overHero);
+  };
+  ScrollTrigger.create({ start: 0, end: "max", onUpdate: update, onRefresh: update });
+  update();
 }
 
 /* ============================================================================

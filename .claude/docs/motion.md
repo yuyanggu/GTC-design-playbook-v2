@@ -35,11 +35,16 @@ The **header wipe lives on its own `titleTl`** so its EXIT runs faster (`timeSca
 0.8s entrance while everything else reverses at normal speed. `heroScene` early-returns on chapter
 pages; under reduced motion it bails and CSS shows the after-scroll state statically.
 
-> **Touch devices scrub.** `heroScene` branches with `gsap.matchMedia()`: `(pointer: fine)`
-> keeps the timed play-once master above; `(pointer: coarse)` builds one timeline (master
-> tweens + the title wipe folded in at 0.5) attached to a `scrub: 0.6`, `anticipatePin: 1`
-> pinned ScrollTrigger so the transition tracks the finger 1:1 in both directions. The
-> load-in (`loadTl`) is force-completed on the first scrub frame. Globally,
+> **Touch / desktop branching.** `heroScene` uses `gsap.matchMedia()` with three branches:
+> - `(max-width: 768px)` **mobile** — play-once, **no pin, no reverse**. An un-pinned `once:true`
+>   ScrollTrigger fires the reveal on the first ~48px of scroll; the fixed pinwheel fades out as
+>   the hero scrolls off. After the reveal the page scrolls natively straight into the `.home-cards`
+>   section below — no snap-back jank. Books/spines are never animated.
+> - `(min-width: 768.01px) and (pointer: fine)` **desktop mouse** — the timed play-once + reversible
+>   pinned master described above.
+> - `(min-width: 768.01px) and (pointer: coarse)` **desktop coarse** — same as mouse but with
+>   `anticipatePin: 1` to smooth the pin grab during momentum scroll.
+>
 > `ScrollTrigger.config({ ignoreMobileResize: true })` stops the mobile address bar's
 > show/hide resize from refreshing the pin mid-scroll.
 
@@ -98,9 +103,12 @@ which fades out. Choreography is the `heroScene` master above.
   gives Boldonse's tall caps + comma/`g` descenders room so the clip doesn't cut glyph tops/bottoms.
 - **Layout (responsive, no overlap):** `.intro-reveal` is absolutely positioned in the band
   `[top:0 → bottom:340px]` (the shelf height), `justify-content:center`, so the empty space above ==
-  below and it never overlaps the shelf. Sizes (`.pinwheel-slot--scrolled`, `.intro__head`,
-  `.intro__body`, gaps) use `clamp(min, min(vw, vh), max)` so the block scales with viewport
-  **height**. Verified balanced + clear of the books across 2000×1050 → 1280×720 via CDP.
+  below and it never overlaps the shelf. Sizes use `clamp(min, min(vw, vh), max)` so the block scales
+  with viewport height. On **mobile (≤768px)** `bottom:0` — no shelf band to reserve — and
+  `width: min(560px, 86vw)`.
+- **Mobile lockup:** the cover `.lockup-row` switches to `flex-direction: column` (pinwheel stacked
+  above title) with `padding-inline: 20px` so the wide "THE GTC DESIGN" title can never overflow
+  on narrow screens. `font-size: clamp(20px, 6.4vw, 30px)`.
 - **Reduced motion:** `heroScene` bails, so CSS shows the composition statically (cover hidden,
   header/body/logo shown, pinwheel parked at `#pinwheelSlotScrolled`).
 
