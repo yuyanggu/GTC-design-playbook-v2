@@ -94,10 +94,22 @@ collide.
 - `heroFlowerSpin(root)` — wind-spin, **only if** `root` has `.hero-flower[data-spin]` (ch1 only).
 - `copyReveals(root)` — `ScrollTrigger.batch` fade-up of `.reveal`.
 - `stickyToc(root)` — the pinned TOC nav (see [gotchas.md](gotchas.md): pinning under ScrollSmoother).
-- `tableOfContents(root)` — active row tracking + accordion sub-rows + click-scroll. **The `.toc__progress` fill bar has been removed** (markup, CSS, and JS width-update line); the ScrollTrigger that fires `update()` is kept so active-row and accordion still track scroll.
-- `chapterSwitch(root)` — the TOC's 4-cell chapter switcher jumps between chapters (in-page on the
-  reader via `GTCRoutes`/`smoother.scrollTo`, else a full load to `/chapter-N`); same behaviour as the
-  menu's `wireNav`.
+- `tableOfContents(root)` — active row tracking + accordion sub-rows + click-scroll. Also: tweens
+  `.toc__scroll.scrollTop` to keep the active (sub-)row centred inside the capped viewport
+  (`follow()`); toggles `.is-overflowing` on the scroll wrapper on init, after each accordion
+  open/close, and on `ScrollTrigger` refresh. **The `.toc__progress` fill bar has been removed.**
+- `chapterSwitch(root)` — the TOC's chapter stack jumps between chapters (in-page on the reader via
+  `GTCRoutes`/`smoother.scrollTo`, else a full load to `/chapter-N`); same behaviour as the menu's
+  `wireNav`. Selector: `.toc__chapter[data-href]` (vertical list rows, not the old 4-cell grid).
+- `mobileTocBar()` — one instance per document (both boot branches). Builds the heading list from
+  `.toc` navs' `[data-toc]` rows in DOM order; shows a fixed bottom `.toc-bar` (≤768px) with
+  prev/next arrows and a label that tracks the 42%-viewport heading; tapping the label slides up a
+  `.toc-sheet` full index. Cross-chapter jumps in the reader re-aim after smooth scroll settles (same
+  convergence idea as `handleDeepLink`). See [chapter-pages.md](chapter-pages.md): mobile section bar.
+- `topbarScrim()` — toggles `html.topbar-clear` on the `<html>` element whenever a coloured hero
+  fills the top band (probe at y=64), which hides the chalk scrim (`.topbar::before`) behind the
+  logo/hamburger so it doesn't show as a chalk band over a coloured hero. Driven by a page-wide
+  `ScrollTrigger`; no-op when no `.page-hero` elements exist (e.g. standalone foreword).
 
 **Reader-only extras** (run when `.chapter-panel`s exist) — see [reader.md](reader.md):
 `panelTransitions()`, `railSync()`, `railReveal()`, `handleDeepLink()`, `urlSync()`.

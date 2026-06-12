@@ -75,6 +75,11 @@ project memory `headless-motion-verification`.
 - ✅ **Continuous reader (`playbook.html`)** — the Foreword + 3 chapters stacked with the seamless
   chapter-to-chapter scroll effect; per-chapter TOC pins coexist; rail follows the active chapter;
   menu/landing books deep-link in.
+- ✅ **Mobile topbar (≤768px, chapter pages + reader)** — topbar drops its stacking context so the
+  logo (z 44) sits behind the wide menu drawer while the hamburger/X (z 60) stays on top; a soft
+  chalk scrim (`.topbar::before`, z 42) fades scrolling copy out under the logo; `topbarScrim()`
+  hides it over coloured heroes. Left **rail hidden** on mobile; `.copy` runs full-width with even
+  side padding; foreword drops its `--fw-rail` gutter. Desktop unchanged. See [menu.md](.claude/docs/menu.md).
 - All surfaces: responsive + reduced-motion, no console errors.
 - ⏭️ **Chapter 4** ("How we work as a team") not built yet (drawer row 4 is "coming soon"; a
   `4_Graphic.svg` asset exists but isn't placed). Ch1's diagrams + the C3 "for each stage" note remain

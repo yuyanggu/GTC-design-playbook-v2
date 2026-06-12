@@ -504,13 +504,13 @@ a.toc__chapter:hover { color: var(--midnight); }
     top: 0;
     left: 0;
     right: 0;
-    height: calc(160px + env(safe-area-inset-top));
+    height: calc(180px + env(safe-area-inset-top));
     z-index: 42;
     background: linear-gradient(
       to bottom,
       var(--chalk) 0,
-      var(--chalk) 10%,
-      rgba(246, 242, 231, 0) 50%
+      var(--chalk) 20%,
+      rgba(246, 242, 231, 0) 90%
     );
     pointer-events: none;
     transition: opacity 0.3s ease;
