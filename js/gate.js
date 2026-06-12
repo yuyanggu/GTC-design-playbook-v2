@@ -15,6 +15,15 @@
   var KEY = "gtc-auth";
   var PASS = "gtcdesign";
 
+  // FOUC shield safety net — html.js-pending is set in the HTML markup to hide
+  // every above-the-fold element until the site modules run their initial
+  // gsap.set's (main.js / chapter.js remove it after wiring). If those modules
+  // fail to load (network error, JS exception, ancient browser), the page
+  // would stay blank-chalk forever. Drop the shield after 3 s no matter what.
+  setTimeout(function () {
+    document.documentElement.classList.remove("js-pending");
+  }, 3000);
+
   var authed = false;
   try { authed = localStorage.getItem(KEY) === "1"; } catch (e) { /* storage blocked */ }
 
@@ -24,6 +33,10 @@
 
   // Hide the page behind the gate from first paint (class drives CSS in styles.css).
   document.documentElement.classList.add("gtc-locked");
+  // While locked the gate overlay paints on top via visibility:hidden on body
+  // (see styles.css §gate). The FOUC shield is now redundant under the lock —
+  // lift it so its rules can't interact with anything inside the gate card.
+  document.documentElement.classList.remove("js-pending");
 
   function build() {
     if (document.querySelector(".gtc-gate")) return;

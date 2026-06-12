@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- html.js-pending: FOUC shield. Lifted by main.js once GSAP has set initial
+     states, or by gate.js's 3 s safety timer if JS never boots. <noscript>
+     removes it for JS-disabled visitors. See css/styles.css §FOUC shield. -->
+<html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +11,31 @@
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/SourceSerif4.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/playbook_logo.svg" as="image" />
+  <!-- FOUC shield: while html.js-pending is set, hide every above-the-fold piece
+       the landing animates in. Painted at parse time, before css/styles.css even
+       loads, so the first frame is just chalk. Removed when main.js lifts the
+       class (or when gate.js's safety timeout fires). -->
+  <style id="fouc-shield">
+    html.js-pending body { background: var(--chalk, #f6f1e6); }
+    html.js-pending .eyebrow,
+    html.js-pending .lockup,
+    html.js-pending .lockup-row,
+    html.js-pending .home-logo,
+    html.js-pending .intro-reveal,
+    html.js-pending .cloud,
+    html.js-pending #arrow,
+    html.js-pending .home-shelf,
+    html.js-pending .home-cards,
+    html.js-pending .pinwheel { opacity: 0 !important; visibility: hidden !important; }
+  </style>
+  <noscript><style>
+    html.js-pending .eyebrow, html.js-pending .lockup, html.js-pending .lockup-row,
+    html.js-pending .home-logo, html.js-pending .intro-reveal, html.js-pending .cloud,
+    html.js-pending #arrow, html.js-pending .home-shelf, html.js-pending .home-cards
+      { opacity: 1 !important; visibility: visible !important; }
+  </style></noscript>
   <link rel="stylesheet" href="css/styles.css" />
   <script src="js/gate.js"></script>
 </head>

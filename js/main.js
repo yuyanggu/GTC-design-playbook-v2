@@ -621,6 +621,13 @@ if (!window.__GTC_LOCKED__) {
   menuScene();
   magneticButtons();
 
+  // FOUC shield lift — every above-the-fold element now has a gsap.set initial
+  // state hiding it (books/spines parked off-screen, pinwheel created, eyebrow/
+  // lockup/clouds/arrow/home-logo/intro reveals autoAlpha:0). Safe to remove the
+  // shield: nothing animated will paint visible until loadTl / heroScene plays.
+  // Done in a rAF so the swap happens after the current paint commits.
+  requestAnimationFrame(() => root.classList.remove("js-pending"));
+
   // Fonts can shift metrics → recompute pin distances once loaded.
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => ScrollTrigger.refresh());
