@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- html.js-pending: FOUC shield. Lifted by chapter.js once GSAP has set initial
+     states, or by gate.js's 3 s safety timer. <noscript> removes it for
+     JS-disabled visitors. See css/styles.css §FOUC shield. -->
+<html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,6 +15,28 @@
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/playbook_logo.svg" as="image" />
+  <!-- FOUC shield: hold the reader blank-chalk until chapter.js has positioned
+       deep-links and run its initial gsap.set's, so the user never sees ch0/ch1
+       jump into place. -->
+  <style id="fouc-shield">
+    html.js-pending body { background: var(--chalk, #f6f1e6); }
+    html.js-pending .topbar,
+    html.js-pending .rail,
+    html.js-pending #smooth-wrapper,
+    html.js-pending .chapter-panel,
+    html.js-pending .page-body,
+    html.js-pending .page-hero,
+    html.js-pending .hero-flower,
+    html.js-pending .toc,
+    html.js-pending .toc-bar { opacity: 0 !important; visibility: hidden !important; }
+  </style>
+  <noscript><style>
+    html.js-pending .topbar, html.js-pending .rail, html.js-pending #smooth-wrapper,
+    html.js-pending .chapter-panel, html.js-pending .page-body, html.js-pending .page-hero,
+    html.js-pending .hero-flower, html.js-pending .toc, html.js-pending .toc-bar
+      { opacity: 1 !important; visibility: visible !important; }
+  </style></noscript>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/chapter.css" />
   <link rel="stylesheet" href="css/playbook.css" />

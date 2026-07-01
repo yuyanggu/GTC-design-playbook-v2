@@ -37,6 +37,13 @@ if (window.__GTC_LOCKED__) {
   mobileTocBar();
   topbarScrim();
 
+  // FOUC shield lift — initChapter has set every .reveal's initial state, the
+  // panel transitions are wired, and the rail is in place. Lift the shield on
+  // the next paint so the now-correctly-hidden content can fade in. Deep-link
+  // case is still protected: handleDeepLink (on window load) keeps using
+  // html.deeplinking and its own reveal.
+  requestAnimationFrame(() => document.documentElement.classList.remove("js-pending"));
+
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => {
     ScrollTrigger.refresh();
@@ -52,6 +59,9 @@ if (window.__GTC_LOCKED__) {
   urlSync();
   mobileTocBar();
   topbarScrim();
+
+  // FOUC shield lift — see the reader branch above for rationale.
+  requestAnimationFrame(() => document.documentElement.classList.remove("js-pending"));
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => {
