@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
+     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<html lang="en" class="js-pending">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Approach — The Design Playbook</title>
+  <meta name="description" content="The shape of engagement, the work we build on, and building lasting capability — Chapter 3 of the GTC Design Playbook." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/playbook_logo.svg" as="image" />
+  <style id="fouc-shield">
+    html.js-pending body { background: var(--chalk, #f6f1e6); }
+    html.js-pending .topbar,
+    html.js-pending .rail,
+    html.js-pending .page-hero,
+    html.js-pending .hero-flower,
+    html.js-pending .copy,
+    html.js-pending .toc,
+    html.js-pending .toc-bar { opacity: 0 !important; visibility: hidden !important; }
+  </style>
+  <noscript><style>
+    html.js-pending .topbar, html.js-pending .rail, html.js-pending .page-hero,
+    html.js-pending .hero-flower, html.js-pending .copy, html.js-pending .toc,
+    html.js-pending .toc-bar
+      { opacity: 1 !important; visibility: visible !important; }
+  </style></noscript>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/chapter.css" />
+  <script src="js/gate.js"></script>
+</head>
+<body style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600; --flower-w: 550px;">
+  <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
+      <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+    </a>
+    <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line class="bar bar-top" x1="3" y1="7" x2="21" y2="7" /><line class="bar bar-mid" x1="3" y1="12" x2="21" y2="12" /><line class="bar bar-bot" x1="3" y1="17" x2="21" y2="17" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="rail" aria-label="Section navigation">
+    <span class="rail__divider" aria-hidden="true"></span>
+    <p class="rail__label">our approach</p>
+  </div>
+
+  <!-- Mobile section bar (≤768px) — driven by js/chapter.js (mobileTocBar). -->
+  <nav class="toc-bar" aria-label="Sections" hidden>
+    <button class="toc-bar__arrow toc-bar__arrow--prev" type="button" aria-label="Previous section">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+    </button>
+    <button class="toc-bar__label" type="button" aria-expanded="false" aria-controls="toc-sheet" aria-haspopup="dialog">
+      <span class="toc-bar__num"></span>
+      <span class="toc-bar__title"></span>
+    </button>
+    <button class="toc-bar__arrow toc-bar__arrow--next" type="button" aria-label="Next section">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+    </button>
+  </nav>
+  <div class="toc-sheet" id="toc-sheet" role="dialog" aria-label="Table of contents">
+    <div class="toc-sheet__scrim"></div>
+    <div class="toc-sheet__panel"></div>
+  </div>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+  <main class="page">
+
+    <!-- ───────────────────────── HERO (orange cover) ───────────────────────── -->
+    <section class="page-hero">
+      <h1 class="page-hero__title">
+        <span class="reveal">03</span>
+        <span class="reveal">Our Approach</span>
+      </h1>
+      <div class="hero-flower" aria-hidden="true">
+        <div class="hero-flower__spin">
+          <img src="assets/3_Graphic.svg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── BODY ───────────────────────── -->
+    <section class="page-body">
+      <div class="page-body__canvas">
+
+       <div class="body-left">
+        <nav class="toc" aria-label="Table of contents">
+          <div class="toc__scroll">
+            <ul class="toc__chapters">
+              <li>
+                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <span class="toc__chapter-num">1</span>
+                  <span class="toc__chapter-name">About GovTech Consulting <span class="toc__chapter-soon">soon</span></span>
+                </span>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
+                  <span class="toc__chapter-num">2</span>
+                  <span class="toc__chapter-name">Our Point of View</span>
+                </a>
+              </li>
+              <li>
+                <span class="toc__chapter is-current" aria-current="true">
+                  <span class="toc__chapter-num">3</span>
+                  <span class="toc__chapter-name">Our Approach</span>
+                </span>
+                <ul class="toc__list">
+                  <li>
+                    <a class="toc__row is-active" data-toc="s-31" href="#s-31">
+                      <span class="toc__num">3.1</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">The Shape of Engagement</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="toc__row" data-toc="s-32" href="#s-32">
+                      <span class="toc__num">3.2</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">The Work We Build On</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="toc__row" data-toc="s-33" href="#s-33">
+                      <span class="toc__num">3.3</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">Building Lasting Capability</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-4" href="/chapter-4">
+                  <span class="toc__chapter-num">4</span>
+                  <span class="toc__chapter-name">The Stages of an Engagement</span>
+                </a>
+              </li>
+              <li>
+                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <span class="toc__chapter-num">5</span>
+                  <span class="toc__chapter-name">How We Work <span class="toc__chapter-soon">soon</span></span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </nav>
+       </div><!-- /.body-left -->
+
+        <article class="copy">
+          <!-- ══ CANONICAL COPY: mirrored verbatim into playbook.html #ch3 ══ -->
+
+          <!-- 3.1 -->
+          <h3 class="section-head reveal" id="s-31">3.1 The Shape of Engagement</h3>
+          <p class="lead reveal">Partnership is how we work. Agencies bring the domain knowledge and the mandate; we bring discovery capability, technology, and product expertise. Together, we build something that creates real impact for the public. Below shows where our partnership begins and ends, and why both points matter.</p>
+          <div class="diagram-ph reveal" role="img" aria-label="Diagram placeholder — the engagement timeline and our entry and exit points">
+            <span class="diagram-ph__tag">Diagram — to come</span>
+            <p class="diagram-ph__desc">A horizontal timeline: Inception → Discovery &amp; Experimentation → Build &amp; Launch. We enter at inception; we exit at one of two points — Exit A, handing over a validated roadmap and working prototype after experimentation; or Exit B, after the build is delivered and live.</p>
+          </div>
+
+          <h4 class="subsection-head reveal">Where we enter</h4>
+          <p class="reveal">The earlier we’re brought in to help shape the problem, the more value the work creates. If the direction is already locked, the scope fixed without discovery, or the agency already committed to a specific build, our ability to help agency partners solve core issues drops significantly. Wherever we enter, we tell agencies what’s still achievable from that point, so both sides begin with a shared, realistic picture of what’s possible.</p>
+
+          <h4 class="subsection-head reveal">Where we exit</h4>
+          <p class="reveal">We don’t leave teams hanging. Our intention is always to build up the agency’s own capability to carry the work forward, and that transfer of ownership starts on day one, not at the handover line. We typically step away at one of two natural exit points:</p>
+          <div class="rulegrid reveal">
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Exit Option A — After experimentation</p>
+              <p>We hand off after Discovery Subphase 2, leaving a validated, high-confidence roadmap and working prototype directly in the agency’s hands for their downstream teams to build. <em>(See 4.2: Discovery.)</em></p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Exit Option B — After build and delivery</p>
+              <p>We stay through the actual build and launch, stepping away only when the service is live and the agency team is fully equipped to run it independently. In special cases that call for it, we will also stay through the support phase. <em>(See 4.3: Building and Delivery; 4.4: Support and Maintenance.)</em></p>
+            </div>
+          </div>
+
+          <!-- 3.2 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/01%20Divider.svg" alt="" />
+          </div>
+          <h3 class="section-head reveal" id="s-32">3.2 The Work We Build On</h3>
+
+          <h4 class="subsection-head reveal">Types of engagement we take on</h4>
+          <p class="reveal">Our work starts with two conditions: (1) a problem worth solving, and (2) a partner ready to work alongside us to solve it. Before committing to an engagement, we work together to understand the engagement landscape — whether the budget is secured, what it covers, and whether it aligns with the proposed scope. Surfacing this early builds the transparency that makes for a productive partnership. <em>(See 4.1: Qualifying.)</em></p>
+          <div class="ctable ctable--2 reveal">
+            <div class="ctable__row ctable__row--head">
+              <div class="ctable__cell ctable__cell--head">The scenario</div>
+              <div class="ctable__cell ctable__cell--head">What we do</div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="The scenario"><p><strong>Legacy system overhaul.</strong> <em>An agency’s legacy system is failing both users and officers.</em></p></div>
+              <div class="ctable__cell" data-label="What we do"><ul><li>Discover what is actually broken.</li><li>Map the full service.</li><li>Prototype what an improved version could look like.</li></ul></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="The scenario"><p><strong>Digital policy validation.</strong> <em>A ministry wants to understand whether a new policy can be delivered digitally.</em></p></div>
+              <div class="ctable__cell" data-label="What we do"><ul><li>Run discovery to validate the need.</li><li>Surface the constraints.</li><li>Experiment with what a service could be before any build commitment is made.</li></ul></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="The scenario"><p><strong>System &amp; operational consolidation.</strong> <em>An agency is streamlining multiple fragmented systems into a single platform, requiring entirely new internal workflows.</em></p></div>
+              <div class="ctable__cell" data-label="What we do"><ul><li>Discover to rethink the people, process, and workflows around it.</li><li>Rebuild the operation alongside the new platform.</li></ul></div>
+            </div>
+          </div>
+
+          <h4 class="subsection-head reveal">What we don’t do</h4>
+          <p class="reveal">We work as an advisory partner, not as a permanent vendor or an ongoing operational arm. Our goal is to build capabilities that outlast us (more on that in 3.3: Building Lasting Capability). To protect that focus, here’s a quick look at what’s in and out of scope:</p>
+          <div class="ctable ctable--2 reveal">
+            <div class="ctable__row ctable__row--head">
+              <div class="ctable__cell ctable__cell--head">What we don’t do</div>
+              <div class="ctable__cell ctable__cell--head">What we do instead</div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="What we don’t do"><p><strong>Take over the entire engagement cycle.</strong> We are a consulting and discovery team, not the permanent design or engineering function for an agency.</p></div>
+              <div class="ctable__cell" data-label="What we do instead"><p><strong>Accelerate, enable, and pilot solutions.</strong> We focus on the discovery arc, building proofs of concept and value (POC/POV) before handing over to our agency partner’s engineering team.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="What we don’t do"><p><strong>Write funding papers or investment proposals.</strong> This includes IV papers, procurement documents, and the like.</p></div>
+              <div class="ctable__cell" data-label="What we do instead"><p><strong>Inform strategic thinking.</strong> We provide the foundational insights and data that help an agency shape and back up their internal case.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="What we don’t do"><p><strong>Design without being involved in the discovery.</strong> If a solution has already been decided and we’re asked only to make it look good, that isn’t an engagement we can add real value to.</p></div>
+              <div class="ctable__cell" data-label="What we do instead"><p><strong>Design based on discovery insights.</strong> We ensure our design is deeply connected to user research, constraints, and verified needs. <em>(See 2.3: Through a Discovery Lens.)</em></p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="What we don’t do"><p><strong>Run isolated research tasks without a discovery arc.</strong> We are not a research-for-hire team delivering standalone tasks; research has to connect to discovery, hypothesis, and action.</p></div>
+              <div class="ctable__cell" data-label="What we do instead"><p><strong>Connect research to clear next steps.</strong> We ensure every research piece connects to a full discovery arc with clear hypothesis, validated findings, and tangible action. <em>(See 2.3 and 4.2.)</em></p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell" data-label="What we don’t do"><p><strong>Deliver a prototype and walk away.</strong> We don’t leave partners without roadmaps or context in the handoff.</p></div>
+              <div class="ctable__cell" data-label="What we do instead"><p><strong>Build capability for the next step forward.</strong> We guide partners to solve the right problems and set up an environment to maintain the work after we leave. <em>(See 3.3: Building Lasting Capability.)</em></p></div>
+            </div>
+          </div>
+          <aside class="callout reveal">
+            <img class="callout__icon" src="assets/menu_3_hover.svg" alt="" width="40" height="40" aria-hidden="true" />
+            <div class="callout__body">
+              <p class="callout__title">A note on research-focused engagements</p>
+              <p>We help agency partners solve core challenges through a complete discovery arc. However, we do make exceptions for specific institutional requirements — a longer, research-led runway before the process begins, or a partial discovery phase without ideation <em>(see 2.3: Through a Discovery Lens)</em>. Even in these rare cases, the work must still connect to a larger arc of hypothesis and action.</p>
+            </div>
+          </aside>
+
+          <!-- 3.3 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/01%20Divider.svg" alt="" />
+          </div>
+          <h3 class="section-head reveal" id="s-33">3.3 Building Lasting Capability</h3>
+          <p class="reveal">We measure our success not by the solutions we leave behind, but by the people who carry them forward. Ownership sits with our agency partners; they hold deep domain knowledge and the long-term stakes in the engagement’s success. Beyond helping agencies fill immediate skill gaps early on, our role is to cultivate the structures, tools, and talent necessary for this work to survive — and keep improving — long after we are gone.</p>
+          <p class="reveal">Capacity only grows under the right conditions. For the work to sustain itself, three things need to come from the agency side:</p>
+          <ul class="reveal">
+            <li><strong>A clearly identified business owner</strong> — someone accountable for the outcome.</li>
+            <li><strong>A sponsor with decision-making authority</strong> — someone who can clear the path when it matters.</li>
+            <li><strong>A shared sense of what success looks like</strong> — agreed between us, and early.</li>
+          </ul>
+          <aside class="callout reveal">
+            <img class="callout__icon" src="assets/menu_3_hover.svg" alt="" width="40" height="40" aria-hidden="true" />
+            <div class="callout__body">
+              <p class="callout__title">Risks</p>
+              <p>Engagements without a clearly identified business owner stall. When no one on the agency side has the authority to make decisions or the mandate to drive the work, even the best discovery and prototyping struggles to land.</p>
+            </div>
+          </aside>
+
+          <h4 class="subsection-head reveal">Two tracks of capability building</h4>
+          <p class="reveal">There are two agency teams that we help grow, and they run in parallel alongside the engagement:</p>
+          <ul class="reveal">
+            <li><strong>The product team</strong> — the people who design, build, and iterate on the service.</li>
+            <li><strong>The operations team</strong> — the people who run and sustain it once it’s live.</li>
+          </ul>
+          <div class="diagram-ph reveal" role="img" aria-label="Diagram placeholder — the capability-building arc running in parallel with the engagement">
+            <span class="diagram-ph__tag">Diagram — to come</span>
+            <p class="diagram-ph__desc">Capability building shown as a parallel track that starts on day one and runs the full length of the engagement, with two sub-tracks inside it: the product team and the operations team.</p>
+          </div>
+
+          <details class="accordion reveal">
+            <summary class="accordion__head">
+              <span class="accordion__title">The product team<span class="accordion__sub">The people who design, build, and iterate on the service</span></span>
+            </summary>
+            <div class="accordion__body">
+              <p>The long-term value of an engagement is rooted in building the right product team from within the agency. When we look for the people, we look for:</p>
+              <ul>
+                <li><strong>Mindset fit</strong> — genuine curiosity about the problem, openness to new ways of working, and a collaborative instinct that makes co-creation possible.</li>
+                <li><strong>Readiness to evolve</strong> — a willingness to grow with the work, picking up new methods and adapting as technology reshapes what design can do.</li>
+                <li><strong>Domain knowledge</strong> — an understanding of the agency’s context, systems, and users that’s hard to bring in from outside.</li>
+                <li><strong>Potential for ownership</strong> — the capacity and ambition to eventually lead the work, not just contribute to it.</li>
+              </ul>
+              <p>There are two ways to build this team, and we have a clear preference:</p>
+              <div class="ctable ctable--2">
+                <div class="ctable__row ctable__row--head">
+                  <div class="ctable__cell ctable__cell--head">Path 1 — Growing existing talent (preferred)</div>
+                  <div class="ctable__cell ctable__cell--head">Path 2 — Bringing in new people</div>
+                </div>
+                <div class="ctable__row">
+                  <div class="ctable__cell" data-label="Path 1 — Growing existing talent (preferred)"><p>Up-skilling current staff into design, product, or engineering roles retains invaluable domain context. Involving them early means capability builds naturally alongside the engagement. The earlier these conversations start — clearing BAU bandwidth and securing approvals — the smoother the path.</p></div>
+                  <div class="ctable__cell" data-label="Path 2 — Bringing in new people"><p>When existing staff can’t be redeployed, fresh talent is an opportunity to build the exact capabilities the engagement needs. To ensure readiness, align early on manpower options — whether navigating MMF allocations, hiring contractors, or securing a longer-term GovTech commitment.</p></div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="accordion reveal">
+            <summary class="accordion__head">
+              <span class="accordion__title">The operations team<span class="accordion__sub">The people who run and sustain it once it’s live</span></span>
+            </summary>
+            <div class="accordion__body">
+              <p>A project’s success ultimately depends on the team running it after launch — the people maintaining, administering, and reviewing performance day to day. Unlike building a traditional product team, new roles may be introduced to fill this operational layer, making structured change management all the more important.</p>
+              <p>Sustaining this team means working through team structure, funding, hiring, and potential vendor partnerships early. Above all, leadership must clearly define the organisation’s long-term commitment once GTC’s direct involvement ends.</p>
+            </div>
+          </details>
+
+          <blockquote class="pullquote reveal">
+            <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
+            <p>The goal across both dimensions is the same: when we leave, the work continues, our agency partners are confident, and the work improves over time.</p>
+          </blockquote>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
+
+  <!-- ───────────────────────── MENU (bookshelf overlay) — shared ───────────────────────── -->
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
+    <div class="menu__scrim" data-menu-close aria-hidden="true"></div>
+    <nav class="menu__drawer" aria-label="Chapters" tabindex="-1">
+      <p class="menu__eyebrow">The Design Playbook</p>
+      <ul class="menu__list">
+        <li class="menu__item">
+          <a class="menu__row" data-href="foreword.html" href="foreword.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_0.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_0_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">00</span>
+              <span class="menu__title">Foreword</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <span class="menu__row menu__row--soon" aria-disabled="true">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">01</span>
+              <span class="menu__title">About GovTech Consulting</span>
+              <span class="menu__soon">Coming soon</span>
+            </span>
+          </span>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_2.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">02</span>
+              <span class="menu__title">Our Point of View</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-approach.html" href="our-approach.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_3.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">03</span>
+              <span class="menu__title">Our Approach</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="stages-of-a-project.html" href="stages-of-a-project.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">04</span>
+              <span class="menu__title">The Stages of an Engagement</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <span class="menu__row menu__row--soon" aria-disabled="true">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">05</span>
+              <span class="menu__title">How We Work</span>
+              <span class="menu__soon">Coming soon</span>
+            </span>
+          </span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
+  <script src="vendor/CustomEase.min.js"></script>
+  <script src="vendor/CustomWiggle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/chapter.js"></script>
+</body>
+</html>

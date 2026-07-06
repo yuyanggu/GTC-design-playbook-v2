@@ -113,26 +113,24 @@
             </span>
           </button>
 
-          <!-- Book 1 — interactive -->
-          <button class="book book--interactive book--1" type="button" data-book data-href="/chapter-1" style="--book-x:278px;">
+          <!-- Book 1 — About GovTech Consulting (coming soon) -->
+          <div class="book book--soon book--1" data-book aria-disabled="true" style="--book-x:278px;">
             <span class="book__inner">
               <span class="book__num">1</span>
               <span class="book__rule" aria-hidden="true"></span>
-              <span class="book__title">Why we exist,<br />and the moment</span>
-              <span class="book__updated">Last updated:<br />2 May 2026</span>
+              <span class="book__title">About GovTech<br />Consulting<span class="book__soon">(Coming soon)</span></span>
               <span class="book__icon">
                 <img class="book__icon-base" src="assets/menu_1.svg" alt="" />
-                <img class="book__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
               </span>
             </span>
-          </button>
+          </div>
 
-          <!-- Book 2 — interactive (Our point of view) -->
+          <!-- Book 2 — interactive (Our Point of View) -->
           <button class="book book--interactive book--2" type="button" data-book data-href="/chapter-2" style="--book-x:556px;">
             <span class="book__inner">
               <span class="book__num">2</span>
               <span class="book__rule" aria-hidden="true"></span>
-              <span class="book__title">Our point<br />of view</span>
+              <span class="book__title">Our Point<br />of View</span>
               <span class="book__updated">Last updated:<br />2 May 2026</span>
               <span class="book__icon">
                 <img class="book__icon-base" src="assets/menu_2.svg" alt="" />
@@ -141,12 +139,12 @@
             </span>
           </button>
 
-          <!-- Book 3 — interactive (Stages of a project) -->
+          <!-- Book 3 — interactive (Our Approach) -->
           <button class="book book--interactive book--3" type="button" data-book data-href="/chapter-3" style="--book-x:834px;">
             <span class="book__inner">
               <span class="book__num">3</span>
               <span class="book__rule" aria-hidden="true"></span>
-              <span class="book__title">Stages of<br />a project</span>
+              <span class="book__title">Our<br />Approach</span>
               <span class="book__updated">Last updated:<br />2 May 2026</span>
               <span class="book__icon">
                 <img class="book__icon-base" src="assets/menu_3.svg" alt="" />
@@ -155,12 +153,26 @@
             </span>
           </button>
 
-          <!-- Book 4 — coming soon (dimmed, non-interactive) -->
-          <div class="book book--soon book--4" data-book aria-disabled="true" style="--book-x:1112px;">
+          <!-- Book 4 — interactive (The Stages of an Engagement) -->
+          <button class="book book--interactive book--4" type="button" data-book data-href="/chapter-4" style="--book-x:1112px;">
             <span class="book__inner">
               <span class="book__num">4</span>
               <span class="book__rule" aria-hidden="true"></span>
-              <span class="book__title">How we work<br />as a team<span class="book__soon">(Coming soon)</span></span>
+              <span class="book__title">The Stages of<br />an Engagement</span>
+              <span class="book__updated">Last updated:<br />2 May 2026</span>
+              <span class="book__icon">
+                <img class="book__icon-base" src="assets/menu_4.svg" alt="" />
+                <img class="book__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
+              </span>
+            </span>
+          </button>
+
+          <!-- Book 5 — coming soon (dimmed, non-interactive) -->
+          <div class="book book--soon book--5" data-book aria-disabled="true" style="--book-x:1390px;">
+            <span class="book__inner">
+              <span class="book__num">5</span>
+              <span class="book__rule" aria-hidden="true"></span>
+              <span class="book__title">How We<br />Work<span class="book__soon">(Coming soon)</span></span>
               <span class="book__icon">
                 <img class="book__icon-base" src="assets/menu_4.svg" alt="" />
               </span>
@@ -181,30 +193,39 @@
         <span class="home-card__rule" aria-hidden="true"></span>
         <span class="home-card__body"><span class="home-card__title">Foreword</span></span>
       </a>
-      <a class="home-card" href="/chapter-1">
+      <div class="home-card home-card--soon" aria-disabled="true">
         <span class="home-card__icon"><img src="assets/menu_1.svg" alt="" /></span>
         <span class="home-card__num">1</span>
         <span class="home-card__rule" aria-hidden="true"></span>
-        <span class="home-card__body"><span class="home-card__title">Why we exist, and the moment</span></span>
-      </a>
+        <span class="home-card__body">
+          <span class="home-card__title">About GovTech Consulting</span>
+          <span class="home-card__soon">Coming soon</span>
+        </span>
+      </div>
       <a class="home-card" href="/chapter-2">
         <span class="home-card__icon"><img src="assets/menu_2.svg" alt="" /></span>
         <span class="home-card__num">2</span>
         <span class="home-card__rule" aria-hidden="true"></span>
-        <span class="home-card__body"><span class="home-card__title">Our point of view</span></span>
+        <span class="home-card__body"><span class="home-card__title">Our Point of View</span></span>
       </a>
       <a class="home-card" href="/chapter-3">
         <span class="home-card__icon"><img src="assets/menu_3.svg" alt="" /></span>
         <span class="home-card__num">3</span>
         <span class="home-card__rule" aria-hidden="true"></span>
-        <span class="home-card__body"><span class="home-card__title">Stages of a project</span></span>
+        <span class="home-card__body"><span class="home-card__title">Our Approach</span></span>
       </a>
-      <div class="home-card home-card--soon" aria-disabled="true">
+      <a class="home-card" href="/chapter-4">
         <span class="home-card__icon"><img src="assets/menu_4.svg" alt="" /></span>
         <span class="home-card__num">4</span>
         <span class="home-card__rule" aria-hidden="true"></span>
+        <span class="home-card__body"><span class="home-card__title">The Stages of an Engagement</span></span>
+      </a>
+      <div class="home-card home-card--soon" aria-disabled="true">
+        <span class="home-card__icon"><img src="assets/menu_4.svg" alt="" /></span>
+        <span class="home-card__num">5</span>
+        <span class="home-card__rule" aria-hidden="true"></span>
         <span class="home-card__body">
-          <span class="home-card__title">How we work as a team</span>
+          <span class="home-card__title">How We Work</span>
           <span class="home-card__soon">Coming soon</span>
         </span>
       </div>

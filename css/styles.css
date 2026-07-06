@@ -325,7 +325,7 @@ img { display: block; max-width: 100%; }
   left: 50%;
   bottom: 0;
   z-index: 2;
-  width: 1300px;                     /* 5×188 + 4×90 */
+  width: 1578px;                     /* 6×188 + 5×90 */
   height: 340px;
   /* --shelf-scale is set by fitShelf() in main.js so the whole shelf scales down to
      fit narrow viewports (origin bottom-centre → stays centred + flush to the floor). */

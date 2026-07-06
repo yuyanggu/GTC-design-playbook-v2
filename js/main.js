@@ -329,9 +329,9 @@ function homeBooks() {
   // no scaling, no parking, no knock/hover physics. The cards are plain <a> links.
   if (window.matchMedia("(max-width: 768px)").matches) return;
 
-  // Scale the whole 1300px shelf down to fit narrow viewports (origin bottom-centre,
-  // set in CSS) so all five books stay visible + centred. Runs under reduced motion too.
-  const SHELF_W = 1300;
+  // Scale the whole shelf down to fit narrow viewports (origin bottom-centre, set in CSS)
+  // so all six books stay visible + centred. Runs under reduced motion too.
+  const SHELF_W = 1578;
   const fitShelf = () => {
     const scale = Math.min(1, (window.innerWidth - 32) / SHELF_W);
     shelf.style.setProperty("--shelf-scale", scale.toFixed(4));

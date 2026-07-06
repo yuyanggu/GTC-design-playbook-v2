@@ -5,7 +5,7 @@ layout, hero, TOC, copy blocks, diagrams, and the left rail. Built from `css/cha
 `js/chapter.js` (function inventory in [architecture.md](architecture.md); the reader-specific
 wrapping in [reader.md](reader.md)).
 
-Pages: `why-we-exist.html` (ch1), `our-point-of-view.html` (ch2), `stages-of-a-project.html` (ch3).
+Pages: `our-point-of-view.html` (ch2), `our-approach.html` (ch3), `stages-of-a-project.html` (ch4).
 **Build a new chapter** by copying the skeleton and changing only: `<body>` theme vars, rail label,
 hero title `<span>`s, hero `<img>` src (+ `data-spin` to animate), the `.toc` rows, and the `.copy`
 content. Edits to diagrams/copy must be **mirrored in both** the standalone page and the matching
@@ -103,15 +103,58 @@ skipped); z-order: scrim/sheet 45 · bar 46 (rail 40 < these < menu 50). `mobile
 - `.lead` — lead paragraph.
 - `.copy ul/ol/li` — themed markers; `<strong>` lead-ins render bold serif (`.copy li strong`) for
   definitional point-form bullets.
-- `.callouts` / `.callout` / `.callout__label` — side-by-side bordered boxes (Activities / Outputs /
-  Artifacts) under a stage; two-column grid that stacks to one column ≤680px. Used throughout C3.
+- `.callout` — full-width note card (`<aside class="callout">`): `.callout__icon` (40×40 img,
+  currently the per-chapter **coloured** pinwheel `assets/menu_2/3/4_hover.svg` reused as a
+  placeholder — the real Figma mark is pending) stacked above `.callout__body` (`.callout__title`, DM Sans 700 18px
+  midnight + serif 18/27 body). Faint midnight-tint bg, 2px solid `--accent` border, 4px radius,
+  26/34px padding (22/20 ≤680px). One block per note — used for "What gets in the way", "A note on
+  this stage", "Risks", "The handoff", etc.
+- `.rulegrid` / `.rulegrid--3` — unboxed columns of copy (the draft's "principles" rows): each
+  `.rulegrid__col` gets a 2px `--accent` top rule + `.rulegrid__title` (DM Sans 700 18px) + a
+  list/paragraphs below. 2-col by default, `--3` for three across; stacks to one column ≤680px.
+  Used for Activities/Artifacts pairs, Exit options, Hypothesis/Build/Test, etc.
+- `.runin` — a DM Sans 700 18px midnight run-in lead (`margin: 1.6em 0 0.4em`) that introduces the
+  copy directly beneath it, tighter than `.subsection-head`. Used for "What we run" / "What we
+  build" style mini-headings.
+- `.ctable` + `.ctable--2` / `.ctable--3` — **comparison table**: an editorial, ungridded CSS grid —
+  no accent-filled header, no vertical gridlines or tinted cells, just a 1px `rgba(1,34,51,0.4)`
+  bottom rule under every cell. `.ctable__cell--head` (top row) and `.ctable__cell--label`
+  (first-column label) are DM Sans 600 16px midnight, no uppercase; body cells are serif 17/26.
+  Equal-width columns. Cells are grouped row-by-row in `.ctable__row` wrappers (plus
+  `.ctable__row--head` for the header row) — `display: contents` on desktop so the grid sees flat
+  cells, real blocks ≤680px where the table restacks as **row cards**: header row hidden, each row
+  a rule-closed group, each body cell announcing its column via a small uppercase accent label from
+  its `data-label` attribute (set in the HTML to the column header text; `--label` cells act as the
+  row heading instead and carry no `data-label`). Used for the draft's shaded multi-row tables
+  (Without/With, Shift/Value, Don't/Do, prototype types, Process/Handover, …).
+- `.accordion` — a native `<details>` collapsible styled as a minimal line-style list (no filled
+  box): a 2px `--accent` top rule brackets every item in **all** states, closed heads included
+  (last item also gets a bottom rule, boxing the stack top+bottom); closed heads are full midnight
+  (no muted state). `<summary class="accordion__head">` wraps `.accordion__title` (DM Sans 600,
+  clamp ≈22→28px, + optional italic `.accordion__sub`) with a `+`/`−` toggle (DM Sans 300 30px,
+  unchanged) at right; body is `.accordion__body`, which reuses the `.copy` inner styles. No JS —
+  native toggle, reduced-motion safe.
+- `.diagram-ph` — **empty diagram placeholder** (dashed, hatched box) for every "blue" section that
+  still needs a drawn diagram: `.diagram-ph__tag` ("Diagram — to come") + `.diagram-ph__desc`
+  (italic description carried from the draft's blue caption). Replace with a `.figure` once drawn.
 - `.figure` — a **drawn diagram** (`.figure__img` SVG capped to the copy column, centred, no
-  caption; used in C2 + C3).
-- `.figure-note` — the older text "Diagram — …" aside, still used where no graphic exists (e.g. C3's
-  "For each stage we capture").
+  caption).
+- `.figure-note` — the older text "Diagram — …" aside (superseded by `.diagram-ph` for new work).
 - `.section-divider` — a small, subtle per-chapter graphic (`01/02/03 Divider.svg`) between sections;
   `clamp(110px,24%,150px)` wide, centred.
 - `.source-note`, `.pullquote` (+ `pullmark.svg`).
+
+The `.callout` / `.rulegrid` / `.ctable` / `.accordion` restyle (2026-07) follows the Figma file
+`6KDO3vldq300tsidL7IiWk` as source of truth — node 2004:1719 (callout), 2004:1917 (ctable), 2004:2053
+(accordion). The callout icon is a placeholder (per-chapter pinwheel svg) pending the real mark.
+Vertical rhythm between blocks uses two tokens on `.copy`: `--block-gap` (44px, 32px ≤680px) for
+callout margins and the accordion group's top/bottom, and `--block-gap-lg` (64px, 44px ≤680px) for
+`.rulegrid` and `.ctable` — they read denser, so they get more air (sibling margins collapse, so
+block-to-block gaps stay exact). `.ctable` cells also carry no rule under their last row — the
+block-gap margin below is separation enough; a trailing line there read as redundant. Content
+accordions call `ScrollTrigger.refresh()` on
+`toggle` (`accordionRefresh()` in `js/chapter.js`) — without it the reader's chapter-to-chapter
+transition engages mid-copy after a `<details>` opens and snaps you into the next chapter.
 
 Most blocks carry `.reveal` for the fade-up (`copyReveals`) — **except `.toc`** (its reveal
 transform fought the pin).

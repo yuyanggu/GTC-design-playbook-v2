@@ -5,9 +5,9 @@
    reveals · the scroll-synced Table of Contents.
 
    Two layouts share this file:
-   • Standalone chapter pages (why-we-exist.html, …) — one chapter per document.
+   • Standalone chapter pages (our-point-of-view.html, …) — one chapter per document.
      Everything is scoped to `document`.
-   • The continuous reader (playbook.html) — three `.chapter-panel`s in one
+   • The continuous reader (playbook.html) — several `.chapter-panel`s in one
      document. Each function is scoped to its panel so the three TOCs / reveal
      batches / flowers don't collide, plus the chapter-to-chapter scroll effect
      (panelTransitions), the rail label/colour follow (railSync), and deep-link
@@ -74,9 +74,25 @@ if (window.__GTC_LOCKED__) {
 function initChapter(root) {
   heroFlowerSpin(root);
   copyReveals(root);
+  accordionRefresh(root);
   stickyToc(root);
   tableOfContents(root);
   chapterSwitch(root);
+}
+
+/* ---- Content accordions change the document height when they open/close, which
+   goes stale in every ScrollTrigger measured at load — worst on the reader, where
+   the chapter-to-chapter transition (panelTransitions) then engages mid-copy and
+   snaps you into the next chapter. Re-measure on every <details> toggle. ---- */
+function accordionRefresh(root) {
+  const items = root.querySelectorAll("details.accordion");
+  if (!items.length) return;
+  let raf = 0;
+  const refresh = () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => ScrollTrigger.refresh());
+  };
+  items.forEach((d) => d.addEventListener("toggle", refresh));
 }
 
 /* ---- Chapter switcher: the 4-cell grid at the top of the TOC jumps between

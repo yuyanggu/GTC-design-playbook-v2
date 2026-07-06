@@ -546,6 +546,11 @@ a.toc__chapter:hover { color: var(--midnight); }
   /* Fluid body size — scales with the viewport (mirrors the heading clamp()s above):
      18px on desktop, easing down to 16px on small screens. */
   --copy-fs: clamp(16px, 0.25vw + 0.9rem, 18px);
+  /* Shared breathing space between content blocks — sibling margins collapse, so
+     block-to-block gaps stay exact. Callout/accordion use the base gap; rulegrid and
+     ctable get the larger one (they read as denser blocks, so they need more air). */
+  --block-gap: 44px;
+  --block-gap-lg: 64px;
   margin-left: 626px;
   /* Fluid comfortable measure: grows with the canvas, capped so line length stays
      readable, and never collides with the canvas's right edge. */
@@ -643,31 +648,43 @@ a.toc__chapter:hover { color: var(--midnight); }
   color: var(--accent, var(--orange));
 }
 
-/* Stage callouts — side-by-side cards (Activities / Outputs / Artifacts) with a
-   serif-bold heading (no all-caps eyebrow). */
-.copy .callouts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin: 2em 0;
-}
+/* Callout — a full-width note card: an accent-outlined panel with an icon stacked
+   above a bold sentence-case title + serif body (Image #2). One block per note. */
 .copy .callout {
-  padding: 24px 26px 22px;
-  background: rgba(1, 34, 51, 0.035);
-  border: 1px solid rgba(1, 34, 51, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: var(--block-gap) 0;
+  padding: 26px 34px;
+  background: rgba(1, 34, 51, 0.03);
+  border: 2px solid var(--accent, var(--orange));
+  border-radius: 4px;
 }
-.copy .callout__label {
+.copy .callout__icon { display: block; width: 40px; height: 40px; }
+/* Title — the p.callout__title selector (0,2,1) outweighs the body p rule below so
+   the title never inherits body sizing. */
+.copy .callout p.callout__title {
   margin: 0 0 12px;
   font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent, var(--orange));
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 27px;
+  letter-spacing: -0.1px;
+  color: var(--midnight);
 }
-.copy .callout ul { margin: 0; }              /* reuse the .copy li markers */
-.copy .callout li { margin-bottom: 0.5em; }
-.copy .callout li:last-child { margin-bottom: 0; }
+.copy .callout__body p,
+.copy .callout__body li {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 27px;
+  letter-spacing: -0.16px;
+  color: var(--midnight);
+}
+.copy .callout__body p { margin: 0 0 0.7em; }
+.copy .callout__body p:last-child { margin-bottom: 0; }
+.copy .callout__body ul { margin: 0; }        /* reuse the .copy li markers */
+.copy .callout__body li { margin-bottom: 0.5em; }
+.copy .callout__body li:last-child { margin-bottom: 0; }
 
 /* Figure note — describes a diagram that isn't drawn yet (text-only aside) */
 .figure-note {
@@ -745,6 +762,203 @@ a.toc__chapter:hover { color: var(--midnight); }
   letter-spacing: -0.2px;
   color: var(--midnight);
 }
+/* A short pull-quote can carry an attribution line (muted, sans). */
+.pullquote cite {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 300;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: rgba(1, 34, 51, 0.55);
+}
+
+/* ---------------------------------------------------------------------------
+   Rule-grid (.rulegrid) — columns of copy, each capped by an accent top rule
+   (the draft's "principles" rows). 2-col by default; --3 for three across.
+   --------------------------------------------------------------------------- */
+.copy .rulegrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 40px);
+  margin: var(--block-gap-lg) 0;
+}
+.copy .rulegrid--3 { grid-template-columns: 1fr 1fr 1fr; }
+.copy .rulegrid__col {
+  border-top: 2px solid var(--accent, var(--orange));
+  padding-top: 16px;
+}
+.copy .rulegrid__title {
+  margin: 0 0 10px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.35;
+  letter-spacing: -0.1px;
+  color: var(--midnight);
+}
+.copy .rulegrid__col ul { margin: 0; }        /* reuse the .copy li markers */
+.copy .rulegrid__col li { margin-bottom: 0.5em; }
+.copy .rulegrid__col li:last-child { margin-bottom: 0; }
+.copy .rulegrid__col p { margin: 0 0 0.7em; font-size: var(--copy-fs); line-height: 1.5; }
+.copy .rulegrid__col p:last-child { margin-bottom: 0; }
+
+/* Run-in lead — a bold sans mini-heading that introduces the copy directly beneath
+   it (tighter than .subsection-head). */
+.copy .runin {
+  margin: 1.6em 0 0.4em;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.1px;
+  color: var(--midnight);
+}
+
+/* ---------------------------------------------------------------------------
+   Comparison table (.ctable) — a quiet ruled grid: no fills or gridlines, just a
+   hairline under every cell (so header-less tables still read as rows). Equal-width
+   columns. Header/label cells are bold sans, plain (no accent fill, no uppercase).
+   Stacks to one column on narrow screens.
+   --------------------------------------------------------------------------- */
+.copy .ctable {
+  margin: var(--block-gap-lg) 0;
+  display: grid;
+  gap: 0;
+  background: none;
+  border: 0;
+}
+/* Optional row wrapper — groups a row's cells for the mobile stack; on desktop it
+   dissolves (display:contents) so the cells stay direct grid items. */
+.copy .ctable__row { display: contents; }
+.copy .ctable--2 { grid-template-columns: repeat(2, 1fr); }
+.copy .ctable--3 { grid-template-columns: repeat(3, 1fr); }
+.copy .ctable__cell {
+  background: none;
+  border-bottom: 1px solid rgba(1, 34, 51, 0.4);
+  padding: 22px 18px;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  line-height: 26px;
+  letter-spacing: -0.16px;
+  color: var(--midnight);
+}
+/* No rule closes the bottom of the table — the block-gap margin below it is
+   separation enough; a trailing line under the last row reads as redundant. */
+.copy .ctable__row:last-of-type .ctable__cell { border-bottom: 0; }
+.copy .ctable__cell > :first-child { margin-top: 0; }
+.copy .ctable__cell > :last-child { margin-bottom: 0; }
+.copy .ctable__cell p { margin: 0 0 0.6em; font-size: inherit; }
+.copy .ctable__cell ul { margin: 0; }
+.copy .ctable__cell li { font-size: inherit; margin-bottom: 0.35em; }
+.copy .ctable__cell li:last-child { margin-bottom: 0; }
+.copy .ctable__cell--head,          /* top-row header cells + first-column labels */
+.copy .ctable__cell--label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--midnight);
+  background: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Accordion (.accordion) — a minimal line-style list (no filled box). Every row is
+   bracketed by an accent top rule in ALL states (closed included); the last row
+   also carries an accent bottom rule so the stack is boxed top+bottom. Header is
+   title left, +/− right; open shows the body. Native <details>; no JS. Adjacent
+   accordions form one continuous stack (each chapter has one contiguous group).
+   --------------------------------------------------------------------------- */
+.copy .accordion {
+  margin: 0;
+  border: 0;
+  border-top: 2px solid var(--accent, var(--orange));
+  background: none;
+}
+.copy .accordion:first-of-type { margin-top: var(--block-gap); }
+.copy .accordion:last-of-type {
+  margin-bottom: var(--block-gap);
+  border-bottom: 2px solid var(--accent, var(--orange));
+}
+
+.copy .accordion__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 40px 2px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  color: var(--midnight);
+}
+.copy .accordion__head::-webkit-details-marker { display: none; }
+.copy .accordion__head::after {                /* +  →  −  toggle */
+  content: "+";
+  flex: none;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--midnight);
+}
+.copy .accordion[open] > .accordion__head::after { content: "\2212"; } /* − */
+.copy .accordion__title {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(1.375rem, 1.1vw + 1rem, 1.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.2px;
+  color: inherit;
+}
+.copy .accordion__sub {          /* optional subtitle under the title */
+  display: block;
+  margin-top: 8px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--midnight);
+}
+.copy .accordion__body { padding: 0 2px 40px; }
+.copy .accordion__body > :first-child { margin-top: 0; }
+.copy .accordion__body > :last-child { margin-bottom: 0; }
+
+/* ---------------------------------------------------------------------------
+   Diagram placeholder (.diagram-ph) — a blank, labelled box standing in for a
+   diagram not yet drawn. Carries its intended description so the gap reads as
+   deliberate. (Extends the .figure-note dashed-aside idea.)
+   --------------------------------------------------------------------------- */
+.copy .diagram-ph {
+  margin: clamp(36px, 6vh, 64px) 0;
+  padding: 30px 26px;
+  border: 1px dashed rgba(1, 34, 51, 0.3);
+  border-radius: 6px;
+  background: repeating-linear-gradient(-45deg,
+      transparent, transparent 11px,
+      rgba(1, 34, 51, 0.022) 11px, rgba(1, 34, 51, 0.022) 22px);
+  text-align: center;
+}
+.copy .diagram-ph__tag {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent, var(--orange));
+}
+.copy .diagram-ph__desc {
+  margin: 0 auto;
+  max-width: 58ch;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: calc(var(--copy-fs) * 0.92);
+  line-height: 1.5;
+  color: rgba(1, 34, 51, 0.72);
+}
 
 /* ---------------------------------------------------------------------------
    Reveal base states (JS animates these in; reduced motion shows them at once)
@@ -788,8 +1002,32 @@ a.toc__chapter:hover { color: var(--midnight); }
 
 @media (max-width: 680px) {
   .toc { padding-left: 76px; }
-  .copy { padding-left: 84px; padding-right: 22px; }
-  .copy .callouts { grid-template-columns: 1fr; }
+  .copy { --block-gap: 32px; --block-gap-lg: 44px; padding-left: 84px; padding-right: 22px; }
+  .copy .rulegrid,
+  .copy .rulegrid--3 { grid-template-columns: 1fr; }
+  .copy .callout { padding: 22px 20px; }
+  /* Comparison tables restack as row cards: the header row hides, each .ctable__row
+     becomes a group closed by a rule, and each cell announces its column via a small
+     accent label (the data-label attribute set in the HTML). */
+  .copy .ctable { display: block; }
+  .copy .ctable__row { display: block; padding: 20px 0; border-bottom: 1px solid rgba(1, 34, 51, 0.4); }
+  .copy .ctable__row--head { display: none; }
+  .copy .ctable__row:last-of-type { border-bottom: 0; padding-bottom: 4px; }
+  .copy .ctable__row:first-of-type,
+  .copy .ctable__row--head + .ctable__row { padding-top: 4px; }
+  .copy .ctable__cell { border-bottom: 0; padding: 0 0 14px; }
+  .copy .ctable__cell:last-child { padding-bottom: 0; }
+  .copy .ctable__cell[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 4px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent, var(--orange));
+  }
   /* On small screens let the hero title wrap instead of being clipped: bound its
      width (left + right) so wrapping engages, and re-enable normal wrapping. */
   .page-hero__title { right: clamp(22px, 5vw, 44px); }

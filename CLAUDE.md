@@ -5,9 +5,17 @@ Playbook. Plain HTML/CSS/vanilla JS, no build step, fully offline-capable.
 
 The site has three surfaces: the **landing** (`index.html` — animated cover, after-scroll intro
 reveal, and an in-flow bookshelf), the **continuous reader** (`playbook.html` — opens with the
-Foreword (`#ch0`), then all three chapters, in one document with a seamless scroll effect; the
-canonical experience), and the **standalone pages** (Foreword + ch1–ch3, kept as a fallback, no
-longer linked). A right-side **drawer Menu** opens from any hamburger/Explore button.
+Foreword (`#ch0`), then the built chapters, in one document with a seamless scroll effect; the
+canonical experience), and the **standalone pages** (Foreword + the built chapters, kept as a
+fallback, no longer linked). A right-side **drawer Menu** opens from any hamburger/Explore button.
+
+**Structure (v0.6 draft, 2026-07):** six parts — `00 Foreword` · `01 About GovTech Consulting`
+(coming soon) · `02 Our Point of View` · `03 Our Approach` · `04 The Stages of an Engagement` ·
+`05 How We Work` (coming soon). Only **02/03/04** have content and get reader panels
+(`#ch2/#ch3/#ch4`, accents blue/orange/blue) + standalone pages
+(`our-point-of-view.html`, `our-approach.html`, `stages-of-a-project.html`). `01` and `05` are
+"coming soon" rows in the menu/shelf/TOC only (no page, matching the old `04 coming soon` pattern).
+The former `01 Why we exist` chapter was retired (its content isn't in the new outline).
 
 ## Detailed docs (`.claude/docs/`)
 
@@ -52,37 +60,47 @@ project memory `headless-motion-verification`.
 
 - ✅ **Landing (`index.html`)** — animated cover (eyebrow + lockup + rising pinwheel + arrow) and the
   after-scroll intro reveal (Figma `2043:1638`); native delay-free scroll; one-direction cloud drift;
-  in-flow landing shelf (**5 books**: 0 Foreword + 1–3 chapters + 4 coming soon; 1300px, scales to
-  fit narrow viewports via `--shelf-scale`; books fall in, sway, raise + recolour).
+  in-flow landing shelf (**6 books**: 0 Foreword + 1 About GTC (soon) + 2–4 chapters + 5 How We
+  Work (soon); **1578px** (`SHELF_W` in `main.js`), scales to fit narrow viewports via
+  `--shelf-scale`; books fall in, sway, raise + recolour).
   **Mobile (≤768px):** shelf hidden, static `.home-cards` stacked cards replace it; cover lockup
   stacks vertically (pinwheel above title, `padding-inline: 20px`) to prevent overflow; hero
   plays reveal once then scroll is fully native into the cards.
 - ✅ **Menu** — right-side drawer (swipe-in, interruptible, rows-fall-away close, hamburger→X) on all
-  chapter pages + reader + foreword standalone. `Esc` / scrim / X closes. **Now 5 rows**:
-  00 Foreword (with `menu_0.svg` icon) → 01 → 02 → 03 → 04 coming soon.
+  chapter pages + reader + foreword standalone. `Esc` / scrim / X closes. **Now 6 rows**:
+  00 Foreword → 01 About GTC (soon) → 02 → 03 → 04 → 05 How We Work (soon). Reader menu uses clean
+  paths (`/chapter-2…4`); standalone menus use file hrefs. `menu_4.svg` is reused for row 05.
 - ✅ **Foreword** — reader panel `#ch0` (`.chapter-panel--foreword`, chalk, no hero, no TOC) + standalone
   `foreword.html` (fallback only, no longer linked from live nav). Entry: shelf book 0 and mobile
   card link to `/playbook.html` (reader top = ch0). Clean path `/foreword` maps in `routes.js` +
   server rewrites; in-reader menu row uses `data-href="/foreword"` for wireNav smooth-scroll.
-- ✅ **Three chapter pages** on the shared chapter system — themed hero, pinned scroll-synced TOC,
-  full copy with drawn C2/C3 diagrams + per-chapter section dividers. **TOC redesigned (2026-06)**
-  as a stacked chapter index: all chapters as vertical Boldonse rows, the current one accent +
-  expanded with its section list (ch2/ch3 have accordion sub-rows); on desktop the stack is capped
-  (~100vh−160px) with top/bottom fade masks and follow-scroll centring the active row. **≤768px the
-  TOC is replaced by a fixed bottom section bar** (`.toc-bar`: prev/next arrows step through every
-  heading — across chapters in the reader — label opens a slide-up `.toc-sheet` full index), on the
-  3 chapter pages + the reader. TOC progress bar previously removed; active-row tracking works.
-- ✅ **Continuous reader (`playbook.html`)** — the Foreword + 3 chapters stacked with the seamless
+- ✅ **Three built chapter pages** (02 Our Point of View, 03 Our Approach, 04 The Stages of an
+  Engagement) on the shared chapter system — themed hero, pinned scroll-synced TOC, full copy from
+  the v0.6 draft + per-chapter section dividers. Content reflowed via reusable blocks: `.callout`
+  (full-width icon note cards) and the new **`.rulegrid`** (unboxed accent-rule columns), the
+  restyled **`.ctable`** comparison grids (2/3-col, hairline-row editorial table), the restyled
+  native-`<details>` **`.accordion`** (accent-ruled list, 28px titles), the new **`.diagram-ph`**
+  dashed placeholder (every "blue" section that still needs a drawn diagram), `.pullquote` (block
+  italics), the new **`.runin`** lead-in. **TOC** is a stacked chapter
+  index (01–05, with 01/05 as `toc__chapter--soon`), the current one accent + expanded to its
+  sections; **≤768px** a fixed bottom `.toc-bar` + slide-up `.toc-sheet` replaces it. See
+  [chapter-pages.md](.claude/docs/chapter-pages.md) for the block catalogue.
+- ✅ **Continuous reader (`playbook.html`)** — Foreword (`#ch0`) + the 3 built chapters
+  (`#ch2/#ch3/#ch4`; `#ch1`/`#ch5` intentionally absent = coming soon) stacked with the seamless
   chapter-to-chapter scroll effect; per-chapter TOC pins coexist; rail follows the active chapter;
-  menu/landing books deep-link in.
+  menu/landing books deep-link in. Content is mirrored verbatim between each reader panel and its
+  standalone page.
 - ✅ **Mobile topbar (≤768px, chapter pages + reader)** — topbar drops its stacking context so the
   logo (z 44) sits behind the wide menu drawer while the hamburger/X (z 60) stays on top; a soft
   chalk scrim (`.topbar::before`, z 42) fades scrolling copy out under the logo; `topbarScrim()`
   hides it over coloured heroes. Left **rail hidden** on mobile; `.copy` runs full-width with even
   side padding; foreword drops its `--fw-rail` gutter. Desktop unchanged. See [menu.md](.claude/docs/menu.md).
 - All surfaces: responsive + reduced-motion, no console errors.
-- ⏭️ **Chapter 4** ("How we work as a team") not built yet (drawer row 4 is "coming soon"; a
-  `4_Graphic.svg` asset exists but isn't placed). Ch1's diagrams + the C3 "for each stage" note remain
-  text `.figure-note`s. `1_Graphic.svg` has a known petal-clipping issue (its internal `clipPath`).
+- ⏭️ **Chapters 01 (About GovTech Consulting) and 05 (How We Work)** not built — the v0.6 draft has
+  only placeholders for them; they exist as "coming soon" rows in the menu/shelf/TOC. **Diagrams:**
+  every `.diagram-ph` placeholder still needs a drawn SVG (2.3 GTC path, 3.1 engagement arc, 3.3
+  capability arc, 4.0 full arc, 4.2 dual-track + prototype spectrum). `1_Graphic.svg` has a known
+  petal-clipping issue, so 03/04 reuse `3_Graphic`/`4_Graphic`. Row 05 reuses `menu_4.svg` (a
+  dedicated `menu_5.svg` would be nice). Docx source: `playbook-content/Draft_ GTC Design Playbook.docx`.
 - ℹ️ Mirrored to a second GitHub repo `yuyanggu/GTC-design-playbook-v2` (`main`) in addition to the
   original `origin` (`yuyanggu/GTC-Design-Playbook`, branch `feat/home-v2`).
