@@ -46,6 +46,12 @@
 
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
+    <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
+      <span class="rail__toc-label">Table of contents</span>
+      <span class="rail__toc-disc" aria-hidden="true">
+        <svg class="rail__toc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+      </span>
+    </button>
     <p class="rail__label">our approach</p>
   </div>
 
@@ -90,13 +96,19 @@
 
        <div class="body-left">
         <nav class="toc" aria-label="Table of contents">
+          <div class="toc__head">
+            <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            </button>
+            <span class="toc__head-label">Table of contents</span>
+          </div>
           <div class="toc__scroll">
             <ul class="toc__chapters">
               <li>
-                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
                   <span class="toc__chapter-num">1</span>
-                  <span class="toc__chapter-name">About GovTech Consulting <span class="toc__chapter-soon">soon</span></span>
-                </span>
+                  <span class="toc__chapter-name">About GovTech Consulting</span>
+                </a>
               </li>
               <li>
                 <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
@@ -116,6 +128,10 @@
                       <span class="toc__rule" aria-hidden="true"></span>
                       <span class="toc__title">The Shape of Engagement</span>
                     </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-31-1" href="#s-31-1"><span class="toc__subtitle">Where we enter</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-31-2" href="#s-31-2"><span class="toc__subtitle">Where we exit</span></a></li>
+                    </ul>
                   </li>
                   <li>
                     <a class="toc__row" data-toc="s-32" href="#s-32">
@@ -123,6 +139,10 @@
                       <span class="toc__rule" aria-hidden="true"></span>
                       <span class="toc__title">The Work We Build On</span>
                     </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-32-1" href="#s-32-1"><span class="toc__subtitle">Types of engagement we take on</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-32-2" href="#s-32-2"><span class="toc__subtitle">What we don’t do</span></a></li>
+                    </ul>
                   </li>
                   <li>
                     <a class="toc__row" data-toc="s-33" href="#s-33">
@@ -130,6 +150,9 @@
                       <span class="toc__rule" aria-hidden="true"></span>
                       <span class="toc__title">Building Lasting Capability</span>
                     </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-33-1" href="#s-33-1"><span class="toc__subtitle">Two tracks of capability building</span></a></li>
+                    </ul>
                   </li>
                 </ul>
               </li>
@@ -140,10 +163,10 @@
                 </a>
               </li>
               <li>
-                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
                   <span class="toc__chapter-num">5</span>
-                  <span class="toc__chapter-name">How We Work <span class="toc__chapter-soon">soon</span></span>
-                </span>
+                  <span class="toc__chapter-name">How We Work</span>
+                </a>
               </li>
             </ul>
           </div>
@@ -161,10 +184,10 @@
             <p class="diagram-ph__desc">A horizontal timeline: Inception → Discovery &amp; Experimentation → Build &amp; Launch. We enter at inception; we exit at one of two points — Exit A, handing over a validated roadmap and working prototype after experimentation; or Exit B, after the build is delivered and live.</p>
           </div>
 
-          <h4 class="subsection-head reveal">Where we enter</h4>
+          <h4 class="subsection-head reveal" id="s-31-1">Where we enter</h4>
           <p class="reveal">The earlier we’re brought in to help shape the problem, the more value the work creates. If the direction is already locked, the scope fixed without discovery, or the agency already committed to a specific build, our ability to help agency partners solve core issues drops significantly. Wherever we enter, we tell agencies what’s still achievable from that point, so both sides begin with a shared, realistic picture of what’s possible.</p>
 
-          <h4 class="subsection-head reveal">Where we exit</h4>
+          <h4 class="subsection-head reveal" id="s-31-2">Where we exit</h4>
           <p class="reveal">We don’t leave teams hanging. Our intention is always to build up the agency’s own capability to carry the work forward, and that transfer of ownership starts on day one, not at the handover line. We typically step away at one of two natural exit points:</p>
           <div class="rulegrid reveal">
             <div class="rulegrid__col">
@@ -183,7 +206,7 @@
           </div>
           <h3 class="section-head reveal" id="s-32">3.2 The Work We Build On</h3>
 
-          <h4 class="subsection-head reveal">Types of engagement we take on</h4>
+          <h4 class="subsection-head reveal" id="s-32-1">Types of engagement we take on</h4>
           <p class="reveal">Our work starts with two conditions: (1) a problem worth solving, and (2) a partner ready to work alongside us to solve it. Before committing to an engagement, we work together to understand the engagement landscape — whether the budget is secured, what it covers, and whether it aligns with the proposed scope. Surfacing this early builds the transparency that makes for a productive partnership. <em>(See 4.1: Qualifying.)</em></p>
           <div class="ctable ctable--2 reveal">
             <div class="ctable__row ctable__row--head">
@@ -204,7 +227,7 @@
             </div>
           </div>
 
-          <h4 class="subsection-head reveal">What we don’t do</h4>
+          <h4 class="subsection-head reveal" id="s-32-2">What we don’t do</h4>
           <p class="reveal">We work as an advisory partner, not as a permanent vendor or an ongoing operational arm. Our goal is to build capabilities that outlast us (more on that in 3.3: Building Lasting Capability). To protect that focus, here’s a quick look at what’s in and out of scope:</p>
           <div class="ctable ctable--2 reveal">
             <div class="ctable__row ctable__row--head">
@@ -260,7 +283,7 @@
             </div>
           </aside>
 
-          <h4 class="subsection-head reveal">Two tracks of capability building</h4>
+          <h4 class="subsection-head reveal" id="s-33-1">Two tracks of capability building</h4>
           <p class="reveal">There are two agency teams that we help grow, and they run in parallel alongside the engagement:</p>
           <ul class="reveal">
             <li><strong>The product team</strong> — the people who design, build, and iterate on the service.</li>
@@ -339,16 +362,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="about-govtech-consulting.html" href="about-govtech-consulting.html">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">01</span>
               <span class="menu__title">About GovTech Consulting</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
         <li class="menu__item">
           <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
@@ -387,16 +410,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="how-we-work.html" href="how-we-work.html">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">05</span>
               <span class="menu__title">How We Work</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
       </ul>
     </nav>

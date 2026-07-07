@@ -36,6 +36,7 @@ if (window.__GTC_LOCKED__) {
   urlSync(); // reflect the deepest in-view anchor in the URL as you scroll
   mobileTocBar();
   topbarScrim();
+  tocCollapse();
 
   // FOUC shield lift — initChapter has set every .reveal's initial state, the
   // panel transitions are wired, and the rail is in place. Lift the shield on
@@ -59,6 +60,7 @@ if (window.__GTC_LOCKED__) {
   urlSync();
   mobileTocBar();
   topbarScrim();
+  tocCollapse();
 
   // FOUC shield lift — see the reader branch above for rationale.
   requestAnimationFrame(() => document.documentElement.classList.remove("js-pending"));
@@ -513,6 +515,130 @@ function mobileTocBar() {
       window.location.href = row.dataset.href;
     }
   });
+}
+
+/* ---- TOC collapse: the ← control in the TOC header tucks the contents
+   column into the left rail; the rotated "Table of contents →" mark at the
+   top of the rail brings it back.
+
+   One connected gesture: the state class flips at the START of either
+   direction (it drives .copy's 0.4s CSS slide + the rail pin's fade), while
+   GSAP tweens the TOC column's real width/margin closed/open on the SAME
+   curve, fading the contents in sync. The contents (.toc__head/.toc__scroll)
+   keep a fixed 328px measure in CSS under overflow:hidden, so the shrinking
+   column clips them at its sweeping edge — nothing squashes. Inline GSAP
+   styles override the class's width snap until the tween lands, then
+   clearProps hands the resting state back to the CSS. One ScrollTrigger
+   refresh after everything settles. Runs before the FOUC lift so a saved
+   "collapsed" never flashes the open TOC. Desktop-only by CSS (≤1180 the
+   controls hide and the state class is inert). ---- */
+function tocCollapse() {
+  const tocs = gsap.utils.toArray(".toc");
+  const railBtn = document.querySelector(".rail__toc");
+  if (!tocs.length || !railBtn) return; // foreword standalone: no TOC, no control
+  const KEY = "gtc-toc";
+  const html = document.documentElement;
+  const DUR = 0.4;          // must match .copy transition duration in CSS
+  const W = 328, ML = 112;  // .toc resting width / margin-left (css/chapter.css)
+  const EASE = window.CustomEase
+    ? window.CustomEase.create("tocSlide", "0.4, 0, 0.2, 1") // .copy's exact bezier
+    : "power2.inOut";
+  const parts = tocs.flatMap((t) => Array.from(t.children)); // .toc__head + .toc__scroll
+  let tl = null;
+
+  let saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) { /* storage blocked */ }
+  if (saved === "collapsed") {
+    html.classList.add("toc-collapsed");
+    gsap.set(parts, { autoAlpha: 0 }); // pre-hidden for a clean expand later
+  }
+  const save = (v) => { try { localStorage.setItem(KEY, v); } catch (e) { /* storage blocked */ } };
+
+  // A single ScrollTrigger.refresh after the whole sequence settles. `after`
+  // runs post-refresh — required for focusing anything inside .toc: the
+  // refresh re-wraps pinned elements in their pin-spacers (a reparent), which
+  // would blur a focus set any earlier.
+  let refreshCall = null;
+  const refreshSoon = (delay, after) => {
+    if (refreshCall) refreshCall.kill();
+    refreshCall = gsap.delayedCall(reduce ? 0 : delay, () => {
+      ScrollTrigger.refresh();
+      if (after) after();
+    });
+  };
+
+  // Move focus only on KEYBOARD activation (click.detail === 0). ScrollSmoother
+  // scroll-centres any focused element that's outside the viewport (its own
+  // focusin handler — focus({preventScroll}) can't stop it), so focusing after
+  // a mouse click would yank the reader to chapter 1's cover. When we do move
+  // it, target the collapse control nearest the viewport, not the document's
+  // first (= chapter 1's in the reader).
+  const nearestCollapse = () => {
+    const mid = window.innerHeight / 2;
+    return gsap.utils.toArray(".toc__collapse").reduce((best, b) => {
+      const d = Math.abs(b.getBoundingClientRect().top + 14 - mid);
+      return !best || d < best.d ? { b, d } : best;
+    }, null).b;
+  };
+
+  // Freeze the column at its current size inline — interrupt-safe (reads the
+  // live values mid-tween too) — so flipping the class never snaps it.
+  // maxWidth must be released too: stickyToc's pin bakes an inline max-width
+  // on .toc at every ScrollTrigger.refresh, which would clamp the width tween
+  // (e.g. max-width:0 baked while collapsed kills the expand). The refresh in
+  // refreshSoon re-bakes the correct value once the gesture settles.
+  const hold = () => gsap.set(tocs, {
+    width: (i, el) => el.offsetWidth,
+    marginLeft: (i, el) => gsap.getProperty(el, "marginLeft"),
+    maxWidth: "none",
+    overflow: "hidden",
+  });
+  const settle = () => gsap.set(tocs, { clearProps: "width,maxWidth,marginLeft,overflow" });
+
+  function collapse(kbd) {
+    save("collapsed");
+    if (tl) tl.kill();
+    if (reduce) {
+      html.classList.add("toc-collapsed");
+      gsap.set(parts, { autoAlpha: 0 });
+      settle();
+      refreshSoon(0);
+      if (kbd) railBtn.focus({ preventScroll: true });
+      return;
+    }
+    hold();
+    html.classList.add("toc-collapsed"); // copy starts sliding; rail pin blooms in
+    tl = gsap.timeline({
+      onComplete() {
+        settle(); // class owns the collapsed resting state
+        if (kbd) railBtn.focus({ preventScroll: true });
+      },
+    });
+    tl.to(parts, { autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 0)
+      .to(tocs, { width: 0, marginLeft: 0, duration: DUR, ease: EASE }, 0);
+    refreshSoon(DUR + 0.1);
+  }
+  function expand(kbd) {
+    save("open");
+    if (tl) tl.kill();
+    const refocus = kbd ? () => nearestCollapse().focus({ preventScroll: true }) : null;
+    if (reduce) {
+      html.classList.remove("toc-collapsed");
+      gsap.set(parts, { autoAlpha: 1 });
+      settle();
+      refreshSoon(0, refocus);
+      return;
+    }
+    hold(); // pin the column closed BEFORE dropping the class — no snap-open
+    html.classList.remove("toc-collapsed"); // copy starts sliding back; rail pin fades out
+    tl = gsap.timeline({ onComplete: settle });
+    tl.to(tocs, { width: W, marginLeft: ML, duration: DUR, ease: EASE }, 0)
+      .to(parts, { autoAlpha: 1, duration: 0.3, ease: "power2.out" }, 0.12);
+    refreshSoon(DUR + 0.1, refocus);
+  }
+  document.querySelectorAll(".toc__collapse").forEach((b) => b.addEventListener("click", (e) => collapse(e.detail === 0)));
+  document.querySelectorAll(".toc__head-label").forEach((l) => l.addEventListener("click", () => collapse(false)));
+  railBtn.addEventListener("click", (e) => expand(e.detail === 0));
 }
 
 /* ---- Top-bar scrim toggle: the soft chalk fade behind the logo/hamburger (mobile,

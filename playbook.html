@@ -75,6 +75,12 @@
   <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
+    <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
+      <span class="rail__toc-label">Table of contents</span>
+      <span class="rail__toc-disc" aria-hidden="true">
+        <svg class="rail__toc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+      </span>
+    </button>
     <p class="rail__label">why we exist, and the moment</p>
   </div>
 
@@ -120,18 +126,106 @@
              width="1440" height="291" alt="" />
         <div class="page-body__canvas">
           <article class="copy foreword__copy">
-            <h2 class="subsection-head reveal">For us, the GTC Design Team</h2>
-            <p class="reveal">This playbook is for us, the GovTech Consulting Design team. We focus on a specific part of design: discovery and creating the conditions for action. Not building, not developing. We work upstream, where the problem gets defined and the direction gets set. If you&rsquo;re on the team, this is your document.</p>
+            <p class="lead reveal">Welcome to the GTC Design Team playbook &mdash; a shared space to align on our principles, craft, and how we work. Because design never stands still, neither do we. This remains a living draft, constantly refined as we adapt to new challenges and evolve our methods together.</p>
 
-            <h2 class="subsection-head reveal">Open for a reason</h2>
-            <p class="reveal">Because good thinking gets sharper with honest reactions. We made it public so anyone can read it, push back on it, or bring it up over a meal. That kind of conversation is exactly what we&rsquo;re hoping for.</p>
+            <h2 class="subsection-head reveal">For GTC Designers</h2>
+            <p class="reveal">This is not a manual for design mechanics, research techniques, or workshop instructions. Instead, it captures how we work, our point of view on where our craft is heading, and what it means to do this work in government, for the public, right now. Treat this playbook as a reference &mdash; somewhere to revisit, question, and build from as we keep learning.</p>
 
-            <h2 class="subsection-head reveal">Not a methods guide</h2>
-            <p class="reveal">You won&rsquo;t find research techniques or workshop instructions here. What you will find is our point of view: on what design actually is and where it&rsquo;s going, on why discovery is changing more dramatically than most people realise, on why prototyping means building to test and not building to release, on how the lines between design, product, and engineering are shifting, and on what it means to do all of this in government, for the public, at this particular moment in time.</p>
-
-            <h2 class="subsection-head reveal">Always in draft</h2>
-            <p class="reveal">This is not an excuse to leave things unfinished. It&rsquo;s a declaration that we are in a moment of genuine flux, learning by doing, testing what we believe, and updating this as we go. Every project is a prototype. So is this.</p>
+            <h2 class="subsection-head reveal">For Friends of Design</h2>
+            <p class="reveal">Our playbook is open because no one should have to figure this out alone. As technology transforms our craft and we continue to experiment, we know shared learning is what helps the wider tech community move forward together. Whether you are a fellow designer, a partner, or just curious about how we work, this space exists to spark new conversations and shape our collective thinking as we build this future together.</p>
           </article>
+        </div>
+      </section>
+     </div><!-- /.chapter-panel__scale -->
+    </section>
+
+    <!-- ═══════════════════════ CHAPTER 1 — About GovTech Consulting ═══════════════════════ -->
+    <section class="section chapter-panel" id="ch1"
+             data-rail="about govtech consulting"
+             style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 611 / 611;">
+     <div class="chapter-panel__scale">
+
+      <section class="page-hero">
+        <h1 class="page-hero__title">
+          <span class="reveal">01</span>
+          <span class="reveal">About GovTech Consulting</span>
+        </h1>
+        <div class="hero-flower" aria-hidden="true">
+          <div class="hero-flower__spin">
+            <img src="assets/1_Graphic.svg" alt="" />
+          </div>
+        </div>
+      </section>
+
+      <section class="page-body">
+        <div class="page-body__canvas">
+         <div class="body-left">
+          <nav class="toc" aria-label="Chapter 1 contents">
+              <div class="toc__head">
+                <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                </button>
+                <span class="toc__head-label">Table of contents</span>
+              </div>
+            <div class="toc__scroll">
+              <ul class="toc__chapters">
+                <li>
+                  <span class="toc__chapter is-current" aria-current="true">
+                    <span class="toc__chapter-num">1</span>
+                    <span class="toc__chapter-name">About GovTech Consulting</span>
+                  </span>
+                  <ul class="toc__list">
+                    <li>
+                      <a class="toc__row is-active" data-toc="s-11" href="#s-11">
+                        <span class="toc__num">1.1</span><span class="toc__rule" aria-hidden="true"></span>
+                        <span class="toc__title">Who We Are</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
+                    <span class="toc__chapter-num">2</span>
+                    <span class="toc__chapter-name">Our Point of View</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-3" href="/chapter-3">
+                    <span class="toc__chapter-num">3</span>
+                    <span class="toc__chapter-name">Our Approach</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-4" href="/chapter-4">
+                    <span class="toc__chapter-num">4</span>
+                    <span class="toc__chapter-name">The Stages of an Engagement</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
+                    <span class="toc__chapter-num">5</span>
+                    <span class="toc__chapter-name">How We Work</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+         </div>
+
+          <article class="copy">
+            <!-- ══ CANONICAL COPY: mirrors about-govtech-consulting.html ══ -->
+
+            <!-- 1.1 -->
+            <h3 class="section-head reveal" id="s-11">1.1 Who We Are</h3>
+            <p class="lead reveal">As technology evolves, so does the relationship between the public sector and the people we serve. GovTech Consulting (GTC) was established to advance Singapore&rsquo;s national mandate on building a resilient digital foundation for our public infrastructure.</p>
+            <p class="reveal">To meet the complex demands of an AI-driven world, the GTC Design team partners with agencies to share tools, grow skills, and cultivate lasting digital capabilities. As government agencies are central to driving sustainable digital growth, we work side by side to empower public officers in fulfilling their core mission &mdash; transforming services and elevating the quality of tech for the public good, together.</p>
+
+            <blockquote class="pullquote reveal">
+              <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
+              <p>We work side by side to empower public officers &mdash; transforming services and elevating the quality of tech for the public good, together.</p>
+            </blockquote>
+          </article>
+
         </div>
       </section>
      </div><!-- /.chapter-panel__scale -->
@@ -159,13 +253,19 @@
         <div class="page-body__canvas">
          <div class="body-left">
           <nav class="toc" aria-label="Chapter 2 contents">
+              <div class="toc__head">
+                <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                </button>
+                <span class="toc__head-label">Table of contents</span>
+              </div>
             <div class="toc__scroll">
               <ul class="toc__chapters">
                 <li>
-                  <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
                     <span class="toc__chapter-num">1</span>
-                    <span class="toc__chapter-name">About GovTech Consulting <span class="toc__chapter-soon">soon</span></span>
-                  </span>
+                    <span class="toc__chapter-name">About GovTech Consulting</span>
+                  </a>
                 </li>
                 <li>
                   <span class="toc__chapter is-current" aria-current="true">
@@ -184,12 +284,21 @@
                         <span class="toc__num">2.2</span><span class="toc__rule" aria-hidden="true"></span>
                         <span class="toc__title">Our Principles of Execution</span>
                       </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-22-1" href="#s-22-1"><span class="toc__subtitle">Our operating principles</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-22-2" href="#s-22-2"><span class="toc__subtitle">The human anchor in AI</span></a></li>
+                      </ul>
                     </li>
                     <li>
                       <a class="toc__row" data-toc="s-23" href="#s-23">
                         <span class="toc__num">2.3</span><span class="toc__rule" aria-hidden="true"></span>
                         <span class="toc__title">Through a Discovery Lens</span>
                       </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-23-1" href="#s-23-1"><span class="toc__subtitle">The cost of bypassing discovery</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-23-2" href="#s-23-2"><span class="toc__subtitle">The GTC design path</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-23-3" href="#s-23-3"><span class="toc__subtitle">What discovery means to us</span></a></li>
+                      </ul>
                     </li>
                     <li>
                       <a class="toc__row" data-toc="s-24" href="#s-24">
@@ -212,10 +321,10 @@
                   </a>
                 </li>
                 <li>
-                  <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
                     <span class="toc__chapter-num">5</span>
-                    <span class="toc__chapter-name">How We Work <span class="toc__chapter-soon">soon</span></span>
-                  </span>
+                    <span class="toc__chapter-name">How We Work</span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -277,7 +386,7 @@
               </div>
             </aside>
 
-            <h4 class="subsection-head reveal">The human anchor in AI</h4>
+            <h4 class="subsection-head reveal" id="s-22-2">The human anchor in AI</h4>
             <p class="reveal">AI has shifted the way we work — from the shape of our team, to the velocity of our tools, and the methods we use to solve problems. The GTC Design team has been moving alongside these changes to improve our work processes, including:</p>
             <ul class="reveal">
               <li><strong>Reducing administrative cognitive load</strong> in our workflows.</li>
@@ -302,7 +411,7 @@
             <h3 class="section-head reveal" id="s-23">2.3 Through a Discovery Lens</h3>
             <p class="reveal">No matter how complex the legacy structures, or how siloed the agencies may be, finding an engagement’s core problem begins with discovery. When we work with agency partners, our first goal is to build a shared understanding of the systems, constraints, and the people involved, while actively testing early assumptions. As the stated problem is rarely the root problem, racing ahead on assumptions is a fast track to solving a problem that may not exist.</p>
 
-            <h4 class="subsection-head reveal">The cost of bypassing discovery</h4>
+            <h4 class="subsection-head reveal" id="s-23-1">The cost of bypassing discovery</h4>
             <p class="reveal">Skipping the discovery phase fundamentally shifts the product’s risk, scope, and strategic focus. Here is what happens when an insight-led endeavour is replaced by unverified assumptions:</p>
             <div class="ctable ctable--2 reveal">
               <div class="ctable__row ctable__row--head">
@@ -323,7 +432,7 @@
               </div>
             </div>
 
-            <h4 class="subsection-head reveal">The GTC design path</h4>
+            <h4 class="subsection-head reveal" id="s-23-2">The GTC design path</h4>
             <p class="reveal">Complex products and engagements tend to stall in one of two ways.</p>
             <ul class="reveal">
               <li><strong>Building without evidence (the blind sprint):</strong> building straight into engineering on unverified assumptions, then discovering post-launch that the problem was misunderstood.</li>
@@ -335,13 +444,13 @@
               <p class="diagram-ph__desc">Approach A — build without discovery: solving the wrong problem with high confidence. Approach B — discovery without build: the problem is identified but nothing gets built. The GTC path runs between them — discovery + prototyping — producing real signal early through continuous experimentation upstream.</p>
             </div>
 
-            <h4 class="subsection-head reveal">What discovery means to us: a two-phase approach</h4>
+            <h4 class="subsection-head reveal" id="s-23-3">What discovery means to us: a two-phase approach</h4>
             <p class="reveal">The landscape of discovery is changing as quickly as the technology around it, but our purpose remains unchanged: to find what’s true before building a solution. What <em>has</em> changed is our ability to now get from insight to evidence faster than ever.</p>
-            <p class="reveal">Rather than treating discovery as a linear phase, the GTC Design team sees discovery as a loop that runs in two subphases which then feed each other: <strong>(1) Discover to Understand</strong> and <strong>(2) Discover to Validate</strong>.</p>
+            <p class="reveal">Rather than treating discovery as a linear phase, the GTC Design team sees discovery as a loop that runs in two subphases which then feed each other: <strong>(1) Uncover What is True</strong> and <strong>(2) Identify What Works</strong>.</p>
 
             <details class="accordion reveal" open>
               <summary class="accordion__head">
-                <span class="accordion__title">Subphase 1: Discover to Understand<span class="accordion__sub">To anchor our strategy in facts rather than assumptions</span></span>
+                <span class="accordion__title">Subphase 1: Uncover What is True<span class="accordion__sub">To anchor our strategy in facts rather than assumptions</span></span>
               </summary>
               <div class="accordion__body">
                 <p>This part largely hasn’t changed from traditional discovery processes. We continue to deeply analyse the current landscape, protecting project teams from the risk of rushing ahead to solve the wrong problems.</p>
@@ -360,7 +469,7 @@
 
             <details class="accordion reveal">
               <summary class="accordion__head">
-                <span class="accordion__title">Subphase 2: Discover to Validate<span class="accordion__sub">The extension — to turn abstract insights into working proof</span></span>
+                <span class="accordion__title">Subphase 2: Identify What Works<span class="accordion__sub">The extension — to turn abstract insights into working proof</span></span>
               </summary>
               <div class="accordion__body">
                 <p>This subphase compresses the gap between strategy and execution. We pull prototyping out of late-stage development and into early discovery, so ideas meet reality before we commit real engineering effort.</p>
@@ -385,7 +494,7 @@
             <p class="reveal">The pace of development has accelerated dramatically. But speed applied to the wrong problem is just the wrong problem arrived at sooner. As public needs grow more complex, getting it right takes more than moving quickly; it requires the judgment to know when to push forward and when to slow down — especially within institutions where the default reaction is to settle for “how it’s always been done”.</p>
             <p class="reveal">Below are the indicators that show we are moving in the right direction:</p>
             <ul class="reveal">
-              <li><strong>The right problems were named.</strong> We articulated the foundational systemic bottlenecks, ensuring public energy was directed where it mattered most.</li>
+              <li><strong>The right problems were named.</strong> We identified and articulated the real, discovered problem, rather than settling for what was assumed.</li>
               <li><strong>The hard line was held.</strong> We pushed back on assumptions and legacy framings rather than accepting them at face value, to protect the integrity of the final product.</li>
               <li><strong>The technology served the people.</strong> We empowered partner agencies to deploy user-centric solutions that accurately solved real friction points and elevated the citizen experience.</li>
               <li><strong>The agency’s capabilities were built.</strong> We established sustainable operational frameworks, enabling agency partners to drive the work forward without long-term dependency on GTC.</li>
@@ -420,13 +529,19 @@
         <div class="page-body__canvas">
          <div class="body-left">
           <nav class="toc" aria-label="Chapter 3 contents">
+              <div class="toc__head">
+                <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                </button>
+                <span class="toc__head-label">Table of contents</span>
+              </div>
             <div class="toc__scroll">
               <ul class="toc__chapters">
                 <li>
-                  <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
                     <span class="toc__chapter-num">1</span>
-                    <span class="toc__chapter-name">About GovTech Consulting <span class="toc__chapter-soon">soon</span></span>
-                  </span>
+                    <span class="toc__chapter-name">About GovTech Consulting</span>
+                  </a>
                 </li>
                 <li>
                   <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
@@ -445,18 +560,29 @@
                         <span class="toc__num">3.1</span><span class="toc__rule" aria-hidden="true"></span>
                         <span class="toc__title">The Shape of Engagement</span>
                       </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-31-1" href="#s-31-1"><span class="toc__subtitle">Where we enter</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-31-2" href="#s-31-2"><span class="toc__subtitle">Where we exit</span></a></li>
+                      </ul>
                     </li>
                     <li>
                       <a class="toc__row" data-toc="s-32" href="#s-32">
                         <span class="toc__num">3.2</span><span class="toc__rule" aria-hidden="true"></span>
                         <span class="toc__title">The Work We Build On</span>
                       </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-32-1" href="#s-32-1"><span class="toc__subtitle">Types of engagement we take on</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-32-2" href="#s-32-2"><span class="toc__subtitle">What we don’t do</span></a></li>
+                      </ul>
                     </li>
                     <li>
                       <a class="toc__row" data-toc="s-33" href="#s-33">
                         <span class="toc__num">3.3</span><span class="toc__rule" aria-hidden="true"></span>
                         <span class="toc__title">Building Lasting Capability</span>
                       </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-33-1" href="#s-33-1"><span class="toc__subtitle">Two tracks of capability building</span></a></li>
+                      </ul>
                     </li>
                   </ul>
                 </li>
@@ -467,10 +593,10 @@
                   </a>
                 </li>
                 <li>
-                  <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
                     <span class="toc__chapter-num">5</span>
-                    <span class="toc__chapter-name">How We Work <span class="toc__chapter-soon">soon</span></span>
-                  </span>
+                    <span class="toc__chapter-name">How We Work</span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -488,10 +614,10 @@
               <p class="diagram-ph__desc">A horizontal timeline: Inception → Discovery &amp; Experimentation → Build &amp; Launch. We enter at inception; we exit at one of two points — Exit A, handing over a validated roadmap and working prototype after experimentation; or Exit B, after the build is delivered and live.</p>
             </div>
 
-            <h4 class="subsection-head reveal">Where we enter</h4>
+            <h4 class="subsection-head reveal" id="s-31-1">Where we enter</h4>
             <p class="reveal">The earlier we’re brought in to help shape the problem, the more value the work creates. If the direction is already locked, the scope fixed without discovery, or the agency already committed to a specific build, our ability to help agency partners solve core issues drops significantly. Wherever we enter, we tell agencies what’s still achievable from that point, so both sides begin with a shared, realistic picture of what’s possible.</p>
 
-            <h4 class="subsection-head reveal">Where we exit</h4>
+            <h4 class="subsection-head reveal" id="s-31-2">Where we exit</h4>
             <p class="reveal">We don’t leave teams hanging. Our intention is always to build up the agency’s own capability to carry the work forward, and that transfer of ownership starts on day one, not at the handover line. We typically step away at one of two natural exit points:</p>
             <div class="rulegrid reveal">
               <div class="rulegrid__col">
@@ -510,7 +636,7 @@
             </div>
             <h3 class="section-head reveal" id="s-32">3.2 The Work We Build On</h3>
 
-            <h4 class="subsection-head reveal">Types of engagement we take on</h4>
+            <h4 class="subsection-head reveal" id="s-32-1">Types of engagement we take on</h4>
             <p class="reveal">Our work starts with two conditions: (1) a problem worth solving, and (2) a partner ready to work alongside us to solve it. Before committing to an engagement, we work together to understand the engagement landscape — whether the budget is secured, what it covers, and whether it aligns with the proposed scope. Surfacing this early builds the transparency that makes for a productive partnership. <em>(See 4.1: Qualifying.)</em></p>
             <div class="ctable ctable--2 reveal">
               <div class="ctable__row ctable__row--head">
@@ -531,7 +657,7 @@
               </div>
             </div>
 
-            <h4 class="subsection-head reveal">What we don’t do</h4>
+            <h4 class="subsection-head reveal" id="s-32-2">What we don’t do</h4>
             <p class="reveal">We work as an advisory partner, not as a permanent vendor or an ongoing operational arm. Our goal is to build capabilities that outlast us (more on that in 3.3: Building Lasting Capability). To protect that focus, here’s a quick look at what’s in and out of scope:</p>
             <div class="ctable ctable--2 reveal">
               <div class="ctable__row ctable__row--head">
@@ -587,7 +713,7 @@
               </div>
             </aside>
 
-            <h4 class="subsection-head reveal">Two tracks of capability building</h4>
+            <h4 class="subsection-head reveal" id="s-33-1">Two tracks of capability building</h4>
             <p class="reveal">There are two agency teams that we help grow, and they run in parallel alongside the engagement:</p>
             <ul class="reveal">
               <li><strong>The product team</strong> — the people who design, build, and iterate on the service.</li>
@@ -667,13 +793,19 @@
         <div class="page-body__canvas">
          <div class="body-left">
           <nav class="toc" aria-label="Chapter 4 contents">
+              <div class="toc__head">
+                <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                </button>
+                <span class="toc__head-label">Table of contents</span>
+              </div>
             <div class="toc__scroll">
               <ul class="toc__chapters">
                 <li>
-                  <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
                     <span class="toc__chapter-num">1</span>
-                    <span class="toc__chapter-name">About GovTech Consulting <span class="toc__chapter-soon">soon</span></span>
-                  </span>
+                    <span class="toc__chapter-name">About GovTech Consulting</span>
+                  </a>
                 </li>
                 <li>
                   <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
@@ -698,12 +830,19 @@
                         <span class="toc__num">4.1</span><span class="toc__rule" aria-hidden="true"></span>
                         <span class="toc__title">Qualifying</span>
                       </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-41-1" href="#s-41-1"><span class="toc__subtitle">Outcomes</span></a></li>
+                      </ul>
                     </li>
                     <li>
                       <a class="toc__row" data-toc="s-42" href="#s-42">
                         <span class="toc__num">4.2</span><span class="toc__rule" aria-hidden="true"></span>
                         <span class="toc__title">Discovery</span>
                       </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-42-1" href="#s-42-1"><span class="toc__subtitle">Subphase 1: Uncover What is True</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-42-2" href="#s-42-2"><span class="toc__subtitle">Subphase 2: Identify What Works</span></a></li>
+                      </ul>
                     </li>
                     <li>
                       <a class="toc__row" data-toc="s-43" href="#s-43">
@@ -720,10 +859,10 @@
                   </ul>
                 </li>
                 <li>
-                  <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                  <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
                     <span class="toc__chapter-num">5</span>
-                    <span class="toc__chapter-name">How We Work <span class="toc__chapter-soon">soon</span></span>
-                  </span>
+                    <span class="toc__chapter-name">How We Work</span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -762,7 +901,7 @@
                 </ul>
               </div>
             </div>
-            <h4 class="subsection-head reveal">Outcomes</h4>
+            <h4 class="subsection-head reveal" id="s-41-1">Outcomes</h4>
             <ul class="reveal">
               <li><strong>A clear decision on commitment;</strong> we accept or decline, and can explain why either way.</li>
               <li><strong>Sharper clarity on the core challenge;</strong> the agency leaves understanding it far better than when they walked in.</li>
@@ -780,19 +919,19 @@
             <p class="reveal">A full discovery journey runs in two subphases, each with a distinct role:</p>
             <div class="rulegrid reveal">
               <div class="rulegrid__col">
-                <p class="rulegrid__title">Subphase 1 — Discover to Understand</p>
+                <p class="rulegrid__title">Subphase 1 — Uncover What is True</p>
                 <p>Frame the problem. Confirm it’s real, systemic, and worth solving before anyone proposes how to build it.</p>
               </div>
               <div class="rulegrid__col">
-                <p class="rulegrid__title">Subphase 2 — Discover to Validate</p>
+                <p class="rulegrid__title">Subphase 2 — Identify What Works</p>
                 <p>Test solutions. Hypothesise, prototype, and validate against real user signal until a confident roadmap emerges.</p>
               </div>
             </div>
             <p class="reveal">Together, they move an engagement from an ambiguous problem statement to a high-confidence, validated roadmap.</p>
 
-            <details class="accordion reveal" open>
+            <details class="accordion reveal" id="s-42-1" open>
               <summary class="accordion__head">
-                <span class="accordion__title">Subphase 1: Discover to Understand<span class="accordion__sub">To frame a problem</span></span>
+                <span class="accordion__title">Subphase 1: Uncover What is True<span class="accordion__sub">To frame a problem</span></span>
               </summary>
               <div class="accordion__body">
                 <p>The purpose of Subphase 1 is to define the real problem, and align understanding with our agency partners before a solution is proposed.</p>
@@ -851,9 +990,9 @@
               </div>
             </details>
 
-            <details class="accordion reveal">
+            <details class="accordion reveal" id="s-42-2">
               <summary class="accordion__head">
-                <span class="accordion__title">Subphase 2: Discover to Validate<span class="accordion__sub">To rapidly experiment</span></span>
+                <span class="accordion__title">Subphase 2: Identify What Works<span class="accordion__sub">To rapidly experiment</span></span>
               </summary>
               <div class="accordion__body">
                 <p>The purpose of Subphase 2 is to transform the understanding from Subphase 1 into a testable object. We hypothesise solutions, then build dynamic prototypes to get real users testing. The prototypes are continuously refined until a validated solution emerges.</p>
@@ -1045,6 +1184,301 @@
 
     </section>
 
+    <!-- ═══════════════════════ CHAPTER 5 — How We Work ═══════════════════════ -->
+    <section class="section chapter-panel" id="ch5"
+             data-rail="how we work"
+             style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600;">
+     <div class="chapter-panel__scale">
+
+      <section class="page-hero">
+        <h1 class="page-hero__title">
+          <span class="reveal">05</span>
+          <span class="reveal">How We Work</span>
+        </h1>
+        <div class="hero-flower" aria-hidden="true">
+          <div class="hero-flower__spin">
+            <img src="assets/4_Graphic.svg" alt="" />
+          </div>
+        </div>
+      </section>
+
+      <section class="page-body">
+        <div class="page-body__canvas">
+         <div class="body-left">
+          <nav class="toc" aria-label="Chapter 5 contents">
+              <div class="toc__head">
+                <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                </button>
+                <span class="toc__head-label">Table of contents</span>
+              </div>
+            <div class="toc__scroll">
+              <ul class="toc__chapters">
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
+                    <span class="toc__chapter-num">1</span>
+                    <span class="toc__chapter-name">About GovTech Consulting</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
+                    <span class="toc__chapter-num">2</span>
+                    <span class="toc__chapter-name">Our Point of View</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-3" href="/chapter-3">
+                    <span class="toc__chapter-num">3</span>
+                    <span class="toc__chapter-name">Our Approach</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="toc__chapter" data-href="/chapter-4" href="/chapter-4">
+                    <span class="toc__chapter-num">4</span>
+                    <span class="toc__chapter-name">The Stages of an Engagement</span>
+                  </a>
+                </li>
+                <li>
+                  <span class="toc__chapter is-current" aria-current="true">
+                    <span class="toc__chapter-num">5</span>
+                    <span class="toc__chapter-name">How We Work</span>
+                  </span>
+                  <ul class="toc__list">
+                    <li>
+                      <a class="toc__row is-active" data-toc="s-51" href="#s-51">
+                        <span class="toc__num">5.1</span><span class="toc__rule" aria-hidden="true"></span>
+                        <span class="toc__title">Our Operating Principles</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="toc__row" data-toc="s-52" href="#s-52">
+                        <span class="toc__num">5.2</span><span class="toc__rule" aria-hidden="true"></span>
+                        <span class="toc__title">Rituals and Cadences</span>
+                      </a>
+                      <ul class="toc__sub">
+                        <li><a class="toc__subrow" data-toc="s-52-1" href="#s-52-1"><span class="toc__subtitle">At the engagement level</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-52-2" href="#s-52-2"><span class="toc__subtitle">Weekly check-ins</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-52-3" href="#s-52-3"><span class="toc__subtitle">Design critiques</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-52-4" href="#s-52-4"><span class="toc__subtitle">Cross-project conversations</span></a></li>
+                        <li><a class="toc__subrow" data-toc="s-52-5" href="#s-52-5"><span class="toc__subtitle">Onboarding</span></a></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <a class="toc__row" data-toc="s-53" href="#s-53">
+                        <span class="toc__num">5.3</span><span class="toc__rule" aria-hidden="true"></span>
+                        <span class="toc__title">How We Show Up</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="toc__row" data-toc="s-54" href="#s-54">
+                        <span class="toc__num">5.4</span><span class="toc__rule" aria-hidden="true"></span>
+                        <span class="toc__title">The Practice in Practice</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </nav>
+         </div>
+
+          <article class="copy">
+            <!-- ══ CANONICAL COPY: mirrors how-we-work.html ══ -->
+
+            <p class="lead reveal">We are always refining our approach to building a collaborative design team. This section is a working draft. For these principles and rituals to work, they must be debated and owned by the whole team.</p>
+            <aside class="callout reveal">
+              <img class="callout__icon" src="assets/menu_4_hover.svg" alt="" width="40" height="40" aria-hidden="true" />
+              <div class="callout__body">
+                <p class="callout__title">A working draft</p>
+                <p>Take a look, add your feedback, and come ready to workshop these principles and rituals in our next session.</p>
+              </div>
+            </aside>
+
+            <!-- 5.1 -->
+            <h3 class="section-head reveal" id="s-51">5.1 Our Operating Principles</h3>
+            <p class="reveal">Operating principles aren’t just abstract ideals — they’re about how we make decisions. These four pillars outline our shared framework for how we collaborate, protect our focus, and drive meaningful results.</p>
+            <div class="rulegrid reveal">
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">High trust</p>
+                <p><em>Autonomy over oversight.</em> We view each other as capable and well-intentioned. Our trust means eliminating micromanagement and giving everyone the space to own their execution.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">High agency</p>
+                <p><em>Initiative over instruction.</em> We value proactivity over passivity. Having agency means stepping into the driver’s seat and owning the entire execution from start to finish — celebrating the wins and embracing the learning experiences.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">High independence</p>
+                <p><em>Asynchronous over assemblies.</em> Our workflow is asynchronous and independent by design. We preserve our focus, meeting only when necessary to move work forward.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Mandate and space to experiment</p>
+                <p><em>Exploration over caution.</em> We embrace exploration to fuel innovation, creating an environment where mistakes are moments for growth. Provided we share the lessons, an unsuccessful experiment is a valuable data point, not a failure.</p>
+              </div>
+            </div>
+
+            <!-- 5.2 -->
+            <div class="section-divider reveal" aria-hidden="true">
+              <img src="assets/03%20Divider.svg" alt="" />
+            </div>
+            <h3 class="section-head reveal" id="s-52">5.2 Rituals and Cadences</h3>
+
+            <h4 class="subsection-head reveal" id="s-52-1">At the engagement level</h4>
+            <p class="reveal">Every engagement moves through three stages:</p>
+            <div class="rulegrid rulegrid--3 reveal">
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Pre-flight</p>
+                <p>We align the team on the problem, and on how we will work together.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Mid-flight</p>
+                <p>We share observations on what is working or needs to change — before it becomes a problem.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Post-flight</p>
+                <p>We share reflections on learnings, findings, and opportunities for improvement.</p>
+              </div>
+            </div>
+
+            <h4 class="subsection-head reveal" id="s-52-2">Weekly check-ins</h4>
+            <p class="reveal">We hold a full-team huddle once a week to collaborate, support one another, and keep everyone connected to the broader vision. This is not a routine status update.</p>
+            <div class="ctable ctable--2 reveal">
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">Frequency</div>
+                <div class="ctable__cell"><p>Weekly.</p></div>
+              </div>
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">Length</div>
+                <div class="ctable__cell"><p>Under 45 minutes.</p></div>
+              </div>
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">Format</div>
+                <div class="ctable__cell"><p>Open sharing — whatever is on your mind, whether blockers, gratitude, or small wins.</p></div>
+              </div>
+            </div>
+
+            <h4 class="subsection-head reveal" id="s-52-3">Design critiques</h4>
+            <p class="reveal">We strive to work, grow, and improve together. Critique is one of the most generative practices a design team can do, if done well. The goal is to collect initial reactions and observations — to understand how our work resonates and where it can be strengthened. This is not a place for prescriptive feedback. Our process draws on Pixar’s “Braintrust”, the candid peer-review approach popularised by Ed Catmull in <em>Creativity, Inc.</em></p>
+            <div class="rulegrid rulegrid--3 reveal">
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Setting the tone</p>
+                <p>The facilitator keeps the conversation in the right register throughout the session.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Setting the context</p>
+                <p>The presenter anchors the room with background — the goals and the current state of the design.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Setting the perspective</p>
+                <p>The critic offers initial reactions and emotional observations. The focus is on impact, not instructions: “this part feels confusing”, not “move this button”.</p>
+              </div>
+            </div>
+            <p class="reveal">Suggestions should be offered only if the presenter specifically asks for them.</p>
+
+            <h4 class="subsection-head reveal" id="s-52-4">Cross-project conversations</h4>
+            <p class="reveal">To keep our work sharp, every designer takes part in regular cross-project check-ins. When you’re deep inside a project, it’s easy to miss the blind spots — unconscious assumptions, subtle scope drift, and missed opportunities.</p>
+            <div class="rulegrid rulegrid--3 reveal">
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Stepping outside</p>
+                <p>Speak with a designer outside of your project. A fresh pair of eyes will spot what has become invisible from the inside, like hidden assumptions.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Keeping it informal</p>
+                <p>Stay open and casual. Have these conversations regularly — over a coffee break or as a quick huddle. The idea is a perspective-driven sounding board, not a formal review.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Rotating the lens</p>
+                <p>Seek different perspectives. There’s no rule that you have to stick with the same partner each time — in fact, we encourage inviting varied voices to build richer feedback loops.</p>
+              </div>
+            </div>
+
+            <h4 class="subsection-head reveal" id="s-52-5">Onboarding</h4>
+            <p class="reveal">A new team member’s first two weeks will always feel overwhelming, and that’s completely okay — it’s not a problem to fix, just an event to prepare for. For us, onboarding is a collective team responsibility, not just an HR checklist. Here’s what a typical onboarding could look like:</p>
+            <div class="ctable ctable--2 reveal">
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">Before day one</div>
+                <div class="ctable__cell"><p>Make them feel welcome with a message, and line up an onboarding buddy who has the bandwidth to make time and conversation.</p></div>
+              </div>
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">First two weeks</div>
+                <div class="ctable__cell"><p>Give them space to observe and ask questions before assigning them to deliver. Introduce them broadly — across disciplines and seniority, not just their immediate work.</p></div>
+              </div>
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">Early on</div>
+                <div class="ctable__cell"><p>Give them an anchor project — a small piece of work that lets them apply existing skills and build context.</p></div>
+              </div>
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">Around week four</div>
+                <div class="ctable__cell"><p>Sit down together and set goals to begin building a growth plan.</p></div>
+              </div>
+              <div class="ctable__row">
+                <div class="ctable__cell ctable__cell--label">After each onboarding</div>
+                <div class="ctable__cell"><p>Collect feedback and improve for the next one.</p></div>
+              </div>
+            </div>
+
+            <!-- 5.3 -->
+            <div class="section-divider reveal" aria-hidden="true">
+              <img src="assets/03%20Divider.svg" alt="" />
+            </div>
+            <h3 class="section-head reveal" id="s-53">5.3 How We Show Up</h3>
+            <p class="reveal">Working in government means shaping lives within complex systems. Our decisions are rarely black and white; they require balancing competing priorities. In this environment, how we work matters as much as what we achieve. The following commitments serve as our compass, ensuring our craft always serves the public good.</p>
+            <div class="rulegrid reveal">
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Honesty over courtesy</p>
+                <p>Don’t play it safe; give honest feedback. High-quality work requires real transparency. That means coming to rituals fully prepared and engaged, ready to discuss what’s hard — not just what’s succeeding.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Collective over individual</p>
+                <p>Look beyond your own deliverables. We build better together than we ever could alone. That means sharing knowledge freely before anyone has to ask, and measuring impact by how the whole team crosses the finish line.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Collaboration over territory</p>
+                <p>Lean into other disciplines. The lines between design, product, and engineering are shifting, and embracing that overlap leads to stronger outcomes than hiding behind a narrow job description. That means learning how other specialties think, and engaging where our roles intersect.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Experimentation over status quo</p>
+                <p>Stay open to evolving. A well-documented experiment upskills the whole team, not just the person who ran it. That means moving past comfortable routines to test new tools or processes, and openly calling out what works and what fails.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Momentum over paralysis</p>
+                <p>Be comfortable with uncertainty. Moving forward in ambiguous spaces is how we uncover the answers we need. That means exercising high agency to make the call, and high independence in discerning when to pull others in.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Legacy over outcome</p>
+                <p>Future-proof the work. The standards we set, the way we work, and the lessons we learn matter far beyond the immediate outcome. Share reflections openly, document methodologies, and treat every engagement as a chance to shape the culture of public-sector design.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Capability over shipping</p>
+                <p>Enable partners for the long term. Working with agency partners isn’t just about delivery; it’s about ensuring they can sustain the work after our exit. Slow down to explain the process and transfer knowledge, even when the engagement is moving quickly.</p>
+              </div>
+              <div class="rulegrid__col">
+                <p class="rulegrid__title">Resilience over resistance</p>
+                <p>Look at the big picture. Act with patience and respect while learning to work fluidly within complex government frameworks. Knowing how to navigate these systems keeps decisions grounded in real-world impact on the public we serve.</p>
+              </div>
+            </div>
+
+            <!-- 5.4 -->
+            <div class="section-divider reveal" aria-hidden="true">
+              <img src="assets/03%20Divider.svg" alt="" />
+            </div>
+            <h3 class="section-head reveal" id="s-54">5.4 The Practice in Practice</h3>
+            <p class="reveal">We are actively exploring the possibilities of design in an AI-enabled environment. Below is a snapshot of how we operate today. As the technological landscape changes, our methods will too — and this page will grow along with us.</p>
+            <p class="source-note reveal">These insights were last updated in May 2026.</p>
+            <ul class="reveal">
+              <li><strong>Designing and thinking with AI.</strong> We use Claude as a thinking partner for drafting, synthesising, sense-making, and stress-testing concepts.</li>
+              <li><strong>Prototyping with real tools.</strong> We are moving beyond click-through mockups, experimenting with tools like Cursor to build functional prototypes that work with real data and real workflows.</li>
+              <li><strong>Synthesising meetings with AI.</strong> We turn discussions into shared knowledge with tools like Granola, capturing and distilling conversations so insights don’t stay trapped in private notes.</li>
+              <li><strong>Working in the open.</strong> Documentation, decisions, and drafts live in shared spaces — currently Notion and Craft — so the whole team can see, react, and build on what’s being created.</li>
+              <li><strong>Understanding classification and sensitivity.</strong> We must know what counts as classified or sensitive data before passing it to any AI tool. Working in government means respecting clear security tiers — Official, Restricted, and Confidential — and this remains a permanent practice even as our workflows evolve.</li>
+            </ul>
+            <p class="reveal">The list above will likely look different every six months. Tools will evolve and new ones will emerge, but our mindset stays constant: stay curious, stay open to trying new things, and never stop asking if there’s a better way to do the work.</p>
+          </article>
+
+        </div>
+      </section>
+     </div><!-- /.chapter-panel__scale -->
+    </section>
+
   </main>
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
@@ -1074,16 +1508,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="/chapter-1" href="/chapter-1">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">01</span>
               <span class="menu__title">About GovTech Consulting</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
         <li class="menu__item">
           <a class="menu__row" data-href="/chapter-2" href="/chapter-2">
@@ -1122,16 +1556,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="/chapter-5" href="/chapter-5">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">05</span>
               <span class="menu__title">How We Work</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
       </ul>
     </nav>

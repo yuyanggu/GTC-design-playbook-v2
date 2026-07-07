@@ -48,6 +48,12 @@
   <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
+    <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
+      <span class="rail__toc-label">Table of contents</span>
+      <span class="rail__toc-disc" aria-hidden="true">
+        <svg class="rail__toc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+      </span>
+    </button>
     <p class="rail__label">our point of view</p>
   </div>
 
@@ -96,13 +102,19 @@
 
        <div class="body-left">
         <nav class="toc" aria-label="Table of contents">
+          <div class="toc__head">
+            <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            </button>
+            <span class="toc__head-label">Table of contents</span>
+          </div>
           <div class="toc__scroll">
             <ul class="toc__chapters">
               <li>
-                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
                   <span class="toc__chapter-num">1</span>
-                  <span class="toc__chapter-name">About GovTech Consulting <span class="toc__chapter-soon">soon</span></span>
-                </span>
+                  <span class="toc__chapter-name">About GovTech Consulting</span>
+                </a>
               </li>
               <li>
                 <span class="toc__chapter is-current" aria-current="true">
@@ -123,6 +135,10 @@
                       <span class="toc__rule" aria-hidden="true"></span>
                       <span class="toc__title">Our Principles of Execution</span>
                     </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-22-1" href="#s-22-1"><span class="toc__subtitle">Our operating principles</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-22-2" href="#s-22-2"><span class="toc__subtitle">The human anchor in AI</span></a></li>
+                    </ul>
                   </li>
                   <li>
                     <a class="toc__row" data-toc="s-23" href="#s-23">
@@ -130,6 +146,11 @@
                       <span class="toc__rule" aria-hidden="true"></span>
                       <span class="toc__title">Through a Discovery Lens</span>
                     </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-23-1" href="#s-23-1"><span class="toc__subtitle">The cost of bypassing discovery</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-23-2" href="#s-23-2"><span class="toc__subtitle">The GTC design path</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-23-3" href="#s-23-3"><span class="toc__subtitle">What discovery means to us</span></a></li>
+                    </ul>
                   </li>
                   <li>
                     <a class="toc__row" data-toc="s-24" href="#s-24">
@@ -153,10 +174,10 @@
                 </a>
               </li>
               <li>
-                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
                   <span class="toc__chapter-num">5</span>
-                  <span class="toc__chapter-name">How We Work <span class="toc__chapter-soon">soon</span></span>
-                </span>
+                  <span class="toc__chapter-name">How We Work</span>
+                </a>
               </li>
             </ul>
           </div>
@@ -218,7 +239,7 @@
             </div>
           </aside>
 
-          <h4 class="subsection-head reveal">The human anchor in AI</h4>
+          <h4 class="subsection-head reveal" id="s-22-2">The human anchor in AI</h4>
           <p class="reveal">AI has shifted the way we work — from the shape of our team, to the velocity of our tools, and the methods we use to solve problems. The GTC Design team has been moving alongside these changes to improve our work processes, including:</p>
           <ul class="reveal">
             <li><strong>Reducing administrative cognitive load</strong> in our workflows.</li>
@@ -243,7 +264,7 @@
           <h3 class="section-head reveal" id="s-23">2.3 Through a Discovery Lens</h3>
           <p class="reveal">No matter how complex the legacy structures, or how siloed the agencies may be, finding an engagement’s core problem begins with discovery. When we work with agency partners, our first goal is to build a shared understanding of the systems, constraints, and the people involved, while actively testing early assumptions. As the stated problem is rarely the root problem, racing ahead on assumptions is a fast track to solving a problem that may not exist.</p>
 
-          <h4 class="subsection-head reveal">The cost of bypassing discovery</h4>
+          <h4 class="subsection-head reveal" id="s-23-1">The cost of bypassing discovery</h4>
           <p class="reveal">Skipping the discovery phase fundamentally shifts the product’s risk, scope, and strategic focus. Here is what happens when an insight-led endeavour is replaced by unverified assumptions:</p>
           <div class="ctable ctable--2 reveal">
             <div class="ctable__row ctable__row--head">
@@ -264,7 +285,7 @@
             </div>
           </div>
 
-          <h4 class="subsection-head reveal">The GTC design path</h4>
+          <h4 class="subsection-head reveal" id="s-23-2">The GTC design path</h4>
           <p class="reveal">Complex products and engagements tend to stall in one of two ways.</p>
           <ul class="reveal">
             <li><strong>Building without evidence (the blind sprint):</strong> building straight into engineering on unverified assumptions, then discovering post-launch that the problem was misunderstood.</li>
@@ -276,13 +297,13 @@
             <p class="diagram-ph__desc">Approach A — build without discovery: solving the wrong problem with high confidence. Approach B — discovery without build: the problem is identified but nothing gets built. The GTC path runs between them — discovery + prototyping — producing real signal early through continuous experimentation upstream.</p>
           </div>
 
-          <h4 class="subsection-head reveal">What discovery means to us: a two-phase approach</h4>
+          <h4 class="subsection-head reveal" id="s-23-3">What discovery means to us: a two-phase approach</h4>
           <p class="reveal">The landscape of discovery is changing as quickly as the technology around it, but our purpose remains unchanged: to find what’s true before building a solution. What <em>has</em> changed is our ability to now get from insight to evidence faster than ever.</p>
-          <p class="reveal">Rather than treating discovery as a linear phase, the GTC Design team sees discovery as a loop that runs in two subphases which then feed each other: <strong>(1) Discover to Understand</strong> and <strong>(2) Discover to Validate</strong>.</p>
+          <p class="reveal">Rather than treating discovery as a linear phase, the GTC Design team sees discovery as a loop that runs in two subphases which then feed each other: <strong>(1) Uncover What is True</strong> and <strong>(2) Identify What Works</strong>.</p>
 
           <details class="accordion reveal" open>
             <summary class="accordion__head">
-              <span class="accordion__title">Subphase 1: Discover to Understand<span class="accordion__sub">To anchor our strategy in facts rather than assumptions</span></span>
+              <span class="accordion__title">Subphase 1: Uncover What is True<span class="accordion__sub">To anchor our strategy in facts rather than assumptions</span></span>
             </summary>
             <div class="accordion__body">
               <p>This part largely hasn’t changed from traditional discovery processes. We continue to deeply analyse the current landscape, protecting project teams from the risk of rushing ahead to solve the wrong problems.</p>
@@ -301,7 +322,7 @@
 
           <details class="accordion reveal">
             <summary class="accordion__head">
-              <span class="accordion__title">Subphase 2: Discover to Validate<span class="accordion__sub">The extension — to turn abstract insights into working proof</span></span>
+              <span class="accordion__title">Subphase 2: Identify What Works<span class="accordion__sub">The extension — to turn abstract insights into working proof</span></span>
             </summary>
             <div class="accordion__body">
               <p>This subphase compresses the gap between strategy and execution. We pull prototyping out of late-stage development and into early discovery, so ideas meet reality before we commit real engineering effort.</p>
@@ -326,7 +347,7 @@
           <p class="reveal">The pace of development has accelerated dramatically. But speed applied to the wrong problem is just the wrong problem arrived at sooner. As public needs grow more complex, getting it right takes more than moving quickly; it requires the judgment to know when to push forward and when to slow down — especially within institutions where the default reaction is to settle for “how it’s always been done”.</p>
           <p class="reveal">Below are the indicators that show we are moving in the right direction:</p>
           <ul class="reveal">
-            <li><strong>The right problems were named.</strong> We articulated the foundational systemic bottlenecks, ensuring public energy was directed where it mattered most.</li>
+            <li><strong>The right problems were named.</strong> We identified and articulated the real, discovered problem, rather than settling for what was assumed.</li>
             <li><strong>The hard line was held.</strong> We pushed back on assumptions and legacy framings rather than accepting them at face value, to protect the integrity of the final product.</li>
             <li><strong>The technology served the people.</strong> We empowered partner agencies to deploy user-centric solutions that accurately solved real friction points and elevated the citizen experience.</li>
             <li><strong>The agency’s capabilities were built.</strong> We established sustainable operational frameworks, enabling agency partners to drive the work forward without long-term dependency on GTC.</li>
@@ -363,16 +384,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="about-govtech-consulting.html" href="about-govtech-consulting.html">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">01</span>
               <span class="menu__title">About GovTech Consulting</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
         <li class="menu__item">
           <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
@@ -411,16 +432,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="how-we-work.html" href="how-we-work.html">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">05</span>
               <span class="menu__title">How We Work</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
       </ul>
     </nav>

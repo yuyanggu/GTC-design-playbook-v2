@@ -84,6 +84,96 @@ body { background: var(--chalk); }
 .rail__search:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
 .lucide { display: block; }
 
+/* Re-open pin for the collapsed TOC — "Table of contents ›" laid vertically
+   at the TOP of the rail, sharing .rail__label's reading axis (bottom→top)
+   and its 36px indent from the viewport left. Anchored under the logo;
+   .rail__label (chapter name) stays visible at the BOTTOM of the rail — the
+   two marks coexist on the same 36px column, one at the top, one at the
+   bottom.
+
+   Layout: writing-mode: vertical-rl makes the button's own box vertical
+   (width→height, height→width) so it fills a vertical strip natively, no
+   transform math. rotate(180deg) flips the character orientation so the
+   text reads bottom→top (matching .rail__label). Because the writing-mode
+   swap already gave us a vertical box, no additional translate is needed —
+   the button occupies (36, 96) to (36+H, 96+W) directly.
+
+   Only rendered while html.toc-collapsed (desktop two-column layout only;
+   ≤1180 the TOC is an inline block and the collapse feature is inert).
+   Counterpart of .toc__collapse (see the TOC section). */
+.rail__toc {
+  position: absolute;
+  top: 96px;                       /* just below the topbar logo band */
+  left: 36px;                      /* mirrors .rail__label horizontal indent */
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  display: none;                   /* ≤1180 hides the control entirely; the
+                                      1181+ MQ below re-enables it as an
+                                      always-in-DOM element that fades. */
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  color: rgba(1, 34, 51, 0.55);
+}
+.rail__toc:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
+.rail__toc-label {
+  color: #8F9B9B;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20.8px; /* 130% */
+  letter-spacing: -0.28px;
+  transition: color 0.2s ease;
+}
+.rail__toc:hover .rail__toc-label { color: var(--midnight); }
+/* Disc around the arrow — mirrors .toc__collapse exactly (28×28 hairline
+   circle) so the collapsed rail control and the expanded TOC control share
+   one visual language. Neutralises the outer vertical-rl + rotate(180deg)
+   so the disc + arrow render upright inside the rotated flow. */
+.rail__toc-disc {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(1, 34, 51, 0.22);
+  border-radius: 999px;
+  background: none;
+  color: rgba(1, 34, 51, 0.55);
+  writing-mode: horizontal-tb;
+  transform: rotate(-180deg);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.rail__toc:hover .rail__toc-disc {
+  color: var(--midnight);
+  border-color: var(--midnight);
+}
+.rail__toc-arrow { display: block; }
+@media (min-width: 1181px) {
+  /* Rendered permanently on desktop (so it can fade), but invisible + inert
+     until the TOC is collapsed. The 0.25s fade is timed to overlap the tail
+     of the copy's slide, so the rail mark blooms in as the two-column layout
+     finishes reflowing — no pop. */
+  .rail__toc {
+    display: inline-flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  html.toc-collapsed .rail__toc {
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0.2s;   /* wait until copy is mostly settled */
+  }
+}
+
 /* The rail (divider + bottom label) shows only over the chalk body. JS (railReveal in
    js/chapter.js) is the single owner of its clip: it clips the rail to the chalk band so
    the coloured chapter heroes occlude it — the incoming hero rising over the outgoing
@@ -168,8 +258,19 @@ body { background: var(--chalk); }
   position: relative;
   background: var(--chalk);
   padding-top: 48px;            /* 1024 hero band → 1072 first content row */
-  padding-bottom: 180px;
+  /* Tail room before the reader's chapter→chapter transition (js/chapter.js
+     panelTransitions) fires at "bottom bottom" — when the chapter's end hits the
+     viewport bottom. Enough that the last section settles and dwells, without a
+     big empty run of chalk. Trimmed on mobile (see ≤768px). */
+  padding-bottom: 280px;
 }
+/* Reader ch1 (About GovTech Consulting) is a SHORT chapter — its body is under a
+   screen tall, so at "bottom bottom" the transition used to engage before the
+   body had scrolled into view. Give the body a full screen so there's one clean
+   screen of chalk + copy after the hero before it hands off to ch2. Reader-only
+   by the .chapter-panel scope (the standalone about-govtech-consulting.html has
+   no transition, so it keeps its natural short height). */
+.chapter-panel#ch1 .page-body { min-height: 100vh; }
 .page-body__canvas {
   position: relative;
   width: min(1440px, 100%);
@@ -218,7 +319,9 @@ body { background: var(--chalk); }
 .toc {
   float: left;
   width: 328px;
-  margin-left: 132px;
+  /* 112px mirrors the copy's right margin (see .copy width) so the two-column
+     block sits symmetrically in the canvas; still clears the 94px fixed rail. */
+  margin-left: 112px;
 }
 /* Inner scroll viewport — on desktop (pinned) the stack is capped to the viewport
    and slides under soft fade masks while JS keeps the active row centred
@@ -236,6 +339,91 @@ body { background: var(--chalk); }
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
   }
+}
+
+/* ----- TOC header + collapse ------------------------------------------------
+   A quiet index header — CONTENTS label + ‹ control — tops the stack. Collapsing
+   (js/chapter.js tocCollapse) tucks the whole column away: html.toc-collapsed
+   zeroes the float and the copy re-centres into the freed width (transition
+   below); the rail's .rail__toc pin brings it back. State persists in
+   localStorage across pages and the reader. Desktop-only: ≤1180 the TOC is an
+   inline centred block, so the header hides and the state class is inert. */
+.toc__head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;         /* button on the left, label to its right */
+  gap: 12px;                           /* icon + text 12px apart */
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(1, 34, 51, 0.14);
+}
+.toc__head-label {
+  color: #8F9B9B;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20.8px; /* 130% */
+  letter-spacing: -0.28px;
+  cursor: pointer;                  /* clicking the label collapses too (JS) */
+  transition: color 0.2s ease;
+}
+.toc__collapse {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(1, 34, 51, 0.22);
+  border-radius: 999px;
+  background: none;
+  color: rgba(1, 34, 51, 0.55);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+/* Hovering either half of the header control wakes the whole unit — icon,
+   ring, and label all turn midnight (mirrors the collapsed .rail__toc pin). */
+.toc__collapse:hover,
+.toc__head:has(> :hover) .toc__collapse { color: var(--midnight); border-color: var(--midnight); }
+.toc__head:has(> :hover) .toc__head-label { color: var(--midnight); }
+.toc__collapse:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
+.toc__collapse svg { display: block; }
+
+@media (min-width: 1181px) {
+  /* Collapse/expand reflow — one connected gesture (owned by js/chapter.js
+     tocCollapse): the copy slides via the CSS transition below while GSAP
+     tweens the TOC column's real width/margin closed/open on the SAME
+     0.4s curve, fading its contents in sync. .toc__head/.toc__scroll keep
+     the column's fixed 328px measure so the shrinking column clips them at
+     its sweeping edge — nothing squashes. The html.toc-collapsed rules are
+     the resting state; GSAP's inline styles override them only while the
+     gesture runs, then clearProps hands back to these. */
+  .copy {
+    transition:
+      margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .toc__head,
+  .toc__scroll { width: 328px; }   /* fixed measure = clip, don't squash */
+  html.toc-collapsed .toc {
+    width: 0;
+    margin-left: 0;
+    pointer-events: none;    /* stays laid-out for the pin/accordion, but inert */
+    overflow: hidden;        /* keep the (already faded-out) inner from bleeding
+                                out of the zeroed footprint mid-snap */
+  }
+  html.toc-collapsed .toc > * { pointer-events: none; }
+  /* Freed width → the copy takes its full 820px measure, centred (equal gutters). */
+  html.toc-collapsed .copy:not(.foreword__copy) {
+    margin-left: max(112px, calc((100% - 820px) / 2));
+    width: min(820px, calc(100% - 224px));
+  }
+}
+@media (max-width: 1180px) {
+  .toc__head { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .copy { transition: none; }
 }
 
 /* Chapter stack — every chapter is a quiet text row; the one you're reading turns
@@ -272,7 +460,7 @@ a.toc__chapter:hover { color: var(--midnight); }
 .toc__chapter-name {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.5;
 }
 /* Current chapter — accent, inert (you are here). */
@@ -551,10 +739,13 @@ a.toc__chapter:hover { color: var(--midnight); }
      ctable get the larger one (they read as denser blocks, so they need more air). */
   --block-gap: 44px;
   --block-gap-lg: 64px;
-  margin-left: 626px;
+  /* 594 = 112 (TOC outer margin) + 328 (TOC) + 154 (column gap); the 112px right
+     margin in the width calc mirrors the TOC's left margin, so both outer
+     gutters of the two-column block are equal. */
+  margin-left: 594px;
   /* Fluid comfortable measure: grows with the canvas, capped so line length stays
      readable, and never collides with the canvas's right edge. */
-  width: min(820px, calc(100% - 626px - 40px));
+  width: min(820px, calc(100% - 594px - 112px));
   padding-top: 78px;           /* 1150 − 1072 */
   color: var(--midnight);
 }
@@ -1048,6 +1239,10 @@ a.toc__chapter:hover { color: var(--midnight); }
   /* Lift the bottom-anchored title clear of the fixed 56px section bar now that
      the hero ends exactly at the viewport bottom. */
   .page-hero__title { bottom: calc(56px + clamp(16px, 3vh, 32px)); }
+
+  /* Shorter tail on phones — a smaller screen wants proportionally less dwell
+     chalk before the chapter transition than the 280px desktop tail. */
+  .page-body { padding-bottom: 150px; }
 
   .copy {
     margin-inline: 0;

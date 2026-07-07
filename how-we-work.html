@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
+     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<html lang="en" class="js-pending">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How We Work — The Design Playbook</title>
+  <meta name="description" content="Our operating principles, rituals and cadences, how we show up, and the practice in practice — Chapter 5 of the GTC Design Playbook." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/playbook_logo.svg" as="image" />
+  <style id="fouc-shield">
+    html.js-pending body { background: var(--chalk, #f6f1e6); }
+    html.js-pending .topbar,
+    html.js-pending .rail,
+    html.js-pending .page-hero,
+    html.js-pending .hero-flower,
+    html.js-pending .copy,
+    html.js-pending .toc,
+    html.js-pending .toc-bar { opacity: 0 !important; visibility: hidden !important; }
+  </style>
+  <noscript><style>
+    html.js-pending .topbar, html.js-pending .rail, html.js-pending .page-hero,
+    html.js-pending .hero-flower, html.js-pending .copy, html.js-pending .toc,
+    html.js-pending .toc-bar
+      { opacity: 1 !important; visibility: visible !important; }
+  </style></noscript>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/chapter.css" />
+  <script src="js/gate.js"></script>
+</head>
+<body style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600;">
+  <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
+  <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
+      <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+    </a>
+    <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line class="bar bar-top" x1="3" y1="7" x2="21" y2="7" /><line class="bar bar-mid" x1="3" y1="12" x2="21" y2="12" /><line class="bar bar-bot" x1="3" y1="17" x2="21" y2="17" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
+  <div class="rail" aria-label="Section navigation">
+    <span class="rail__divider" aria-hidden="true"></span>
+    <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
+      <span class="rail__toc-label">Table of contents</span>
+      <span class="rail__toc-disc" aria-hidden="true">
+        <svg class="rail__toc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+      </span>
+    </button>
+    <p class="rail__label">how we work</p>
+  </div>
+
+  <!-- Mobile section bar (≤768px) — pinned to the viewport bottom; the arrows step
+       heading-to-heading and the label opens the TOC sheet. Driven by js/chapter.js
+       (mobileTocBar). Fixed elements must live outside #smooth-wrapper. -->
+  <nav class="toc-bar" aria-label="Sections" hidden>
+    <button class="toc-bar__arrow toc-bar__arrow--prev" type="button" aria-label="Previous section">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+    </button>
+    <button class="toc-bar__label" type="button" aria-expanded="false" aria-controls="toc-sheet" aria-haspopup="dialog">
+      <span class="toc-bar__num"></span>
+      <span class="toc-bar__title"></span>
+    </button>
+    <button class="toc-bar__arrow toc-bar__arrow--next" type="button" aria-label="Next section">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+    </button>
+  </nav>
+  <div class="toc-sheet" id="toc-sheet" role="dialog" aria-label="Table of contents">
+    <div class="toc-sheet__scrim"></div>
+    <div class="toc-sheet__panel"></div>
+  </div>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+  <main class="page">
+
+    <!-- ───────────────────────── HERO (orange cover) ───────────────────────── -->
+    <section class="page-hero">
+      <h1 class="page-hero__title">
+        <span class="reveal">05</span>
+        <span class="reveal">How We Work</span>
+      </h1>
+
+      <!-- Top-right graphic (static — no animation). Placeholder art: reuses 4_Graphic
+           until a bespoke 5_Graphic.svg exists. -->
+      <div class="hero-flower" aria-hidden="true">
+        <div class="hero-flower__spin">
+          <img src="assets/4_Graphic.svg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── BODY ───────────────────────── -->
+    <section class="page-body">
+      <div class="page-body__canvas">
+
+       <div class="body-left">
+        <nav class="toc" aria-label="Table of contents">
+          <div class="toc__head">
+            <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            </button>
+            <span class="toc__head-label">Table of contents</span>
+          </div>
+          <div class="toc__scroll">
+            <ul class="toc__chapters">
+              <li>
+                <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
+                  <span class="toc__chapter-num">1</span>
+                  <span class="toc__chapter-name">About GovTech Consulting</span>
+                </a>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
+                  <span class="toc__chapter-num">2</span>
+                  <span class="toc__chapter-name">Our Point of View</span>
+                </a>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-3" href="/chapter-3">
+                  <span class="toc__chapter-num">3</span>
+                  <span class="toc__chapter-name">Our Approach</span>
+                </a>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-4" href="/chapter-4">
+                  <span class="toc__chapter-num">4</span>
+                  <span class="toc__chapter-name">The Stages of an Engagement</span>
+                </a>
+              </li>
+              <li>
+                <span class="toc__chapter is-current" aria-current="true">
+                  <span class="toc__chapter-num">5</span>
+                  <span class="toc__chapter-name">How We Work</span>
+                </span>
+                <ul class="toc__list">
+                  <li>
+                    <a class="toc__row is-active" data-toc="s-51" href="#s-51">
+                      <span class="toc__num">5.1</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">Our Operating Principles</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="toc__row" data-toc="s-52" href="#s-52">
+                      <span class="toc__num">5.2</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">Rituals and Cadences</span>
+                    </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-52-1" href="#s-52-1"><span class="toc__subtitle">At the engagement level</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-52-2" href="#s-52-2"><span class="toc__subtitle">Weekly check-ins</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-52-3" href="#s-52-3"><span class="toc__subtitle">Design critiques</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-52-4" href="#s-52-4"><span class="toc__subtitle">Cross-project conversations</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-52-5" href="#s-52-5"><span class="toc__subtitle">Onboarding</span></a></li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a class="toc__row" data-toc="s-53" href="#s-53">
+                      <span class="toc__num">5.3</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">How We Show Up</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="toc__row" data-toc="s-54" href="#s-54">
+                      <span class="toc__num">5.4</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">The Practice in Practice</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+       </div><!-- /.body-left -->
+
+        <article class="copy">
+          <!-- ══ CANONICAL COPY: mirrored verbatim into playbook.html #ch5 ══ -->
+
+          <p class="lead reveal">We are always refining our approach to building a collaborative design team. This section is a working draft. For these principles and rituals to work, they must be debated and owned by the whole team.</p>
+          <aside class="callout reveal">
+            <img class="callout__icon" src="assets/menu_4_hover.svg" alt="" width="40" height="40" aria-hidden="true" />
+            <div class="callout__body">
+              <p class="callout__title">A working draft</p>
+              <p>Take a look, add your feedback, and come ready to workshop these principles and rituals in our next session.</p>
+            </div>
+          </aside>
+
+          <!-- 5.1 -->
+          <h3 class="section-head reveal" id="s-51">5.1 Our Operating Principles</h3>
+          <p class="reveal">Operating principles aren’t just abstract ideals — they’re about how we make decisions. These four pillars outline our shared framework for how we collaborate, protect our focus, and drive meaningful results.</p>
+          <div class="rulegrid reveal">
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">High trust</p>
+              <p><em>Autonomy over oversight.</em> We view each other as capable and well-intentioned. Our trust means eliminating micromanagement and giving everyone the space to own their execution.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">High agency</p>
+              <p><em>Initiative over instruction.</em> We value proactivity over passivity. Having agency means stepping into the driver’s seat and owning the entire execution from start to finish — celebrating the wins and embracing the learning experiences.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">High independence</p>
+              <p><em>Asynchronous over assemblies.</em> Our workflow is asynchronous and independent by design. We preserve our focus, meeting only when necessary to move work forward.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Mandate and space to experiment</p>
+              <p><em>Exploration over caution.</em> We embrace exploration to fuel innovation, creating an environment where mistakes are moments for growth. Provided we share the lessons, an unsuccessful experiment is a valuable data point, not a failure.</p>
+            </div>
+          </div>
+
+          <!-- 5.2 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/03%20Divider.svg" alt="" />
+          </div>
+          <h3 class="section-head reveal" id="s-52">5.2 Rituals and Cadences</h3>
+
+          <h4 class="subsection-head reveal" id="s-52-1">At the engagement level</h4>
+          <p class="reveal">Every engagement moves through three stages:</p>
+          <div class="rulegrid rulegrid--3 reveal">
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Pre-flight</p>
+              <p>We align the team on the problem, and on how we will work together.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Mid-flight</p>
+              <p>We share observations on what is working or needs to change — before it becomes a problem.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Post-flight</p>
+              <p>We share reflections on learnings, findings, and opportunities for improvement.</p>
+            </div>
+          </div>
+
+          <h4 class="subsection-head reveal" id="s-52-2">Weekly check-ins</h4>
+          <p class="reveal">We hold a full-team huddle once a week to collaborate, support one another, and keep everyone connected to the broader vision. This is not a routine status update.</p>
+          <div class="ctable ctable--2 reveal">
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">Frequency</div>
+              <div class="ctable__cell"><p>Weekly.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">Length</div>
+              <div class="ctable__cell"><p>Under 45 minutes.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">Format</div>
+              <div class="ctable__cell"><p>Open sharing — whatever is on your mind, whether blockers, gratitude, or small wins.</p></div>
+            </div>
+          </div>
+
+          <h4 class="subsection-head reveal" id="s-52-3">Design critiques</h4>
+          <p class="reveal">We strive to work, grow, and improve together. Critique is one of the most generative practices a design team can do, if done well. The goal is to collect initial reactions and observations — to understand how our work resonates and where it can be strengthened. This is not a place for prescriptive feedback. Our process draws on Pixar’s “Braintrust”, the candid peer-review approach popularised by Ed Catmull in <em>Creativity, Inc.</em></p>
+          <div class="rulegrid rulegrid--3 reveal">
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Setting the tone</p>
+              <p>The facilitator keeps the conversation in the right register throughout the session.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Setting the context</p>
+              <p>The presenter anchors the room with background — the goals and the current state of the design.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Setting the perspective</p>
+              <p>The critic offers initial reactions and emotional observations. The focus is on impact, not instructions: “this part feels confusing”, not “move this button”.</p>
+            </div>
+          </div>
+          <p class="reveal">Suggestions should be offered only if the presenter specifically asks for them.</p>
+
+          <h4 class="subsection-head reveal" id="s-52-4">Cross-project conversations</h4>
+          <p class="reveal">To keep our work sharp, every designer takes part in regular cross-project check-ins. When you’re deep inside a project, it’s easy to miss the blind spots — unconscious assumptions, subtle scope drift, and missed opportunities.</p>
+          <div class="rulegrid rulegrid--3 reveal">
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Stepping outside</p>
+              <p>Speak with a designer outside of your project. A fresh pair of eyes will spot what has become invisible from the inside, like hidden assumptions.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Keeping it informal</p>
+              <p>Stay open and casual. Have these conversations regularly — over a coffee break or as a quick huddle. The idea is a perspective-driven sounding board, not a formal review.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Rotating the lens</p>
+              <p>Seek different perspectives. There’s no rule that you have to stick with the same partner each time — in fact, we encourage inviting varied voices to build richer feedback loops.</p>
+            </div>
+          </div>
+
+          <h4 class="subsection-head reveal" id="s-52-5">Onboarding</h4>
+          <p class="reveal">A new team member’s first two weeks will always feel overwhelming, and that’s completely okay — it’s not a problem to fix, just an event to prepare for. For us, onboarding is a collective team responsibility, not just an HR checklist. Here’s what a typical onboarding could look like:</p>
+          <div class="ctable ctable--2 reveal">
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">Before day one</div>
+              <div class="ctable__cell"><p>Make them feel welcome with a message, and line up an onboarding buddy who has the bandwidth to make time and conversation.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">First two weeks</div>
+              <div class="ctable__cell"><p>Give them space to observe and ask questions before assigning them to deliver. Introduce them broadly — across disciplines and seniority, not just their immediate work.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">Early on</div>
+              <div class="ctable__cell"><p>Give them an anchor project — a small piece of work that lets them apply existing skills and build context.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">Around week four</div>
+              <div class="ctable__cell"><p>Sit down together and set goals to begin building a growth plan.</p></div>
+            </div>
+            <div class="ctable__row">
+              <div class="ctable__cell ctable__cell--label">After each onboarding</div>
+              <div class="ctable__cell"><p>Collect feedback and improve for the next one.</p></div>
+            </div>
+          </div>
+
+          <!-- 5.3 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/03%20Divider.svg" alt="" />
+          </div>
+          <h3 class="section-head reveal" id="s-53">5.3 How We Show Up</h3>
+          <p class="reveal">Working in government means shaping lives within complex systems. Our decisions are rarely black and white; they require balancing competing priorities. In this environment, how we work matters as much as what we achieve. The following commitments serve as our compass, ensuring our craft always serves the public good.</p>
+          <div class="rulegrid reveal">
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Honesty over courtesy</p>
+              <p>Don’t play it safe; give honest feedback. High-quality work requires real transparency. That means coming to rituals fully prepared and engaged, ready to discuss what’s hard — not just what’s succeeding.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Collective over individual</p>
+              <p>Look beyond your own deliverables. We build better together than we ever could alone. That means sharing knowledge freely before anyone has to ask, and measuring impact by how the whole team crosses the finish line.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Collaboration over territory</p>
+              <p>Lean into other disciplines. The lines between design, product, and engineering are shifting, and embracing that overlap leads to stronger outcomes than hiding behind a narrow job description. That means learning how other specialties think, and engaging where our roles intersect.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Experimentation over status quo</p>
+              <p>Stay open to evolving. A well-documented experiment upskills the whole team, not just the person who ran it. That means moving past comfortable routines to test new tools or processes, and openly calling out what works and what fails.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Momentum over paralysis</p>
+              <p>Be comfortable with uncertainty. Moving forward in ambiguous spaces is how we uncover the answers we need. That means exercising high agency to make the call, and high independence in discerning when to pull others in.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Legacy over outcome</p>
+              <p>Future-proof the work. The standards we set, the way we work, and the lessons we learn matter far beyond the immediate outcome. Share reflections openly, document methodologies, and treat every engagement as a chance to shape the culture of public-sector design.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Capability over shipping</p>
+              <p>Enable partners for the long term. Working with agency partners isn’t just about delivery; it’s about ensuring they can sustain the work after our exit. Slow down to explain the process and transfer knowledge, even when the engagement is moving quickly.</p>
+            </div>
+            <div class="rulegrid__col">
+              <p class="rulegrid__title">Resilience over resistance</p>
+              <p>Look at the big picture. Act with patience and respect while learning to work fluidly within complex government frameworks. Knowing how to navigate these systems keeps decisions grounded in real-world impact on the public we serve.</p>
+            </div>
+          </div>
+
+          <!-- 5.4 -->
+          <div class="section-divider reveal" aria-hidden="true">
+            <img src="assets/03%20Divider.svg" alt="" />
+          </div>
+          <h3 class="section-head reveal" id="s-54">5.4 The Practice in Practice</h3>
+          <p class="reveal">We are actively exploring the possibilities of design in an AI-enabled environment. Below is a snapshot of how we operate today. As the technological landscape changes, our methods will too — and this page will grow along with us.</p>
+          <p class="source-note reveal">These insights were last updated in May 2026.</p>
+          <ul class="reveal">
+            <li><strong>Designing and thinking with AI.</strong> We use Claude as a thinking partner for drafting, synthesising, sense-making, and stress-testing concepts.</li>
+            <li><strong>Prototyping with real tools.</strong> We are moving beyond click-through mockups, experimenting with tools like Cursor to build functional prototypes that work with real data and real workflows.</li>
+            <li><strong>Synthesising meetings with AI.</strong> We turn discussions into shared knowledge with tools like Granola, capturing and distilling conversations so insights don’t stay trapped in private notes.</li>
+            <li><strong>Working in the open.</strong> Documentation, decisions, and drafts live in shared spaces — currently Notion and Craft — so the whole team can see, react, and build on what’s being created.</li>
+            <li><strong>Understanding classification and sensitivity.</strong> We must know what counts as classified or sensitive data before passing it to any AI tool. Working in government means respecting clear security tiers — Official, Restricted, and Confidential — and this remains a permanent practice even as our workflows evolve.</li>
+          </ul>
+          <p class="reveal">The list above will likely look different every six months. Tools will evolve and new ones will emerge, but our mindset stays constant: stay curious, stay open to trying new things, and never stop asking if there’s a better way to do the work.</p>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
+
+  <!-- ───────────────────────── MENU (bookshelf overlay) — shared ───────────────────────── -->
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
+    <!-- Right-side drawer: scrim (click-to-close) + chalk card of chapter rows. Swipes in
+         from the right; on close the rows fall away (see menuScene in js/main.js). The
+         close control is the topbar hamburger (morphs to an X) / the scrim / Esc. -->
+    <div class="menu__scrim" data-menu-close aria-hidden="true"></div>
+    <nav class="menu__drawer" aria-label="Chapters" tabindex="-1">
+      <p class="menu__eyebrow">The Design Playbook</p>
+      <ul class="menu__list">
+        <li class="menu__item">
+          <a class="menu__row" data-href="foreword.html" href="foreword.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_0.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_0_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">00</span>
+              <span class="menu__title">Foreword</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="about-govtech-consulting.html" href="about-govtech-consulting.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">01</span>
+              <span class="menu__title">About GovTech Consulting</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_2.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">02</span>
+              <span class="menu__title">Our Point of View</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-approach.html" href="our-approach.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_3.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">03</span>
+              <span class="menu__title">Our Approach</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="stages-of-a-project.html" href="stages-of-a-project.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">04</span>
+              <span class="menu__title">The Stages of an Engagement</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="how-we-work.html" href="how-we-work.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">05</span>
+              <span class="menu__title">How We Work</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
+  <script src="vendor/CustomEase.min.js"></script>
+  <script src="vendor/CustomWiggle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/chapter.js"></script>
+</body>
+</html>

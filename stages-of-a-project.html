@@ -45,6 +45,12 @@
 
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
+    <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
+      <span class="rail__toc-label">Table of contents</span>
+      <span class="rail__toc-disc" aria-hidden="true">
+        <svg class="rail__toc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+      </span>
+    </button>
     <p class="rail__label">the stages of an engagement</p>
   </div>
 
@@ -86,13 +92,19 @@
 
        <div class="body-left">
         <nav class="toc" aria-label="Table of contents">
+          <div class="toc__head">
+            <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            </button>
+            <span class="toc__head-label">Table of contents</span>
+          </div>
           <div class="toc__scroll">
             <ul class="toc__chapters">
               <li>
-                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                <a class="toc__chapter" data-href="/chapter-1" href="/chapter-1">
                   <span class="toc__chapter-num">1</span>
-                  <span class="toc__chapter-name">About GovTech Consulting <span class="toc__chapter-soon">soon</span></span>
-                </span>
+                  <span class="toc__chapter-name">About GovTech Consulting</span>
+                </a>
               </li>
               <li>
                 <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
@@ -118,6 +130,9 @@
                       <span class="toc__rule" aria-hidden="true"></span>
                       <span class="toc__title">Qualifying</span>
                     </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-41-1" href="#s-41-1"><span class="toc__subtitle">Outcomes</span></a></li>
+                    </ul>
                   </li>
                   <li>
                     <a class="toc__row" data-toc="s-42" href="#s-42">
@@ -125,6 +140,10 @@
                       <span class="toc__rule" aria-hidden="true"></span>
                       <span class="toc__title">Discovery</span>
                     </a>
+                    <ul class="toc__sub">
+                      <li><a class="toc__subrow" data-toc="s-42-1" href="#s-42-1"><span class="toc__subtitle">Subphase 1: Uncover What is True</span></a></li>
+                      <li><a class="toc__subrow" data-toc="s-42-2" href="#s-42-2"><span class="toc__subtitle">Subphase 2: Identify What Works</span></a></li>
+                    </ul>
                   </li>
                   <li>
                     <a class="toc__row" data-toc="s-43" href="#s-43">
@@ -143,10 +162,10 @@
                 </ul>
               </li>
               <li>
-                <span class="toc__chapter toc__chapter--soon" aria-disabled="true">
+                <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
                   <span class="toc__chapter-num">5</span>
-                  <span class="toc__chapter-name">How We Work <span class="toc__chapter-soon">soon</span></span>
-                </span>
+                  <span class="toc__chapter-name">How We Work</span>
+                </a>
               </li>
             </ul>
           </div>
@@ -185,7 +204,7 @@
               </ul>
             </div>
           </div>
-          <h4 class="subsection-head reveal">Outcomes</h4>
+          <h4 class="subsection-head reveal" id="s-41-1">Outcomes</h4>
           <ul class="reveal">
             <li><strong>A clear decision on commitment;</strong> we accept or decline, and can explain why either way.</li>
             <li><strong>Sharper clarity on the core challenge;</strong> the agency leaves understanding it far better than when they walked in.</li>
@@ -203,19 +222,19 @@
           <p class="reveal">A full discovery journey runs in two subphases, each with a distinct role:</p>
           <div class="rulegrid reveal">
             <div class="rulegrid__col">
-              <p class="rulegrid__title">Subphase 1 — Discover to Understand</p>
+              <p class="rulegrid__title">Subphase 1 — Uncover What is True</p>
               <p>Frame the problem. Confirm it’s real, systemic, and worth solving before anyone proposes how to build it.</p>
             </div>
             <div class="rulegrid__col">
-              <p class="rulegrid__title">Subphase 2 — Discover to Validate</p>
+              <p class="rulegrid__title">Subphase 2 — Identify What Works</p>
               <p>Test solutions. Hypothesise, prototype, and validate against real user signal until a confident roadmap emerges.</p>
             </div>
           </div>
           <p class="reveal">Together, they move an engagement from an ambiguous problem statement to a high-confidence, validated roadmap.</p>
 
-          <details class="accordion reveal" open>
+          <details class="accordion reveal" id="s-42-1" open>
             <summary class="accordion__head">
-              <span class="accordion__title">Subphase 1: Discover to Understand<span class="accordion__sub">To frame a problem</span></span>
+              <span class="accordion__title">Subphase 1: Uncover What is True<span class="accordion__sub">To frame a problem</span></span>
             </summary>
             <div class="accordion__body">
               <p>The purpose of Subphase 1 is to define the real problem, and align understanding with our agency partners before a solution is proposed.</p>
@@ -274,9 +293,9 @@
             </div>
           </details>
 
-          <details class="accordion reveal">
+          <details class="accordion reveal" id="s-42-2">
             <summary class="accordion__head">
-              <span class="accordion__title">Subphase 2: Discover to Validate<span class="accordion__sub">To rapidly experiment</span></span>
+              <span class="accordion__title">Subphase 2: Identify What Works<span class="accordion__sub">To rapidly experiment</span></span>
             </summary>
             <div class="accordion__body">
               <p>The purpose of Subphase 2 is to transform the understanding from Subphase 1 into a testable object. We hypothesise solutions, then build dynamic prototypes to get real users testing. The prototypes are continuously refined until a validated solution emerges.</p>
@@ -488,16 +507,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="about-govtech-consulting.html" href="about-govtech-consulting.html">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">01</span>
               <span class="menu__title">About GovTech Consulting</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
         <li class="menu__item">
           <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
@@ -536,16 +555,16 @@
           </a>
         </li>
         <li class="menu__item">
-          <span class="menu__row menu__row--soon" aria-disabled="true">
+          <a class="menu__row" data-href="how-we-work.html" href="how-we-work.html">
             <span class="menu__icon">
               <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
             </span>
             <span class="menu__text">
               <span class="menu__num">05</span>
               <span class="menu__title">How We Work</span>
-              <span class="menu__soon">Coming soon</span>
             </span>
-          </span>
+          </a>
         </li>
       </ul>
     </nav>

@@ -66,6 +66,22 @@ These are the highest-value notes in the repo — preserve them.
   `float:left`). **Do NOT hand-roll a per-frame `gsap.ticker` follow** that re-reads
   `getBoundingClientRect` and re-applies the transform: it lands a frame behind the smoother and the
   nav visibly **lags**. The ScrollTrigger pin is internally synced → glued with no lag. (`stickyToc`.)
+- **`focus()` scrolls the page under ScrollSmoother — `preventScroll` can't stop it.** The
+  smoother installs its own window `focusin` handler that `scrollTo(target, false, "center
+  center")`s any focused element it considers out of view (`{preventScroll:true}` only suppresses
+  the *native* scroll). So programmatic `.focus()` after a UI action (e.g. moving focus to the TOC
+  collapse control after expanding) can yank the reader to wherever that element lives — focusing
+  `document.querySelector(".toc__collapse")` scrolls to *chapter 1's* cover. Rules: only move focus
+  on **keyboard** activation (`click` event `detail === 0`), pick the instance **nearest the
+  viewport**, and do it **after** the settling `ScrollTrigger.refresh()` — the refresh re-wraps
+  pinned elements in their pin-spacers (a reparent) which blurs any focus set earlier. (`tocCollapse`.)
+- **Animating the size of a pinned element:** every `ScrollTrigger.refresh()` **bakes inline
+  `width`/`max-width`/`margin`/`height` onto the pinned element** (to lock it inside its
+  pin-spacer). An inline `max-width` baked at refresh time silently **clamps any later width
+  tween** — e.g. `max-width:0` baked while the TOC was collapsed made the expand tween advance
+  `style.width` with zero visible effect. When tweening a pinned element's width (`tocCollapse`),
+  set `maxWidth:"none"` for the duration of the gesture, `clearProps` it after, and let the
+  settling `ScrollTrigger.refresh()` re-bake the correct values.
 
 ## Clean URLs (reader)
 

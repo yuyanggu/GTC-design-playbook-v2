@@ -20,9 +20,9 @@
    ========================================================================== */
 (function () {
   // section id → URL slug. Chapters derive as /chapter-{N} from their ch{N} id.
-  // Chapters 01 (About GovTech Consulting) and 05 (How We Work) are "coming soon" —
-  // no reader panel, no path, so they're absent here.
+  // All five chapters (01–05) plus the Foreword are live.
   var SECTION_SLUGS = {
+    "s-11": "who-we-are",
     "s-21": "foundations-that-guide-us",
     "s-22": "our-principles-of-execution",
     "s-23": "through-a-discovery-lens",
@@ -34,6 +34,10 @@
     "s-42": "discovery",
     "s-43": "building-and-delivery",
     "s-44": "support-and-maintenance",
+    "s-51": "our-operating-principles",
+    "s-52": "rituals-and-cadences",
+    "s-53": "how-we-show-up",
+    "s-54": "the-practice-in-practice",
   };
 
   var byId = {};   // id → path
@@ -43,8 +47,8 @@
   byId["ch0"] = "/foreword";
   byPath["/foreword"] = "ch0";
 
-  // Live reader chapters (01 and 05 are coming soon → not mapped).
-  ["ch2", "ch3", "ch4"].forEach(function (cid) {
+  // Live reader chapters (all five are built).
+  ["ch1", "ch2", "ch3", "ch4", "ch5"].forEach(function (cid) {
     var path = "/chapter-" + cid.slice(2);
     byId[cid] = path;
     byPath[path] = cid;

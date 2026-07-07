@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
+     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<html lang="en" class="js-pending">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About GovTech Consulting — The Design Playbook</title>
+  <meta name="description" content="Who we are — GovTech Consulting (GTC) and the GTC Design team. Chapter 1 of the GTC Design Playbook." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/playbook_logo.svg" as="image" />
+  <style id="fouc-shield">
+    html.js-pending body { background: var(--chalk, #f6f1e6); }
+    html.js-pending .topbar,
+    html.js-pending .rail,
+    html.js-pending .page-hero,
+    html.js-pending .hero-flower,
+    html.js-pending .copy,
+    html.js-pending .toc,
+    html.js-pending .toc-bar { opacity: 0 !important; visibility: hidden !important; }
+  </style>
+  <noscript><style>
+    html.js-pending .topbar, html.js-pending .rail, html.js-pending .page-hero,
+    html.js-pending .hero-flower, html.js-pending .copy, html.js-pending .toc,
+    html.js-pending .toc-bar
+      { opacity: 1 !important; visibility: visible !important; }
+  </style></noscript>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/chapter.css" />
+  <script src="js/gate.js"></script>
+</head>
+<body style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 611 / 611;">
+  <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
+  <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
+      <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+    </a>
+    <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line class="bar bar-top" x1="3" y1="7" x2="21" y2="7" /><line class="bar bar-mid" x1="3" y1="12" x2="21" y2="12" /><line class="bar bar-bot" x1="3" y1="17" x2="21" y2="17" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
+  <div class="rail" aria-label="Section navigation">
+    <span class="rail__divider" aria-hidden="true"></span>
+    <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
+      <span class="rail__toc-label">Table of contents</span>
+      <span class="rail__toc-disc" aria-hidden="true">
+        <svg class="rail__toc-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+      </span>
+    </button>
+    <p class="rail__label">about govtech consulting</p>
+  </div>
+
+  <!-- Mobile section bar (≤768px) — pinned to the viewport bottom; the arrows step
+       heading-to-heading and the label opens the TOC sheet. Driven by js/chapter.js
+       (mobileTocBar). Fixed elements must live outside #smooth-wrapper. -->
+  <nav class="toc-bar" aria-label="Sections" hidden>
+    <button class="toc-bar__arrow toc-bar__arrow--prev" type="button" aria-label="Previous section">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+    </button>
+    <button class="toc-bar__label" type="button" aria-expanded="false" aria-controls="toc-sheet" aria-haspopup="dialog">
+      <span class="toc-bar__num"></span>
+      <span class="toc-bar__title"></span>
+    </button>
+    <button class="toc-bar__arrow toc-bar__arrow--next" type="button" aria-label="Next section">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+    </button>
+  </nav>
+  <div class="toc-sheet" id="toc-sheet" role="dialog" aria-label="Table of contents">
+    <div class="toc-sheet__scrim"></div>
+    <div class="toc-sheet__panel"></div>
+  </div>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+  <main class="page">
+
+    <!-- ───────────────────────── HERO (orange cover) ───────────────────────── -->
+    <section class="page-hero">
+      <h1 class="page-hero__title">
+        <span class="reveal">01</span>
+        <span class="reveal">About GovTech Consulting</span>
+      </h1>
+
+      <!-- Top-right graphic (static — no animation) -->
+      <div class="hero-flower" aria-hidden="true">
+        <div class="hero-flower__spin">
+          <img src="assets/1_Graphic.svg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── BODY ───────────────────────── -->
+    <section class="page-body">
+      <div class="page-body__canvas">
+
+       <div class="body-left">
+        <nav class="toc" aria-label="Table of contents">
+          <div class="toc__head">
+            <button class="toc__collapse" type="button" aria-label="Hide table of contents" title="Hide table of contents">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            </button>
+            <span class="toc__head-label">Table of contents</span>
+          </div>
+          <div class="toc__scroll">
+            <ul class="toc__chapters">
+              <li>
+                <span class="toc__chapter is-current" aria-current="true">
+                  <span class="toc__chapter-num">1</span>
+                  <span class="toc__chapter-name">About GovTech Consulting</span>
+                </span>
+                <ul class="toc__list">
+                  <li>
+                    <a class="toc__row is-active" data-toc="s-11" href="#s-11">
+                      <span class="toc__num">1.1</span>
+                      <span class="toc__rule" aria-hidden="true"></span>
+                      <span class="toc__title">Who We Are</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-2" href="/chapter-2">
+                  <span class="toc__chapter-num">2</span>
+                  <span class="toc__chapter-name">Our Point of View</span>
+                </a>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-3" href="/chapter-3">
+                  <span class="toc__chapter-num">3</span>
+                  <span class="toc__chapter-name">Our Approach</span>
+                </a>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-4" href="/chapter-4">
+                  <span class="toc__chapter-num">4</span>
+                  <span class="toc__chapter-name">The Stages of an Engagement</span>
+                </a>
+              </li>
+              <li>
+                <a class="toc__chapter" data-href="/chapter-5" href="/chapter-5">
+                  <span class="toc__chapter-num">5</span>
+                  <span class="toc__chapter-name">How We Work</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+       </div><!-- /.body-left -->
+
+        <article class="copy">
+          <!-- ══ CANONICAL COPY: mirrored verbatim into playbook.html #ch1 ══ -->
+
+          <!-- 1.1 -->
+          <h3 class="section-head reveal" id="s-11">1.1 Who We Are</h3>
+          <p class="lead reveal">As technology evolves, so does the relationship between the public sector and the people we serve. GovTech Consulting (GTC) was established to advance Singapore&rsquo;s national mandate on building a resilient digital foundation for our public infrastructure.</p>
+          <p class="reveal">To meet the complex demands of an AI-driven world, the GTC Design team partners with agencies to share tools, grow skills, and cultivate lasting digital capabilities. As government agencies are central to driving sustainable digital growth, we work side by side to empower public officers in fulfilling their core mission &mdash; transforming services and elevating the quality of tech for the public good, together.</p>
+
+          <blockquote class="pullquote reveal">
+            <img class="pullquote__mark" src="assets/pullmark.svg" alt="" aria-hidden="true" width="15" height="15" />
+            <p>We work side by side to empower public officers &mdash; transforming services and elevating the quality of tech for the public good, together.</p>
+          </blockquote>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+    </div><!-- /#smooth-content -->
+  </div><!-- /#smooth-wrapper -->
+
+  <!-- ───────────────────────── MENU (bookshelf overlay) — shared ───────────────────────── -->
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
+    <!-- Right-side drawer: scrim (click-to-close) + chalk card of chapter rows. Swipes in
+         from the right; on close the rows fall away (see menuScene in js/main.js). The
+         close control is the topbar hamburger (morphs to an X) / the scrim / Esc. -->
+    <div class="menu__scrim" data-menu-close aria-hidden="true"></div>
+    <nav class="menu__drawer" aria-label="Chapters" tabindex="-1">
+      <p class="menu__eyebrow">The Design Playbook</p>
+      <ul class="menu__list">
+        <li class="menu__item">
+          <a class="menu__row" data-href="foreword.html" href="foreword.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_0.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_0_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">00</span>
+              <span class="menu__title">Foreword</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="about-govtech-consulting.html" href="about-govtech-consulting.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">01</span>
+              <span class="menu__title">About GovTech Consulting</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_2.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">02</span>
+              <span class="menu__title">Our Point of View</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="our-approach.html" href="our-approach.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_3.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">03</span>
+              <span class="menu__title">Our Approach</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="stages-of-a-project.html" href="stages-of-a-project.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">04</span>
+              <span class="menu__title">The Stages of an Engagement</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="how-we-work.html" href="how-we-work.html">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__num">05</span>
+              <span class="menu__title">How We Work</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
+  <script src="vendor/CustomEase.min.js"></script>
+  <script src="vendor/CustomWiggle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/chapter.js"></script>
+</body>
+</html>
