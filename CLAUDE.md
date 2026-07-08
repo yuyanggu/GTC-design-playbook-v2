@@ -75,10 +75,12 @@ project memory `headless-motion-verification`.
   stacks vertically (pinwheel above title, `padding-inline: 20px`) to prevent overflow; hero
   plays reveal once then scroll is fully native into the cards.
 - ✅ **Menu** — right-side drawer (swipe-in, interruptible, rows-fall-away close, hamburger→X) on all
-  chapter pages + reader + foreword standalone + about. `Esc` / scrim / X closes. **7 rows, all
+  chapter pages + foreword standalone + about. `Esc` / scrim / X closes. **7 rows, all
   linked**: 00 Foreword → 01 About GTC → 02 → 03 → 04 → 05 How We Work → About (unnumbered coda
-  row, hand-written `menu_about*.svg` icons). Reader menu uses clean paths (`/chapter-1…5`,
-  `/about`); standalone menus use file hrefs. `menu_4.svg` is reused for row 05.
+  row, hand-written `menu_about*.svg` icons). Standalone menus use file hrefs. `menu_4.svg` is reused
+  for row 05. **The reader (`playbook.html`) no longer has the drawer** (hamburger + `#menu`
+  removed, 2026-07): its **always-open TOC** — now ending in an **About** row and with the
+  collapse/hide control dropped — is the sole navigation.
 - ✅ **Foreword** — reader panel `#ch0` (`.chapter-panel--foreword`, chalk, no hero, no TOC) + standalone
   `foreword.html` (fallback only, no longer linked from live nav). Entry: shelf book 0 and mobile
   card link to `/playbook.html` (reader top = ch0). Clean path `/foreword` maps in `routes.js` +
@@ -114,10 +116,16 @@ project memory `headless-motion-verification`.
   `.about-*`/`page-dark` block at the end of `chapter.css`; clean path `/about` rewrites in
   `vercel.json` / `_redirects` / `serve.json`.
 - ✅ **Continuous reader (`playbook.html`)** — Foreword (`#ch0`) + all five chapters
-  (`#ch1/#ch2/#ch3/#ch4/#ch5`) stacked with the seamless chapter-to-chapter scroll effect; per-chapter
-  TOC pins coexist; rail follows the active chapter; menu/landing books deep-link in. `urlSync`
-  updates the address bar to `/chapter-1`…`/chapter-5/<section-slug>` and `/foreword`. Content is
-  mirrored verbatim between each reader panel and its standalone page.
+  (`#ch1/#ch2/#ch3/#ch4/#ch5`) + the **embedded About terminal panel** (`#about`,
+  `.chapter-panel--about`, dark — mirrors `about.html`) stacked with the seamless
+  chapter-to-chapter scroll effect; per-chapter TOC pins coexist; rail follows the active chapter
+  (clipped away over the dark About panel); landing books deep-link in. Scrolling past `#ch5` now
+  hands off into About like any chapter boundary; `aboutPanel()` in `js/chapter.js` ports the About
+  page's gallery + manifesto motion (about.js is not loaded here) and inverts the topbar logo over
+  the dark panel. `urlSync` updates the address bar to `/chapter-1`…`/chapter-5/<section-slug>`,
+  `/foreword`, and `/about`. Content is mirrored verbatim between each reader panel and its
+  standalone page. **The drawer Menu was removed here (2026-07); the always-open TOC (now including
+  an About row, collapse control dropped) is the sole nav.**
 - ✅ **Mobile topbar (≤768px, chapter pages + reader)** — topbar drops its stacking context so the
   logo (z 44) sits behind the wide menu drawer while the hamburger/X (z 60) stays on top; a soft
   chalk scrim (`.topbar::before`, z 42) fades scrolling copy out under the logo; `topbarScrim()`

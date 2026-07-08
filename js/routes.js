@@ -47,6 +47,11 @@
   byId["ch0"] = "/foreword";
   byPath["/foreword"] = "ch0";
 
+  // The About panel is embedded as the reader's terminal panel (id "about") and
+  // also exists as the standalone about.html; both share the /about path.
+  byId["about"] = "/about";
+  byPath["/about"] = "about";
+
   // Live reader chapters (all five are built).
   ["ch1", "ch2", "ch3", "ch4", "ch5"].forEach(function (cid) {
     var path = "/chapter-" + cid.slice(2);
@@ -71,7 +76,7 @@
     // anti-flash inline script, which can't query the DOM yet.
     isReaderPath: function (path) {
       var p = norm(path);
-      return p === "/foreword" || /^\/chapter-\d+(\/|$)/.test(p);
+      return p === "/foreword" || p === "/about" || /^\/chapter-\d+(\/|$)/.test(p);
     },
   };
 })();

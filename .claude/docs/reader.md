@@ -5,6 +5,31 @@ flows seamlessly from chapter to chapter. Builds on the shared chapter system
 ([chapter-pages.md](chapter-pages.md)) with reader-only functions in `js/chapter.js`
 (`panelTransitions`, `railSync`, `railReveal`, `handleDeepLink`) and the `css/playbook.css` layer.
 
+## Navigation surface (2026-07)
+
+The reader has **no drawer Menu** — the hamburger + `#menu` overlay were removed, so `menuScene()`
+early-returns (no `#menu`, no `[data-menu-open]`). The **always-open TOC is the sole navigation**:
+the collapse control (`.toc__head` with `.toc__collapse` + the rail's `.rail__toc` re-open pin) is
+gone from every panel, so `tocCollapse()` also early-returns (no `.rail__toc`). Each chapter TOC's
+stacked chapter index now carries a final unnumbered **About** row (`.toc__chapter--about`,
+`data-href="/about"`) that jumps to the embedded About panel via `chapterSwitch` / `GTCRoutes`.
+
+## The About terminal panel (2026-07)
+
+`about.html`'s content is embedded as the reader's **last** `.chapter-panel` (`#about`,
+`.chapter-panel--about`, dark), so scrolling past `#ch5` now hands off into it exactly like a
+chapter-to-chapter transition (`#ch5` is no longer the last panel, so `panelTransitions` gives it a
+scale/fade out; About, being last, never scales out). The page's own motion — the gallery's
+staggered rise + pinned horizontal scroll and the manifesto's masked line reveal — is **ported into
+`aboutPanel()` in `js/chapter.js`** (scoped to `#about`, driven by the reader's shared
+ScrollSmoother); `js/about.js` is NOT loaded here. `aboutPanel()` also toggles `html.reader-dark`
+(topbar logo → chalk) via a live-rect probe — a start/end ScrollTrigger mis-measures because the
+gallery pin shifts the panel's geometry, the same reason `topbarScrim`/`railReveal` probe rects.
+`railReveal` folds `.chapter-panel--about` into its occluder set so the fixed rail clips away over
+the full-bleed dark panel just as it does over a coloured hero. `/about` maps to `#about` in
+`routes.js`; a cold visit to `/about` still serves the standalone `about.html` (server rewrite
+unchanged), while in-reader scroll-spy writes `/about` as you enter the panel.
+
 ## Structure
 
 The reader opens with a **Foreword panel** (`#ch0`, `.chapter-panel--foreword`) before `#ch1`. It has no coloured hero and no TOC — just a chalk background with a top-left `.foreword__title`, a full-width orb banner (`.foreword__graphic`), and the standard `.copy` column. Its clean path is **`/foreword`** (a special-case in `routes.js`, not `/chapter-0`). It transitions into `#ch1` exactly like any other panel, and inherits `panelTransitions`, `railSync`, `railReveal`, `urlSync`, and `copyReveals` with no changes to those functions.

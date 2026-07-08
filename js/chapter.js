@@ -37,6 +37,7 @@ if (window.__GTC_LOCKED__) {
   mobileTocBar();
   topbarScrim();
   tocCollapse();
+  aboutPanel(); // reader-only: the embedded About terminal panel's gallery + manifesto motion
 
   // FOUC shield lift — initChapter has set every .reveal's initial state, the
   // panel transitions are wired, and the rail is in place. Lift the shield on
@@ -354,6 +355,11 @@ function mobileTocBar() {
       entries.push({ el, num, title: text.textContent.trim(), accent: accentOf(el) });
     });
   });
+  // The embedded About panel has no sections of its own, so it isn't caught by the
+  // .toc__row sweep above — append it as a final (unnumbered) entry so the bar's
+  // label + arrows step into it, matching the desktop TOC's About row.
+  const aboutEl = document.getElementById("about");
+  if (aboutEl) entries.push({ el: aboutEl, num: "", title: "About", accent: accentOf(aboutEl) });
   if (!entries.length) return;
   bar.hidden = false;
 
@@ -665,6 +671,89 @@ function topbarScrim() {
   update();
 }
 
+/* ---- About panel (reader-only): the embedded About terminal panel (#about,
+   mirrors about.html). Ports the standalone page's motion — the photo gallery's
+   staggered rise + pinned horizontal scroll and the closing manifesto's masked
+   line reveal — scoped to the one #about panel and driven by the reader's shared
+   ScrollSmoother (js/about.js is NOT loaded here). Also inverts the topbar logo
+   to chalk while the dark About panel sits under the bar. The panel is the LAST
+   .chapter-panel, so panelTransitions leaves it alone (it never scales out) while
+   ch5 now hands off into it. ---- */
+function aboutPanel() {
+  const panel = document.getElementById("about");
+  if (!panel) return;
+
+  // Topbar logo → chalk while the dark About panel sits under the bar. A live-rect
+  // probe (not a start/end ScrollTrigger) because the gallery pin below shifts the
+  // panel's measured geometry — the same reason topbarScrim/railReveal probe rects.
+  // Dark whenever the panel straddles the line just below the topbar.
+  const root = document.documentElement;
+  const PROBE = 64;
+  const darkUpdate = () => {
+    const r = panel.getBoundingClientRect();
+    root.classList.toggle("reader-dark", r.top <= PROBE && r.bottom >= PROBE);
+  };
+  ScrollTrigger.create({ start: 0, end: "max", onUpdate: darkUpdate, onRefresh: darkUpdate });
+  darkUpdate();
+
+  const gallery = panel.querySelector(".about-gallery");
+  const strip = gallery && gallery.querySelector(".about-gallery__strip");
+  const items = gsap.utils.toArray(".about-gallery__item", panel);
+  const lines = gsap.utils.toArray(".about-manifesto__text", panel);
+  const manifesto = panel.querySelector(".about-manifesto");
+
+  if (reduce) {
+    // No rise / no pin / no line mask — CSS handles a native swipe + visible manifesto.
+    if (lines.length) gsap.set(lines, { yPercent: 0, clearProps: "transform" });
+    return;
+  }
+
+  // Gallery photos rise once on enter (y only), before the horizontal pin engages.
+  // matchMedia rebuilds the right travel on resize/rotate; the pin/scrub lives on
+  // the strip (x), the rise on the items (y), so the two transforms never fight.
+  if (items.length && gallery) {
+    const mm = gsap.matchMedia();
+    mm.add({ isMobile: "(max-width: 768px)", isDesktop: "(min-width: 769px)" }, (ctx) => {
+      const rise = ctx.conditions.isMobile ? 160 : 300;
+      gsap.set(items, { y: rise, willChange: "transform", force3D: true });
+      gsap.to(items, {
+        y: 0, duration: 1.15, delay: 0.15, ease: "expo.out",
+        stagger: { each: 0.14, from: "start" }, force3D: true,
+        scrollTrigger: { trigger: gallery, start: "top 85%", once: true },
+        onComplete: () => gsap.set(items, { willChange: "auto" }),
+      });
+    });
+  }
+
+  // Pin the gallery at viewport centre and translate the strip left by its overflow —
+  // scroll distance = the strip's own width, so the pace reads 1:1. A short dead zone
+  // (holdFraction) keeps it still until the rise above has settled. pinType:"transform"
+  // is required under ScrollSmoother (see .claude/docs/gotchas.md).
+  if (strip && gallery) {
+    const holdFraction = 0.16;
+    const holdEase = (p) => (p < holdFraction ? 0 : (p - holdFraction) / (1 - holdFraction));
+    gsap.to(strip, {
+      x: () => -(strip.scrollWidth - window.innerWidth),
+      ease: holdEase,
+      scrollTrigger: {
+        trigger: gallery, pin: true, pinType: "transform", scrub: true,
+        start: "center center", end: () => "+=" + strip.scrollWidth, invalidateOnRefresh: true,
+      },
+    });
+  }
+
+  // Manifesto: masked line reveal. y:0 zeroes the px offset GSAP parses out of the
+  // CSS translateY(112%) start state — otherwise it stacks with yPercent and settles
+  // half-hidden (same guard as js/about.js).
+  if (lines.length && manifesto) {
+    gsap.set(lines, { y: 0, yPercent: 112 });
+    gsap.to(lines, {
+      yPercent: 0, duration: 0.9, ease: "power4.out", stagger: 0.14,
+      scrollTrigger: { trigger: manifesto, start: "top 82%", once: true },
+    });
+  }
+}
+
 /* ============================================================================
    Continuous reader only — chapter-to-chapter scroll effect
    Ported from the GSAP "stacked panels" ScrollTrigger demo, adapted from its
@@ -747,7 +836,11 @@ function railReveal() {
   const rail = document.querySelector(".rail");
   const label = rail && rail.querySelector(".rail__label");
   const bodies = gsap.utils.toArray(".page-body");
-  const heroes = gsap.utils.toArray(".page-hero");
+  // The dark, full-bleed About panel occludes the rail exactly like a coloured hero
+  // (both are multi-viewport surfaces the fixed rail must not float over): a rising
+  // About eats the rail bottom→top through the ch5→About transition, and it stays
+  // hidden while you read About. So fold the About panel into the occluder set.
+  const heroes = [...gsap.utils.toArray(".page-hero"), ...gsap.utils.toArray(".chapter-panel--about")];
   if (!rail || !label || !bodies.length) return;
 
   const update = () => {
