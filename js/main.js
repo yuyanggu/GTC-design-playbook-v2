@@ -141,6 +141,7 @@ function heroScene() {
   headSpans.forEach((s) => gsap.set(s, { y: Math.ceil(s.parentElement.getBoundingClientRect().height) + 2 }));
   gsap.set(".home-logo", { autoAlpha: 0, y: -8 });
   gsap.set(".intro__body p", { autoAlpha: 0, y: 18 });
+  gsap.set(".intro__dive", { autoAlpha: 0, y: 18 });
 
   // Both pointer types use the SAME timed play-once model: one scroll past the threshold
   // plays the whole transition at its own fixed duration (NOT mapped to scroll speed),
@@ -155,7 +156,8 @@ function heroScene() {
     if (pinwheelProx) master.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);
     master
       .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
-      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78);
+      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78)
+      .to(".intro__dive", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.95);
     // Books/spines only rise on desktop — on mobile the shelf is replaced by the cards.
     if (!mobile) {
       hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
@@ -167,8 +169,10 @@ function heroScene() {
     }
 
     // Header line-clip wipe on its OWN timeline so its EXIT can run faster than entrance.
+    // (The landing headline was retired 2026-07, so headSpans is usually empty — guard
+    // the tween so GSAP doesn't warn about a missing target.)
     const titleTl = gsap.timeline({ paused: true });
-    titleTl.to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5);
+    if (headSpans.length) titleTl.to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5);
 
     // Mobile: NO pin and NO reverse. The reveal plays ONCE on the first bit of scroll,
     // then scroll stays fully native straight into the cards below — so there's no pin
@@ -330,8 +334,8 @@ function homeBooks() {
   if (window.matchMedia("(max-width: 768px)").matches) return;
 
   // Scale the whole shelf down to fit narrow viewports (origin bottom-centre, set in CSS)
-  // so all six books stay visible + centred. Runs under reduced motion too.
-  const SHELF_W = 1578;
+  // so all five books stay visible + centred. Runs under reduced motion too.
+  const SHELF_W = 1300;   // 5×188 + 4×90 (was 1578 with 6 books incl. Foreword)
   const fitShelf = () => {
     const scale = Math.min(1, (window.innerWidth - 32) / SHELF_W);
     shelf.style.setProperty("--shelf-scale", scale.toFixed(4));
@@ -604,6 +608,83 @@ function magneticButtons() {
 }
 
 /* ============================================================================
+   7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
+   (the landing "Dive in" button). GSAP fade/scale-in; page scroll is hard-locked
+   while open (like menuScene — decoupled from ScrollSmoother, see gotchas.md).
+   No-ops on pages without #aboutModal. "Read the playbook" is a plain <a>, so it
+   needs no wiring here.
+   ========================================================================== */
+function aboutModal() {
+  const modal = document.querySelector("#aboutModal");
+  const openBtns = gsap.utils.toArray("[data-about-open]");
+  if (!modal || !openBtns.length) return;
+
+  const scrim = modal.querySelector(".about-modal__scrim");
+  const card = modal.querySelector(".about-modal__card");
+  const closeEls = gsap.utils.toArray("[data-about-close]", modal); // scrim + ✕
+  const main = document.querySelector("main");
+  let isOpen = false;
+  let lastFocus = null;
+
+  function lock() {
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    if (main) main.inert = true;             // background unreachable while open
+    root.style.overflow = "hidden";           // hard-lock page scroll (decoupled from ScrollSmoother)
+    document.body.style.overflow = "hidden";
+  }
+  function unlock() {
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    if (main) main.inert = false;
+    root.style.overflow = "";
+    document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to "Dive in"
+  }
+
+  // Reduced motion: show/hide instantly (no fade/scale).
+  if (reduce) {
+    const openR = () => { if (isOpen) return; isOpen = true; lock(); gsap.set(scrim, { autoAlpha: 1 }); gsap.set(card, { autoAlpha: 1, y: 0, scale: 1 }); if (card) card.focus({ preventScroll: true }); };
+    const closeR = () => { if (!isOpen) return; isOpen = false; unlock(); };
+    openBtns.forEach((b) => b.addEventListener("click", openR));
+    closeEls.forEach((b) => b.addEventListener("click", closeR));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) closeR(); });
+    return;
+  }
+
+  // Independent open/close tweens (NOT one play/reverse timeline — a completed GSAP
+  // timeline doesn't reliably resume on reverse(), and rapid open→close interleaving
+  // wedges it). killTweensOf makes a mid-flight interruption clean. The `hidden`
+  // attribute (toggled by lock/unlock) does the actual show/hide.
+  let closing = false;
+  function open() {
+    if (isOpen) return;
+    isOpen = true;
+    closing = false;                        // cancel any in-flight close intent
+    lock();
+    gsap.killTweensOf([scrim, card]);
+    gsap.to(scrim, { autoAlpha: 1, duration: 0.35, ease: "power2.out" });
+    gsap.fromTo(card, { autoAlpha: 0, y: 24, scale: 0.98 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" });
+    if (card) card.focus({ preventScroll: true });
+  }
+  function close() {
+    if (!isOpen) return;
+    isOpen = false;
+    closing = true;
+    gsap.killTweensOf([scrim, card]);
+    gsap.to(scrim, { autoAlpha: 0, duration: 0.3, ease: "power2.in" });
+    gsap.to(card, { autoAlpha: 0, y: 16, scale: 0.98, duration: 0.3, ease: "power2.in",
+      onComplete: () => { if (closing) { closing = false; unlock(); } } });
+  }
+
+  openBtns.forEach((b) => b.addEventListener("click", open));
+  closeEls.forEach((b) => b.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) close(); });
+}
+
+/* ============================================================================
    Boot — skipped while the password gate is locked (js/gate.js) so no animation
    runs behind the lock; on unlock the page reloads and boots fresh.
    ========================================================================== */
@@ -619,6 +700,7 @@ if (!window.__GTC_LOCKED__) {
   homeBooks();      // parks the books/spines (hbBooks/hbSpines, read by heroScene)
   heroScene();      // one-shot scroll master (consumes hbBooks/hbSpines, completes loadTl)
   menuScene();
+  aboutModal();
   magneticButtons();
 
   // FOUC shield lift — every above-the-fold element now has a gsap.set initial

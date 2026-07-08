@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/about", "destination": "/about.html" },
     { "source": "/chapter-:n", "destination": "/playbook.html" },
     { "source": "/chapter-:n/:section", "destination": "/playbook.html" }
   ],

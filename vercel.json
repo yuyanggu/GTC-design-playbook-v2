@@ -2,6 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     { "source": "/foreword", "destination": "/playbook.html" },
+    { "source": "/about", "destination": "/about.html" },
     { "source": "/chapter-:n(\\d+)", "destination": "/playbook.html" },
     { "source": "/chapter-:n(\\d+)/:section", "destination": "/playbook.html" }
   ]

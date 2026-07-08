@@ -22,9 +22,11 @@ hero fills the top band (dark logo on colour, no text to mask). The left **rail 
 drops its `--fw-rail` to match. Desktop is unchanged (rail present; drawer narrow + right-aligned, so
 no overlap; no scrim).
 
-The drawer block is **duplicated verbatim** into every page that has one (the 3 chapter pages +
-`playbook.html` + `foreword.html`); the only per-page difference is each row's `data-href`.
-The drawer now has **five rows**: 00 Foreword → 01 → 02 → 03 → 04 (coming soon).
+The drawer block is **duplicated verbatim** into every page that has one (the 5 chapter pages +
+`playbook.html` + `foreword.html` + `about.html`); the only per-page difference is each row's
+`data-href`. The drawer now has **seven rows**: 00 Foreword → 01 → 02 → 03 → 04 → 05 → About
+(unnumbered coda row, `menu_about.svg` / `menu_about_hover.svg` — hand-written SVGs quoting the
+About frieze motif; links `about.html`, or `/about` from the reader).
 
 ### Drawer = floating top-right card
 
@@ -32,7 +34,7 @@ The drawer now has **five rows**: 00 Foreword → 01 → 02 → 03 → 04 (comin
 (`border-radius:16px`), auto height (sized to contents), uniform padding. The chalk panel is a
 **`::before` layer** so its opacity can fade (via the GSAP-driven `--card-bg-o`) **independently** of
 the rows that fall over it. Inside: a `.menu__eyebrow` ("The Design Playbook") + a `.menu__list` of
-four `.menu__item` rows.
+seven `.menu__item` rows.
 
 ### Rows = icon left, number + title right
 

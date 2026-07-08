@@ -337,6 +337,9 @@ function mobileTocBar() {
 
   // Heading entries in document order. The reader's foreword panel has no TOC,
   // so it contributes a hand-rolled first entry.
+  // NOTE: the Foreword (#ch0) was RETIRED 2026-07 — its panel is commented out in
+  // playbook.html, so getElementById("ch0") is null and this (plus the buildSheetIndex
+  // block below) no-ops. Kept guarded for a clean revert.
   const entries = [];
   const foreword = document.getElementById("ch0");
   if (foreword) entries.push({ el: foreword, num: "0", title: "Foreword", accent: accentOf(foreword) });

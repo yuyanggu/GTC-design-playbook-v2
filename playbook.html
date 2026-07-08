@@ -109,18 +109,16 @@
     <div id="smooth-content">
   <main class="playbook">
 
-    <!-- ═══════════════════════ CHAPTER 0 — Foreword ═══════════════════════ -->
-    <!-- No coloured hero, no TOC (Figma 2146:5238). It's a .chapter-panel so it
-         inherits panelTransitions / railSync / railReveal / urlSync / copyReveals;
-         data-rail drives the rail label; --accent is midnight (no themed accent). -->
+    <!-- ═══════════════════════ CHAPTER 0 — Foreword: RETIRED 2026-07 ═══════════════════════
+         Hidden site-wide. Its lead moved to the landing welcome copy and its two sections
+         moved to the "About this playbook" popup (index.html #aboutModal). Kept commented
+         here for revert; the reader now opens at Chapter 1. (Inner explanatory comments were
+         inlined as plain text so the whole block nests inside one HTML comment.)
     <section class="section chapter-panel chapter-panel--foreword" id="ch0"
              data-rail="foreword"
              style="--accent: var(--midnight);">
      <div class="chapter-panel__scale">
       <section class="page-body foreword">
-        <!-- Title + banner are direct children of the full-width .page-body so they
-             position against the viewport rail (not the centred 1440 canvas); only
-             the copy stays inside the canvas. -->
         <h1 class="foreword__title reveal">Foreword</h1>
         <img class="foreword__graphic reveal" src="assets/foreword_Graphic.png"
              width="1440" height="291" alt="" />
@@ -136,8 +134,9 @@
           </article>
         </div>
       </section>
-     </div><!-- /.chapter-panel__scale -->
+     </div>
     </section>
+    -->
 
     <!-- ═══════════════════════ CHAPTER 1 — About GovTech Consulting ═══════════════════════ -->
     <section class="section chapter-panel" id="ch1"
@@ -1495,6 +1494,7 @@
     <nav class="menu__drawer" aria-label="Chapters" tabindex="-1">
       <p class="menu__eyebrow">The Design Playbook</p>
       <ul class="menu__list">
+        <!-- Foreword menu row: RETIRED 2026-07 (Foreword hidden site-wide; kept for revert)
         <li class="menu__item">
           <a class="menu__row" data-href="/foreword" href="/foreword">
             <span class="menu__icon">
@@ -1507,6 +1507,7 @@
             </span>
           </a>
         </li>
+        -->
         <li class="menu__item">
           <a class="menu__row" data-href="/chapter-1" href="/chapter-1">
             <span class="menu__icon">
@@ -1564,6 +1565,17 @@
             <span class="menu__text">
               <span class="menu__num">05</span>
               <span class="menu__title">How We Work</span>
+            </span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__row" data-href="/about" href="/about">
+            <span class="menu__icon">
+              <img class="menu__icon-base" src="assets/menu_about.svg" alt="" />
+              <img class="menu__icon-hover" src="assets/menu_about_hover.svg" alt="" aria-hidden="true" />
+            </span>
+            <span class="menu__text">
+              <span class="menu__title">About</span>
             </span>
           </a>
         </li>

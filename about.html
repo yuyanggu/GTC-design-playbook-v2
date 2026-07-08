@@ -1,38 +1,30 @@
 <!DOCTYPE html>
-<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
+<!-- html.js-pending: FOUC shield. Lifted by main.js once initial states are
      set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
 <html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Foreword — The Design Playbook</title>
-  <meta name="description" content="Foreword to the GTC Design Playbook." />
+  <title>About — The Design Playbook</title>
+  <meta name="description" content="The people behind the GTC Design Playbook." />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/playbook_logo.svg" as="image" />
   <style id="fouc-shield">
-    html.js-pending body { background: var(--chalk, #f6f1e6); }
+    html.js-pending body { background: #0f191f; }
     html.js-pending .topbar,
-    html.js-pending .rail,
-    html.js-pending .page-body,
-    html.js-pending .foreword,
-    html.js-pending .toc-bar { opacity: 0 !important; visibility: hidden !important; }
+    html.js-pending .page-body { opacity: 0 !important; visibility: hidden !important; }
   </style>
   <noscript><style>
-    html.js-pending .topbar, html.js-pending .rail, html.js-pending .page-body,
-    html.js-pending .foreword, html.js-pending .toc-bar
+    html.js-pending .topbar, html.js-pending .page-body
       { opacity: 1 !important; visibility: visible !important; }
   </style></noscript>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/chapter.css" />
   <script src="js/gate.js"></script>
 </head>
-<body>
-  <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
-       The vertical divider runs the full height; the rotated label, the hamburger
-       (opens the bookshelf Menu) and the search icon ride in the rail. Lives OUTSIDE
-       #smooth-wrapper so it stays viewport-anchored, like the menu/pinwheel. -->
+<body class="page-dark">
   <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
   <header class="topbar">
     <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
@@ -45,33 +37,45 @@
     </button>
   </header>
 
-  <div class="rail" aria-label="Section navigation">
-    <span class="rail__divider" aria-hidden="true"></span>
-    <p class="rail__label">foreword</p>
-  </div>
-
-  <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
+  <!-- ScrollSmoother wrapper — content scrolls; menu stays fixed outside -->
   <div id="smooth-wrapper">
     <div id="smooth-content">
       <main class="playbook">
-        <section class="page-body foreword chapter-panel--foreword">
-          <!-- Title + banner are direct children of the full-width .page-body so they
-               position against the viewport rail (not the centred 1440 canvas); only
-               the copy stays inside the canvas. -->
-          <h1 class="foreword__title reveal">Foreword</h1>
-          <img class="foreword__graphic reveal" src="assets/foreword_Graphic.png"
-               width="1440" height="291" alt="" />
-          <div class="page-body__canvas">
-            <article class="copy foreword__copy">
-              <p class="lead reveal">Welcome to the GTC Design Team playbook &mdash; a shared space to align on our principles, craft, and how we work. Because design never stands still, neither do we. This remains a living draft, constantly refined as we adapt to new challenges and evolve our methods together.</p>
-
-              <h2 class="subsection-head reveal">For GTC Designers</h2>
-              <p class="reveal">This is not a manual for design mechanics, research techniques, or workshop instructions. Instead, it captures how we work, our point of view on where our craft is heading, and what it means to do this work in government, for the public, right now. Treat this playbook as a reference &mdash; somewhere to revisit, question, and build from as we keep learning.</p>
-
-              <h2 class="subsection-head reveal">For Friends of Design</h2>
-              <p class="reveal">Our playbook is open because no one should have to figure this out alone. As technology transforms our craft and we continue to experiment, we know shared learning is what helps the wider tech community move forward together. Whether you are a fellow designer, a partner, or just curious about how we work, this space exists to spark new conversations and shape our collective thinking as we build this future together.</p>
-            </article>
+        <section class="page-body about-page">
+          <!-- Hero (Figma 2052:1275): full viewport — topbar at top, head row
+               (title left / intro right, space-between) centred in the gap, the
+               illustration full-bleed along the bottom edge. -->
+          <div class="about-hero">
+            <div class="about-hero__head">
+              <h1 class="about-page__title reveal">About</h1>
+              <p class="about-page__intro reveal">We&rsquo;re the designers, researchers, and creative technologists behind GovTech Consulting. The playbook is how we think, this is what it looks like when we&rsquo;re in it: on the ground, in the room, and occasionally around a dinner table.</p>
+            </div>
+            <img class="about-hero__frieze" src="assets/about_hero_dark.webp"
+                 width="3420" height="922" alt="" />
           </div>
+
+          <!-- Pinned horizontal gallery — the strip translates left as you scroll
+               (js/about.js galleryScroll). Same-height images, natural widths.
+               Under reduced motion the section unpins and swipes natively (CSS). -->
+          <section class="about-gallery" aria-label="Photos of the GTC design team">
+            <div class="about-gallery__strip">
+              <figure class="about-gallery__item"><img src="assets/photos/about-5.jpg" width="1008" height="756" alt="A playbook alignment session — the team gathered around a screen reading 'A place to align, not a place to learn'." /></figure>
+              <figure class="about-gallery__item"><img src="assets/photos/about-3.jpg" width="1332" height="724" alt="The full consulting group at the GTC-CMG 2026 kickoff." /></figure>
+              <figure class="about-gallery__item"><img src="assets/photos/about-8.jpg" width="730" height="972" alt="Designers talking on an escalator between site visits." /></figure>
+              <figure class="about-gallery__item"><img src="assets/photos/about-1.jpg" width="934" height="664" alt="The team on a studio visit, under a red thread art installation." /></figure>
+              <figure class="about-gallery__item"><img src="assets/photos/about-4.jpg" width="1002" height="752" alt="A team selfie by the Marina Bay waterfront." /></figure>
+              <figure class="about-gallery__item"><img src="assets/photos/about-2.jpg" width="934" height="664" alt="Dinner around a colleague's table." /></figure>
+              <figure class="about-gallery__item"><img src="assets/photos/about-6.jpg" width="1000" height="750" alt="Drinks after work at a neighbourhood bistro." /></figure>
+              <figure class="about-gallery__item"><img src="assets/photos/about-7.jpg" width="1000" height="750" alt="A night out — the team mid-laugh under the fairy lights." /></figure>
+            </div>
+          </section>
+
+          <!-- Masked line reveal (js/about.js manifestoReveal): each line's text
+               rises out from under its own overflow-hidden wrapper, once, on enter. -->
+          <p class="about-manifesto">
+            <span class="about-manifesto__line"><span class="about-manifesto__text">Less deck.</span></span>
+            <span class="about-manifesto__line"><span class="about-manifesto__text about-manifesto__accent">More impact.</span></span>
+          </p>
         </section>
       </main>
     </div><!-- /#smooth-content -->
@@ -181,6 +185,6 @@
   <script src="vendor/CustomEase.min.js"></script>
   <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>
-  <script type="module" src="js/chapter.js"></script>
+  <script type="module" src="js/about.js"></script>
 </body>
 </html>

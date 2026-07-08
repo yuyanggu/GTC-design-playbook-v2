@@ -1258,3 +1258,139 @@ a.toc__chapter:hover { color: var(--midnight); }
   .foreword__title { margin-left: clamp(22px, 5vw, 32px); }
   .foreword__graphic { margin-left: 0; width: 100%; }
 }
+
+/* ============================================================================
+   ABOUT — standalone page (about.html): DARK page (Figma 2052:1275), no rail,
+   no TOC. body.page-dark inverts the topbar controls. First screen is a full
+   viewport hero — topbar at top, head row (Boldonse title left / serif intro
+   right, space-between) centred in the gap, the illustration full-bleed along
+   the bottom edge. Below on scroll: pinned horizontal photo gallery
+   (js/about.js galleryScroll) + "Less deck. / More impact." masked line reveal
+   (js/about.js manifestoReveal).
+   ========================================================================== */
+body.page-dark { background: #0c1619; }
+body.page-dark .topbar__logo img { filter: brightness(0) invert(1); }  /* white wordmark */
+body.page-dark .topbar__menu { color: var(--chalk); }
+/* The hamburger/X (z 60) floats above the chalk drawer (z 50) — flip it back
+   to midnight while the menu is open so the X stays visible on chalk. */
+body.page-dark:has(.menu:not([hidden])) .topbar__menu { color: var(--midnight); }
+
+.page-body.about-page {
+  --page-pad: clamp(22px, 2.8vw, 40px);    /* Figma: 40px side padding at 1710 */
+  padding: 0;                              /* drop the shared .page-body 48/280 pad — the hero owns its own spacing */
+  background: #0c1619;
+  color: #fff;
+}
+/* Tail room after the manifesto (the shared .page-body padding-bottom is gone). */
+.about-manifesto { padding-bottom: clamp(96px, 16vh, 200px); }
+
+/* ----- Hero: fills the viewport; illustration pinned to the bottom edge, the
+   head row centred in the space between the (fixed) topbar and the art. ------ */
+.about-hero {
+  min-height: 100vh;
+  min-height: 100svh;                      /* stable on mobile toolbars */
+  display: flex;
+  flex-direction: column;
+  padding-top: clamp(160px, 200px, 220px); /* base 200px; clamp keeps a safety margin on very short/tall viewports */
+}
+.about-hero__head {
+  display: flex;
+  align-items: center;                     /* title / intro centred against each other */
+  justify-content: space-between;          /* title hard-left, intro hard-right */
+  gap: clamp(32px, 6vw, 120px);
+  padding-inline: var(--page-pad);
+}
+.about-hero__frieze {
+  display: block;
+  margin-top: auto;                        /* head rides high; art pinned to the bottom edge */
+  width: 100%;                             /* full-bleed, edge to edge + bottom */
+  height: auto;                            /* natural aspect 3420/922 */
+  object-fit: cover;
+}
+
+.about-page__title {
+  margin: 0;
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5.2vw, 75px);
+  line-height: 1.6;                        /* Figma: 120/75 */
+  color: #fff;
+}
+.about-page__intro {
+  margin: 0;
+  flex: 0 1 auto;
+  max-width: 639px;                        /* Figma paragraph width */
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 16px;                         /* playbook body size (Figma 16/24) */
+  line-height: 1.5;
+  letter-spacing: -0.16px;
+  color: #fff;
+}
+
+/* ----- Photo gallery — pinned horizontal strip ------------------------------
+   The section is viewport-wide and clips the strip (images enter from beyond
+   the right edge); js/about.js pins it and tweens the strip's x. Same-height
+   images at natural widths (mixed portrait/landscape reads editorial). */
+.about-gallery {
+  position: relative;
+  overflow: hidden;
+  margin-top: 260px;                   /* gap under the hero illustration (reads dark-on-dark, so generous) */
+  margin-bottom: clamp(24px, 5vh, 64px);
+}
+.about-gallery__strip {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: max-content;              /* size to the images so scrollWidth is honest */
+  gap: clamp(16px, 2vw, 28px);
+  padding-inline: var(--page-pad);
+  will-change: transform;
+}
+.about-gallery__item { margin: 0; flex: 0 0 auto; }
+.about-gallery__item img {
+  display: block;
+  height: clamp(320px, 58vh, 540px);   /* the one shared height */
+  width: auto;
+  border-radius: 4px;
+}
+
+/* ----- Closing manifesto — masked line reveal -------------------------------
+   Each line is an overflow-hidden mask; the inner text starts translated below
+   the mask (under .js) and manifestoReveal slides it up once on enter. */
+.about-manifesto {
+  margin: clamp(80px, 14vh, 160px) auto 0;
+  padding-inline: var(--page-pad);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.6vw, 64px);
+  line-height: 1.6;                    /* generous box — Boldonse caps clip in tight boxes */
+  text-align: center;
+  color: #fff;
+}
+.about-manifesto__line { display: block; overflow: hidden; }
+.about-manifesto__text { display: block; }
+.js .about-manifesto__text { transform: translateY(112%); }   /* hidden under the mask until JS reveals */
+.about-manifesto__accent { color: var(--orange); }
+
+/* Reduced motion → no pin, no line rise (js/about.js early-returns); the strip
+   swipes natively and the manifesto is simply visible. */
+@media (prefers-reduced-motion: reduce) {
+  .about-gallery { overflow-x: auto; }
+  .js .about-manifesto__text { transform: none; }
+}
+
+@media (max-width: 768px) {
+  /* Head row stacks; the mobile topbar scrim (chalk on other pages) goes dark. */
+  body.page-dark .topbar::before {
+    background: linear-gradient(to bottom, #0c1619 0, #0c1619 20%, rgba(12, 22, 25, 0) 90%);
+  }
+  .about-hero__head {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+  }
+  .about-gallery__item img { height: min(52vh, 420px); }
+}

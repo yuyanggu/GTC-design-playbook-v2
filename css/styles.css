@@ -304,6 +304,28 @@ img { display: block; max-width: 100%; }
 .intro__body p + p { margin-top: 1.25em; }
 .intro__body em { font-style: italic; }
 
+/* "Dive in" — inline underlined text button that opens the About-this-playbook popup.
+   Native <button> chrome reset; sits below the welcome copy in the reveal column. */
+.intro__dive {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(14px, min(1.2vw, 1.8vh), 17px);
+  letter-spacing: -0.2px;
+  color: var(--midnight);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1.5px;
+  transition: color 0.2s ease, text-underline-offset 0.2s ease;
+}
+.intro__dive:hover,
+.intro__dive:focus-visible { color: var(--orange); text-underline-offset: 7px; }
+
 /* Arrow — Figma top:934 / 1024 ≈ 91.2% ; native 57 × 45 */
 .arrow {
   position: absolute;
@@ -325,7 +347,7 @@ img { display: block; max-width: 100%; }
   left: 50%;
   bottom: 0;
   z-index: 2;
-  width: 1578px;                     /* 6×188 + 5×90 */
+  width: 1300px;                     /* 5×188 + 4×90 (was 1578 with 6 books) */
   height: 340px;
   /* --shelf-scale is set by fitShelf() in main.js so the whole shelf scales down to
      fit narrow viewports (origin bottom-centre → stays centred + flush to the floor). */
@@ -384,14 +406,16 @@ img { display: block; max-width: 100%; }
 /* The after-scroll reveal is hidden on the cover state (revealed by the scroll master).
    Hide the body's paragraphs (not the container) — the master animates the <p>s. */
 .js .home-logo,
-.js .intro__body p { opacity: 0; }
+.js .intro__body p,
+.js .intro__dive { opacity: 0; }
 .js .intro__head .line > span { transform: translateY(110%); }
 @media (prefers-reduced-motion: reduce) {
   /* No scroll choreography → present the after-scroll composition statically so the
-     header/body copy is reachable. Clouds stay; the cover-only bits are hidden. */
+     welcome copy + Dive-in button are reachable. Clouds stay; the cover-only bits are hidden. */
   .js .cloud,
   .js .home-logo,
-  .js .intro__body p { opacity: 1; }
+  .js .intro__body p,
+  .js .intro__dive { opacity: 1; }
   .js .eyebrow--top,
   .js .lockup,
   .js #arrow { opacity: 0; }
@@ -909,4 +933,177 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
     color: rgba(246, 242, 231, 0.85);
   }
 
+}
+
+/* ============================================================================
+   ABOUT-THIS-PLAYBOOK POPUP  (Figma 2038:8068)
+   Full-screen modal opened by the landing "Dive in" button; holds the retired
+   Foreword's two sections. Mechanics/animation in aboutModal() (js/main.js).
+   ========================================================================== */
+.about-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow-y: auto;
+  background: #fff;                         /* white full-screen surface (Figma) */
+}
+.about-modal[hidden] { display: none; }
+
+/* Full-bleed click-to-close catcher (side gutters). */
+.about-modal__scrim {
+  position: fixed;
+  inset: 0;
+  cursor: pointer;
+}
+
+/* Full-width content, top-aligned, fixed sizing so it fits one screen (button visible). */
+.about-modal__card {
+  position: relative;
+  min-height: 100%;
+  width: 100%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.about-modal__card:focus { outline: none; }
+
+/* Close X - pinned to the viewport corner. */
+.about-modal__close {
+  position: fixed;
+  top: 24px;
+  right: 32px;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--midnight);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.about-modal__close:hover,
+.about-modal__close:focus-visible { background: rgba(1, 34, 51, 0.08); }
+
+/* Header - left-aligned display title, no rule above; generous space below. */
+.about-modal__title {
+  margin: 0 0 48px;
+}
+.about-modal__title h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.3px;
+  color: var(--midnight);
+}
+
+/* Content - illustration (left) + two text sections (right); the sections split
+   into equal halves that line up with the two stacked illustration blocks. */
+.about-modal__content {
+  flex: 1 1 auto;                          /* fill the space so the button sits at the bottom edge */
+  display: flex;
+  gap: 40px;
+  align-items: stretch;
+  min-height: 0;
+}
+.about-modal__illus {
+  flex: 0 0 582px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.about-modal__illus img {
+  display: block;
+  width: 100%;
+  flex: 1 1 0;                             /* two blocks share the (now taller) column height */
+  min-height: 0;
+  object-fit: cover;
+}
+
+.about-modal__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.about-modal__row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;               /* heading + body hug the top of each half */
+  flex: 1 1 0;                           /* two equal halves aligned to the illustration blocks */
+}
+.about-modal__row:first-of-type { padding-bottom: 24px; }
+.about-modal__row:last-of-type { padding-top: 24px; }
+.about-modal__row h3 {
+  flex: 0 0 230px;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+  color: var(--midnight);
+}
+.about-modal__row p {
+  flex: 1 1 auto;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.32px;
+  color: #000;
+}
+.about-modal__rule {
+  height: 0;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--midnight);
+}
+
+/* CTA - midnight button with orange arrow chip, bottom-right. */
+.about-modal__cta {
+  align-self: flex-end;
+  margin-top: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  background: var(--midnight);
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  transition: background 0.2s ease;
+}
+.about-modal__cta:hover,
+.about-modal__cta:focus-visible { background: #013a58; }
+.about-modal__cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  background: var(--orange);
+  color: var(--midnight);
+}
+
+@media (max-width: 768px) {
+  .about-modal__card { padding: 72px 20px 32px; }
+  .about-modal__title { margin-bottom: 28px; }
+  .about-modal__title h2 { font-size: 28px; }
+  .about-modal__content { flex-direction: column; gap: 22px; }
+  .about-modal__illus { flex-basis: auto; width: 100%; }
+  .about-modal__text { flex-basis: auto; width: 100%; }
+  .about-modal__row { flex-direction: column; gap: 8px; flex-basis: auto; }
+  .about-modal__row:first-of-type { padding-bottom: 20px; }
+  .about-modal__row:last-of-type { padding-top: 20px; }
+  .about-modal__cta { align-self: stretch; justify-content: center; }
 }

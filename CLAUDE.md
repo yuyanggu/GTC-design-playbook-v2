@@ -75,9 +75,10 @@ project memory `headless-motion-verification`.
   stacks vertically (pinwheel above title, `padding-inline: 20px`) to prevent overflow; hero
   plays reveal once then scroll is fully native into the cards.
 - ✅ **Menu** — right-side drawer (swipe-in, interruptible, rows-fall-away close, hamburger→X) on all
-  chapter pages + reader + foreword standalone. `Esc` / scrim / X closes. **6 rows, all linked**:
-  00 Foreword → 01 About GTC → 02 → 03 → 04 → 05 How We Work. Reader menu uses clean
-  paths (`/chapter-1…5`); standalone menus use file hrefs. `menu_4.svg` is reused for row 05.
+  chapter pages + reader + foreword standalone + about. `Esc` / scrim / X closes. **7 rows, all
+  linked**: 00 Foreword → 01 About GTC → 02 → 03 → 04 → 05 How We Work → About (unnumbered coda
+  row, hand-written `menu_about*.svg` icons). Reader menu uses clean paths (`/chapter-1…5`,
+  `/about`); standalone menus use file hrefs. `menu_4.svg` is reused for row 05.
 - ✅ **Foreword** — reader panel `#ch0` (`.chapter-panel--foreword`, chalk, no hero, no TOC) + standalone
   `foreword.html` (fallback only, no longer linked from live nav). Entry: shelf book 0 and mobile
   card link to `/playbook.html` (reader top = ch0). Clean path `/foreword` maps in `routes.js` +
@@ -95,6 +96,23 @@ project memory `headless-motion-verification`.
   **TOC** is a stacked chapter index (01–05, all linkable now), the current one accent + expanded to
   its sections; **≤768px** a fixed bottom `.toc-bar` + slide-up `.toc-sheet` replaces it. See
   [chapter-pages.md](.claude/docs/chapter-pages.md) for the block catalogue.
+- ✅ **About page (`about.html`)** — standalone **dark** page (Figma `2052:1275`, bg `#0c1619`,
+  menu-only entry, not on the landing shelf; **no left rail**; `body.page-dark` inverts the topbar —
+  white wordmark via CSS filter, chalk hamburger that flips back to midnight while the chalk drawer
+  is open via `:has(.menu:not([hidden]))`). Layout: **full-viewport hero** (`.about-hero`,
+  `min-height:100svh`) — head row (Boldonse "About" hard-left + 639px serif intro hard-right,
+  `space-between`, **centred vertically** in the gap between the fixed topbar and the art via
+  `flex:1`; stacks ≤768px) sits above the **full-bleed** `assets/about_hero_dark.webp` illustration
+  (3420×922, edge-to-edge, flush to the bottom viewport edge, static). Note: `.page-body.about-page`
+  zeroes the shared `.page-body` 48/280 padding so the hero is exactly one screen. Below on scroll:
+  **pinned horizontal photo gallery** (8 team photos, `assets/photos/about-*.jpg`, same
+  height/natural widths, 4px radius; strip scrubs left by its overflow, `pinType:"transform"`;
+  reduced-motion → native `overflow-x` swipe) → "Less deck. / More impact." **masked line reveal**
+  (each line rises once out of its overflow-hidden wrapper on enter; `manifestoReveal` in
+  `js/about.js` — note the `y:0` guard so GSAP doesn't stack the CSS start offset). Intro copy is the
+  playbook body size (16px). Own module `js/about.js` (not `chapter.js`); CSS is the
+  `.about-*`/`page-dark` block at the end of `chapter.css`; clean path `/about` rewrites in
+  `vercel.json` / `_redirects` / `serve.json`.
 - ✅ **Continuous reader (`playbook.html`)** — Foreword (`#ch0`) + all five chapters
   (`#ch1/#ch2/#ch3/#ch4/#ch5`) stacked with the seamless chapter-to-chapter scroll effect; per-chapter
   TOC pins coexist; rail follows the active chapter; menu/landing books deep-link in. `urlSync`

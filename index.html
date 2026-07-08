@@ -72,17 +72,15 @@
         </div>
 
         <!-- After-scroll reveal column: the pinwheel rises UP to its slot here, then the
-             header (line-clip wipe) + body copy fade up. Hidden on the cover state. -->
+             welcome copy + "Dive in" button fade up. Hidden on the cover state.
+             (The old two-line "A place to align…" headline was removed 2026-07 in favour
+             of the simpler welcome copy — see git history to revive it.) -->
         <div class="intro-reveal" id="introReveal">
           <span class="pinwheel-slot pinwheel-slot--scrolled" id="pinwheelSlotScrolled" aria-hidden="true"></span>
-          <h2 class="intro__head">
-            <span class="line"><span>A place to align,</span></span>
-            <span class="line"><span>not a place to learn.</span></span>
-          </h2>
           <div class="intro__body">
-            <p><em>Design is changing.</em> The way we work, the tools we use, the expectations we navigate all of it is shifting. This playbook captures how we think about it at GTC: our principles, our craft, and our way of working and because design never stops evolving, neither does this.</p>
-            <p>Consider it a living reference, a place to learn, revisit, and build from.</p>
+            <p>Welcome to the GTC Design Team playbook &mdash; a shared space to align on our principles, craft, and how we work. Because design never stands still, neither do we. This remains a living draft, constantly refined as we adapt to new challenges and evolve our methods together.</p>
           </div>
+          <button class="intro__dive" type="button" data-about-open>Dive in</button>
         </div>
 
         <img class="arrow" id="arrow" src="assets/arrow.svg" alt="" aria-hidden="true" />
@@ -96,10 +94,13 @@
             <img class="spine" src="assets/book_element_3.svg" alt="" style="--x:473px; --w:76px;" />
             <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:753px; --w:72px;" />
             <img class="spine" src="assets/book_element_4.svg" alt="" style="--x:1031px; --w:72px;" />
-            <img class="spine" src="assets/book_element_5.svg" alt="" style="--x:1306px; --w:33px;" />
+            <!-- trailing spine (was --x:1306) removed with book 0 → shelf narrowed to 1300px -->
           </div>
 
-          <!-- Book 0 — Foreword (interactive) -->
+          <!-- Book 0 — Foreword: RETIRED 2026-07 (Foreword hidden site-wide, kept for revert).
+               Re-add here + restore --book-x offsets below (shift each +278px) and SHELF_W to
+               revive. -->
+          <!--
           <button class="book book--interactive book--0" type="button" data-book data-href="/playbook.html" style="--book-x:0px;">
             <span class="book__inner">
               <span class="book__num">0</span>
@@ -112,9 +113,10 @@
               </span>
             </span>
           </button>
+          -->
 
           <!-- Book 1 — interactive (About GovTech Consulting) -->
-          <button class="book book--interactive book--1" type="button" data-book data-href="/chapter-1" style="--book-x:278px;">
+          <button class="book book--interactive book--1" type="button" data-book data-href="/chapter-1" style="--book-x:0px;">
             <span class="book__inner">
               <span class="book__num">1</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -128,7 +130,7 @@
           </button>
 
           <!-- Book 2 — interactive (Our Point of View) -->
-          <button class="book book--interactive book--2" type="button" data-book data-href="/chapter-2" style="--book-x:556px;">
+          <button class="book book--interactive book--2" type="button" data-book data-href="/chapter-2" style="--book-x:278px;">
             <span class="book__inner">
               <span class="book__num">2</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -142,7 +144,7 @@
           </button>
 
           <!-- Book 3 — interactive (Our Approach) -->
-          <button class="book book--interactive book--3" type="button" data-book data-href="/chapter-3" style="--book-x:834px;">
+          <button class="book book--interactive book--3" type="button" data-book data-href="/chapter-3" style="--book-x:556px;">
             <span class="book__inner">
               <span class="book__num">3</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -156,7 +158,7 @@
           </button>
 
           <!-- Book 4 — interactive (The Stages of an Engagement) -->
-          <button class="book book--interactive book--4" type="button" data-book data-href="/chapter-4" style="--book-x:1112px;">
+          <button class="book book--interactive book--4" type="button" data-book data-href="/chapter-4" style="--book-x:834px;">
             <span class="book__inner">
               <span class="book__num">4</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -170,7 +172,7 @@
           </button>
 
           <!-- Book 5 — interactive (How We Work) -->
-          <button class="book book--interactive book--5" type="button" data-book data-href="/chapter-5" style="--book-x:1390px;">
+          <button class="book book--interactive book--5" type="button" data-book data-href="/chapter-5" style="--book-x:1112px;">
             <span class="book__inner">
               <span class="book__num">5</span>
               <span class="book__rule" aria-hidden="true"></span>
@@ -191,12 +193,14 @@
          tap-to-navigate (no hover/physics); each card has a CSS spine ledge below it.
          Hidden on desktop, where #homeShelf is used instead. -->
     <nav class="home-cards" aria-label="Playbook sections">
+      <!-- Foreword card: RETIRED 2026-07 (kept for revert).
       <a class="home-card" href="/playbook.html">
         <span class="home-card__icon"><img src="assets/menu_0.svg" alt="" /></span>
         <span class="home-card__num">0</span>
         <span class="home-card__rule" aria-hidden="true"></span>
         <span class="home-card__body"><span class="home-card__title">Foreword</span></span>
       </a>
+      -->
       <a class="home-card" href="/chapter-1">
         <span class="home-card__icon"><img src="assets/menu_1.svg" alt="" /></span>
         <span class="home-card__num">1</span>
@@ -232,6 +236,52 @@
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
 
+  <!-- ─────────── "About this playbook" popup (Figma 2038:8068) ───────────
+       Opened by the landing "Dive in" button ([data-about-open]); fade/scale-in
+       via GSAP (aboutModal() in main.js). Holds the retired Foreword's two
+       sections. Sits OUTSIDE #smooth-wrapper so main can be made inert while open. -->
+  <div class="about-modal" id="aboutModal" role="dialog" aria-modal="true"
+       aria-labelledby="aboutModalTitle" hidden aria-hidden="true">
+    <div class="about-modal__scrim" data-about-close aria-hidden="true"></div>
+    <div class="about-modal__card" tabindex="-1">
+      <button class="about-modal__close" type="button" data-about-close aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <div class="about-modal__title">
+        <h2 id="aboutModalTitle">About this playbook</h2>
+      </div>
+
+      <div class="about-modal__content">
+        <div class="about-modal__illus" aria-hidden="true">
+          <img src="assets/about_modal_1.png" alt="" width="582" height="325" />
+          <img src="assets/about_modal_2.png" alt="" width="582" height="325" />
+        </div>
+        <div class="about-modal__text">
+          <section class="about-modal__row">
+            <h3>For GTC Designers</h3>
+            <p>This is not a manual for design mechanics, research techniques, or workshop instructions. Instead, it captures how we work, our point of view on where our craft is heading, and what it means to do this work in government, for the public, right now. Treat this playbook as a reference &mdash; somewhere to revisit, question, and build from as we keep learning.</p>
+          </section>
+          <hr class="about-modal__rule" />
+          <section class="about-modal__row">
+            <h3>For Friends of Design</h3>
+            <p>Our playbook is open because no one should have to figure this out alone. As technology transforms our craft and we continue to experiment, we know shared learning is what helps the wider tech community move forward together. Whether you are a fellow designer, a partner, or just curious about how we work, this space exists to spark new conversations and shape our collective thinking as we build this future together.</p>
+          </section>
+        </div>
+      </div>
+
+      <a class="about-modal__cta" href="/playbook.html">
+        <span>Read the playbook</span>
+        <span class="about-modal__cta-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" focusable="false">
+            <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
