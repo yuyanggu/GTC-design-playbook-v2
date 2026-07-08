@@ -612,8 +612,7 @@ function magneticButtons() {
    7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
    (the landing "Dive in" button). GSAP fade/scale-in; page scroll is hard-locked
    while open (like menuScene — decoupled from ScrollSmoother, see gotchas.md).
-   No-ops on pages without #aboutModal. "Read the playbook" is a plain <a>, so it
-   needs no wiring here.
+   No-ops on pages without #aboutModal.
    ========================================================================== */
 function aboutModal() {
   const modal = document.querySelector("#aboutModal");

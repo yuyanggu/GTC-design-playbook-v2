@@ -1013,7 +1013,7 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 /* Content - illustration (left) + two text sections (right); the sections split
    into equal halves that line up with the two stacked illustration blocks. */
 .about-modal__content {
-  flex: 1 1 auto;                          /* fill the space so the button sits at the bottom edge */
+  flex: 1 1 auto;                          /* fill the remaining card height */
   display: flex;
   gap: 40px;
   align-items: stretch;
@@ -1074,34 +1074,6 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   border-top: 1px solid var(--midnight);
 }
 
-/* CTA - midnight button with orange arrow chip, bottom-right. */
-.about-modal__cta {
-  align-self: flex-end;
-  margin-top: 40px;
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 12px;
-  background: var(--midnight);
-  color: #fff;
-  text-decoration: none;
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: 16px;
-  transition: background 0.2s ease;
-}
-.about-modal__cta:hover,
-.about-modal__cta:focus-visible { background: #013a58; }
-.about-modal__cta-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 19px;
-  height: 19px;
-  background: var(--orange);
-  color: var(--midnight);
-}
-
 @media (max-width: 768px) {
   .about-modal__card { padding: 72px 20px 32px; }
   .about-modal__title { margin-bottom: 28px; }
@@ -1112,5 +1084,4 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   .about-modal__row { flex-direction: column; gap: 8px; flex-basis: auto; }
   .about-modal__row:first-of-type { padding-bottom: 20px; }
   .about-modal__row:last-of-type { padding-top: 20px; }
-  .about-modal__cta { align-self: stretch; justify-content: center; }
 }
