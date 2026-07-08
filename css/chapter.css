@@ -1284,6 +1284,14 @@ body.page-dark .topbar__menu { color: var(--chalk); }
    to midnight while the menu is open so the X stays visible on chalk. */
 body.page-dark:has(.menu:not([hidden])) .topbar__menu { color: var(--midnight); }
 
+/* ----- About embedded in the reader (playbook.html #about terminal panel) ------
+   The standalone page is body.page-dark throughout; in the reader ONLY the terminal
+   panel is dark, so invert the topbar logo to chalk while it sits under the bar
+   (aboutPanel in js/chapter.js toggles html.reader-dark as the panel fills the top
+   band). The left rail is clipped away over the panel by railReveal, which treats
+   .chapter-panel--about as an occluder just like a coloured chapter hero. */
+html.reader-dark .topbar__logo img { filter: brightness(0) invert(1); }
+
 .page-body.about-page {
   --page-pad: clamp(22px, 2.8vw, 40px);    /* Figma: 40px side padding at 1710 */
   padding: 0;                              /* drop the shared .page-body 48/280 pad — the hero owns its own spacing */
@@ -1391,8 +1399,11 @@ body.page-dark:has(.menu:not([hidden])) .topbar__menu { color: var(--midnight); 
 }
 
 @media (max-width: 768px) {
-  /* Head row stacks; the mobile topbar scrim (chalk on other pages) goes dark. */
-  body.page-dark .topbar::before {
+  /* Head row stacks; the mobile topbar scrim (chalk on other pages) goes dark —
+     on the standalone page (body.page-dark) and over the reader's About panel
+     (html.reader-dark). */
+  body.page-dark .topbar::before,
+  html.reader-dark .topbar::before {
     background: linear-gradient(to bottom, #0c1619 0, #0c1619 20%, rgba(12, 22, 25, 0) 90%);
   }
   .about-hero__head {
