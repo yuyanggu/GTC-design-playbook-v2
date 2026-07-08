@@ -87,6 +87,13 @@ body {
 
 img { display: block; max-width: 100%; }
 
+/* Chrome/Safari let you click-drag images & SVGs out as ghost drag images — kill that
+   so pressing on any graphic never starts a native drag (books, spines, icons, art). */
+img, svg {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 /* ============================================================================
    TYPE SYSTEM  (letterSpacing tokens are % of font-size)
    ========================================================================== */

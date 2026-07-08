@@ -336,8 +336,9 @@ function homeBooks() {
   // Scale the whole shelf down to fit narrow viewports (origin bottom-centre, set in CSS)
   // so all five books stay visible + centred. Runs under reduced motion too.
   const SHELF_W = 1300;   // 5×188 + 4×90 (was 1578 with 6 books incl. Foreword)
+  const SHELF_PAD = 80;   // 40px breathing room each side so the shelf never crowds the edge
   const fitShelf = () => {
-    const scale = Math.min(1, (window.innerWidth - 32) / SHELF_W);
+    const scale = Math.min(1, (window.innerWidth - SHELF_PAD) / SHELF_W);
     shelf.style.setProperty("--shelf-scale", scale.toFixed(4));
   };
   fitShelf();
