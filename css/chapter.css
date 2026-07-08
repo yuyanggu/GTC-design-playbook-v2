@@ -271,6 +271,15 @@ body { background: var(--chalk); }
    by the .chapter-panel scope (the standalone about-govtech-consulting.html has
    no transition, so it keeps its natural short height). */
 .chapter-panel#ch1 .page-body { min-height: 100vh; }
+/* Chapters 2–5 dwell longer than the 280px base before the chapter→chapter
+   transition engages. Bounded to ≥769px so the ≤768px 150px mobile trim
+   (below) still wins on phones despite the higher ID specificity here. */
+@media (min-width: 769px) {
+  .chapter-panel#ch2 .page-body,
+  .chapter-panel#ch3 .page-body,
+  .chapter-panel#ch4 .page-body,
+  .chapter-panel#ch5 .page-body { padding-bottom: 360px; }
+}
 .page-body__canvas {
   position: relative;
   width: min(1440px, 100%);

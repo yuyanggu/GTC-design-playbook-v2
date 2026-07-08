@@ -694,16 +694,17 @@ function panelTransitions(panelEls) {
         pinSpacing: false,                  // next chapter scrolls up and over the pinned one
         pinType: "transform",               // required under ScrollSmoother
         scrub: true,
-        // Snap, scroll-direction-biased: a small nudge in either direction commits the
-        // transition the moment you stop — scroll down → completes into the next chapter,
-        // scroll up → returns — so it activates fast and always settles ON a chapter,
-        // never half-cut. directional:true is what makes the nudge follow your scroll.
+        // Snap, proximity-based: settles on whichever end (0 = stay, 1 = next chapter) is
+        // closer, so it always lands ON a chapter, never half-cut. Deliberately NOT
+        // directional — a directional bias completes the hand-off on the tiniest forward
+        // nudge, which read as "scrolling past is too easy." Proximity means you have to
+        // scroll roughly halfway through the transition before it commits, giving readers
+        // real resistance/feedback that a chapter boundary is happening.
         snap: {
           snapTo: [0, 1],
           duration: { min: 0.4, max: 0.5 },
           delay: 0.00,                      // snap almost immediately after the scroll stops
           ease: "power2.out",
-          directional: true,                // bias to the direction you're scrolling (commits quicker)
         },
         invalidateOnRefresh: true,
       },
