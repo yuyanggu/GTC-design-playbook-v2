@@ -185,7 +185,13 @@ function coverScroll() {
 function introHold() {
   if (reduce || !loadTl || !document.querySelector("#hero")) return;  // no intro → nothing to guard
 
-  if (smoother) smoother.paused(true);   // freeze the smoothed (desktop) scroll
+  // Always start the landing at the very top on (re)load. ScrollSmoother drives its OWN scroll
+  // (not window scroll), and the browser restores that position on refresh — which would drop
+  // the pinwheel load-in into the intro/books. Reset the smoother to the top (before the hold,
+  // for the visual, and again on release, in case the browser restored during the load-in).
+  const toTop = () => { if (smoother) smoother.scrollTop(0); else window.scrollTo(0, 0); };
+  toTop();
+  if (smoother) smoother.paused(true);    // freeze the smoothed (desktop) scroll
   root.style.overflow = "hidden";         // + hard-lock native scroll (touch/mobile)
   document.body.style.overflow = "hidden";
 
@@ -194,6 +200,7 @@ function introHold() {
     if (released) return;
     released = true;
     if (smoother) smoother.paused(false);
+    toTop();
     root.style.overflow = "";
     document.body.style.overflow = "";
   };
