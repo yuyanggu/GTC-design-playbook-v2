@@ -17,8 +17,8 @@ These are the highest-value notes in the repo — preserve them.
 - Use **`autoAlpha`** (opacity + visibility) for fade-outs so faded elements are truly gone.
 - **GSAP-animated CSS custom props must be declared with a real initial value** (e.g.
   `--streak-hide: 100%`), otherwise GSAP reads an empty start and jumps to the end value.
-- Always honour `prefers-reduced-motion`: `pinwheelScene`/`heroScene` bail to end-states and the
-  static graphic (the old separate `introReveal` fallback was folded in during the home-v2 refactor).
+- Always honour `prefers-reduced-motion`: the landing scenes (`pinwheelScene`/`coverScroll`/
+  `introScene`/`homeBooks`) bail to end-states and CSS shows everything statically.
 - After font load, call `ScrollTrigger.refresh()` (metrics shift can break pin distances).
 
 ## Transform fights
@@ -31,10 +31,11 @@ These are the highest-value notes in the repo — preserve them.
   pinwheel keeps position on the outer `.pinwheel` and rotation on the inner `.pinwheel__spin`. GSAP
   sums `y`+`yPercent`, and `overwrite:"auto"` only kills the *same* property. (Same lesson behind the
   reader's outer/inner `.chapter-panel` split.)
-- **Don't animate `yPercent` for a line-clip reveal.** GSAP's percent-unit transform cache can end
-  with `yPercent:0` in cache but a **stale inline `translate(…px)`** that never re-renders (the
-  reveal stays hidden). Drive the wipe with **px `y`** (measured line height → 0) instead.
-  (`heroScene`'s header.)
+- **Don't animate `yPercent` for a line-clip reveal without zeroing `y` first.** GSAP parses a CSS
+  `translateY(…%)` start state into a **px** value in its cache; animating `yPercent` then stacks on
+  that stale px offset (the reveal settles half-hidden). Either drive the wipe with **px `y`**
+  (measured line height → 0) or `gsap.set({y:0, yPercent:…})` before animating `yPercent` (the
+  guard used by `manifestoReveal` in about.js and `introScene`'s word rise in main.js).
 
 ## Cross-section travel
 
@@ -49,14 +50,22 @@ These are the highest-value notes in the repo — preserve them.
 
 ## ScrollSmoother & pinning
 
-- **ScrollSmoother:** only `#smooth-content` (the `<main>`) is transformed/smoothed; the
-  `position:fixed` **menu overlay and pinwheel traveler live OUTSIDE it** (direct children of
-  `<body>`) so fixed stays viewport-anchored. The pinwheel's `place()` reads the slot's live
-  `getBoundingClientRect()`, which already reflects the smoother transform, so the fixed traveler
-  still aligns. The menu **does NOT call the smoother API** (pausing it tangled with open/close and
-  bugged out); instead, while open it hard-locks page scroll via
-  `documentElement.style.overflow = "hidden"` — freezing the window scroll the smoother rides on.
-  Restored on close.
+- **ScrollSmoother** now runs on **every** surface, including the landing (`smooth:1.7`); only
+  `#smooth-content` (the `<main>`) is transformed/smoothed. The `position:fixed` **menu overlay,
+  pinwheel traveler, and the landing's top-bar logo (`.home-logo`) live OUTSIDE it** (direct children
+  of `<body>`) so fixed stays viewport-anchored — a `fixed` element left *inside* `#smooth-content`
+  is positioned relative to the transformed ancestor, not the viewport, and won't stay put.
+  The pinwheel's `place()` reads the slot's live `getBoundingClientRect()`, which already reflects
+  the smoother transform, so the fixed traveler aligns **without lag — but only because `place()` is
+  added to `gsap.ticker` AFTER `ScrollSmoother.create()`** (pinwheelScene boots after smoothScroll),
+  so each frame it reads the *post*-transform rect. Add it before the smoother and the pinwheel
+  trails a frame (the same lag the TOC note below warns about). This per-frame follow is fine here
+  because the pinwheel is a small fixed sprite, not an in-flow nav that must glue to content.
+- **Two scroll-locks depending on the page.** The **menu** hard-locks scroll via
+  `documentElement.style.overflow = "hidden"` (pausing the smoother API tangled with open/close and
+  bugged out) — but the menu is absent on the landing. The **About popup** (landing only) instead
+  **pauses the smoother** (`smoother.paused(true)` in `lock`, `false` in `unlock`) alongside the
+  overflow lock, so the smoothed landing scroll actually freezes while the modal is open.
 - **Pinning under ScrollSmoother (the chapter TOC).** CSS `position:sticky`/`fixed` **cannot
   survive** the smoother's transform on `#smooth-content` (a sticky el reads `top:-402` instead of
   sticking; a fixed el is positioned relative to the transformed ancestor, not the viewport). Use a

@@ -92,10 +92,11 @@ shelf** (`#homeShelf`):
   Cards use `padding-block: 32px`, 48px icons, `linear-gradient(90deg, #aed3ed 0%, #4f94cf 47.12%)`,
   18px gap. No hover/physics — tap navigates. Book 4 uses `.home-card--soon` (gray). The Foreword
   card links to `/playbook.html` (reader top = ch0); chapter cards link to `/chapter-N`.
-- `homeBooks()` parks books/spines (`hbBooks`/`hbSpines`, read by `heroScene`) and calls
-  `wireBookKnockAndHover()` (cursor-knock + hover-raise/recolour).
-- **The hover raise uses `yPercent` (NOT `y`)** so it can't overwrite the scroll master's `y`
-  tween — books always fall away on scroll-up even if the cursor grazes a book mid-transition
+- `homeBooks()` parks books/spines below the fold, plays their rise-in via its own `once:true`
+  ScrollTrigger when the shelf enters, and calls `wireBookKnockAndHover()` (cursor-knock +
+  hover-raise/recolour).
+- **The hover raise uses `yPercent` (NOT `y`)** so it can't overwrite the rise-in's `y`
+  tween — the two never fight even if the cursor grazes a book mid-rise
   (separate transform channels — see [gotchas.md](gotchas.md)).
 - Book number top padding is **30px** (was 19px).
 

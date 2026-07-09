@@ -1,8 +1,10 @@
 /* ============================================================================
-   GTC — The Design Playbook · home v2 motion
+   GTC — The Design Playbook · home v3 motion
    Load: clouds drift, the pinwheel rises in + aligns to the lockup (wind spin).
-   Scroll: the lockup/pinwheel group lifts, the arrow fades, the section books
-   rise in and settle flush to the bottom. (Books reuse the menu book system.)
+   Scroll: fully native, no pin — the cover lockup scales down as it scrolls away
+   (the fixed pinwheel tracks its slot rect, so it shrinks for free), the clouds
+   parallax down to settle along the intro's top edge, the intro headline words
+   rise once on enter, and the section books rise when the shelf enters.
    GSAP + ScrollTrigger + ScrollSmoother. The menu overlay code stays for the
    chapter pages and no-ops here (no #menu on the home).
    ========================================================================== */
@@ -23,37 +25,32 @@ const arrow = document.querySelector("#arrow");
 // first scroll so the scroll sequence never fights an in-flight entrance.
 let loadTl = null;
 
-// The pinwheel traveler's proxy (rise/align/scrolled) — owned by pinwheelScene, driven
-// on scroll by heroScene's master (it tweens `.scrolled` to glide the pinwheel UP to the
-// after-scroll header slot). Shared because the two scenes are separate functions.
+// The pinwheel traveler's proxy (rise/align) — owned by pinwheelScene; kept module-level
+// so coverScroll can fast-forward the load-in on first scroll.
 let pinwheelProx = null;
-
-// Home book + spine elements (parked below the fold by homeBooks; their rise-in is
-// authored into heroScene's one-shot master timeline).
-let hbBooks = [];
-let hbSpines = [];
 
 // ScrollSmoother instance (the menu does NOT touch it — it just hard-locks page scroll
 // via documentElement overflow while open, to avoid smoother/menu interaction bugs).
 let smoother = null;
 
 /* ============================================================================
-   0 · Smooth scrolling (GSAP ScrollSmoother) — wraps #smooth-content; the pinned
-   hero rides inside it, the fixed pinwheel stays outside. Subtle (smooth:1).
-   The LANDING page (the only page with #hero) opts OUT of the smoother entirely so
-   its scroll is native + 1:1 (no catch-up lag): the hero/pinwheel pins fall back to
-   native pinning, the pinwheel traveler reads live rects either way, and index.html
-   has no #menu, so nothing there depends on `smoother`. Chapter pages + the reader
-   keep the smoother (their TOC/panel pins need its transform — see chapter.js).
+   0 · Smooth scrolling (GSAP ScrollSmoother) — wraps #smooth-content; the fixed
+   pinwheel stays outside and reads live rects. EVERY surface uses it now: the
+   landing gets a heavier glide (smooth 1.7), chapter pages + the reader stay at 1.
+   The landing has no #menu, so the menu's overflow hard-lock is moot there; the
+   About popup pauses the smoother while open instead (see aboutModal).
    ========================================================================== */
 function smoothScroll() {
   if (reduce || !window.ScrollSmoother) return;
-  if (document.querySelector("#hero")) return;   // landing page → native scroll, no lag
+  // The landing gets a heavier glide (smooth 1.7) than the chapter pages (1); the fixed
+  // pinwheel traveler reads live rects, and place() (pinwheelScene) is added to the ticker
+  // AFTER the smoother, so it reads the post-transform slot rect each frame → tracks cleanly.
+  const home = !!document.querySelector("#hero");
   smoother = ScrollSmoother.create({
     wrapper: "#smooth-wrapper",
     content: "#smooth-content",
-    smooth: 1,        // subtle catch-up
-    smoothTouch: 0,   // native scrolling on touch devices
+    smooth: home ? 1.7 : 1,
+    smoothTouch: 0,   // native scrolling on touch devices (smoothing touch feels laggy)
     effects: false,
   });
 }
@@ -116,13 +113,31 @@ function cloudDrift() {
   build();
   let rt;
   window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 200); });
+
+  // Scroll parallax (landing only): the CONTAINER drifts down in document space at
+  // <1× scroll speed, so the cloud band moves up-screen slower than the page and
+  // settles along the top of the intro section, then freezes and scrolls away with
+  // it. Container `y` is a free channel — the per-cloud tweens above own x/scale/
+  // opacity — and build() only resets the children, so this survives resize rebuilds.
+  const CLOUD_TRAVEL = 0.75;   // fraction of viewport height; tune vs the Figma intro
+  const cont = document.querySelector("#hero .clouds");
+  if (cont) {
+    gsap.to(cont, {
+      y: () => window.innerHeight * CLOUD_TRAVEL,
+      ease: "none",
+      scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true, invalidateOnRefresh: true },
+    });
+  }
 }
 
 /* ============================================================================
-   2 · Scroll scene — ONE-SHOT on first scroll: arrow out fast → group lifts up
-       → books rise in and settle. Timed (not scrubbed); reverses at the very top.
+   2 · Cover scroll — no pin. On the first scroll-down the cover exit plays as ONE
+       timed, uninterruptible timeline (it runs to completion on its own clock, so
+       scroll speed/stops can't jitter or freeze it): the lockup scales down (the
+       fixed pinwheel tracks its slot rect and shrinks with it), the arrow fades,
+       and the top-left header wordmark fades in. Reverses only back at the very top.
    ========================================================================== */
-function heroScene() {
+function coverScroll() {
   const hero = document.querySelector("#hero");
   const row = document.querySelector("#lockupRow");
   if (!hero || !row) return;        // hero-only scene; absent on chapter pages
@@ -131,106 +146,178 @@ function heroScene() {
   // translate(-50%,-50%) so xPercent/yPercent don't stack into a double-shift.
   gsap.set(row, { x: 0, y: 0, xPercent: -50, yPercent: -50 });
 
-  if (reduce) return;               // static layout (books shown settled by homeBooks)
+  if (reduce) return;               // static layout, native scroll only
 
-  // GSAP owns the reveal's hidden start states (so its cache matches the DOM and the
-  // master can animate / reverse them cleanly — a bare CSS start fights GSAP's cleanup).
-  // The header line-clip uses px `y` (each span pushed below its clipped line): GSAP's
-  // percent-unit transform cache leaves a stale inline px value that won't re-render.
-  const headSpans = gsap.utils.toArray(".intro__head .line > span");
-  headSpans.forEach((s) => gsap.set(s, { y: Math.ceil(s.parentElement.getBoundingClientRect().height) + 2 }));
-  gsap.set(".home-logo", { autoAlpha: 0, y: -8 });
-  gsap.set(".intro__body p", { autoAlpha: 0, y: 18 });
-  gsap.set(".intro__dive", { autoAlpha: 0, y: 18 });
+  // One paused timeline = the whole cover exit. Played once, in full, so the logo
+  // scale can't be interrupted mid-flight by scroll. (The top-left brand mark is a
+  // separate fixed top bar revealed at the bottom of the page — see logoBar.)
+  const coverTl = gsap.timeline({ paused: true })
+    .to(row, { scale: 0.55, transformOrigin: "50% 50%", duration: 0.9, ease: "power2.inOut" }, 0)
+    .to("#arrow", { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 0);
 
-  // Both pointer types use the SAME timed play-once model: one scroll past the threshold
-  // plays the whole transition at its own fixed duration (NOT mapped to scroll speed),
-  // and scrolling back to the top reverses it. Touch only differs by `anticipatePin`,
-  // which smooths the pin grab during momentum scroll. Built once, called per branch.
-  function buildTimedHero({ anticipatePin = 0, mobile = false } = {}) {
-    // The whole transition as one timed timeline (played once on scroll, reversible).
-    const master = gsap.timeline({ paused: true });
-    master
-      .to("#arrow", { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
-      .to([".eyebrow--top", ".lockup"], { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 0.04);
-    if (pinwheelProx) master.to(pinwheelProx, { scrolled: 1, duration: 0.95, ease: "power3.inOut" }, 0.1);
-    master
-      .to(".home-logo", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4)
-      .to(".intro__body p", { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.14, ease: "power2.out" }, 0.78)
-      .to(".intro__dive", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.95);
-    // Books/spines only rise on desktop — on mobile the shelf is replaced by the cards.
-    if (!mobile) {
-      hbSpines.forEach((s, i) => master.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, 0.5 + i * 0.05));
-      hbBooks.forEach((b, i) => {
-        master
-          .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.6 + i * 0.08)
-          .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
-      });
-    }
-
-    // Header line-clip wipe on its OWN timeline so its EXIT can run faster than entrance.
-    // (The landing headline was retired 2026-07, so headSpans is usually empty — guard
-    // the tween so GSAP doesn't warn about a missing target.)
-    const titleTl = gsap.timeline({ paused: true });
-    if (headSpans.length) titleTl.to(headSpans, { y: 0, duration: 0.8, stagger: 0.13, ease: "power3.out" }, 0.5);
-
-    // Mobile: NO pin and NO reverse. The reveal plays ONCE on the first bit of scroll,
-    // then scroll stays fully native straight into the cards below — so there's no pin
-    // jank and the page can't snap the reader back up. The fixed pinwheel fades out as
-    // the hero scrolls off so it doesn't hang over the cards.
-    if (mobile) {
-      ScrollTrigger.create({
-        trigger: hero,
-        start: "top+=48 top",
-        once: true,
-        onEnter: () => {
-          if (loadTl) { loadTl.progress(1); loadTl.kill(); loadTl = null; }
-          master.timeScale(1).play();
-          titleTl.timeScale(1).play();
-        },
-      });
-      const pw = document.querySelector(".pinwheel");
-      if (pw) {
-        ScrollTrigger.create({
-          trigger: hero,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-          onUpdate: (self) => { pw.style.opacity = String(Math.max(0, 1 - self.progress * 1.7)); },
-        });
+  // Play-once latch: fire the timeline on the first real downward scroll and let it
+  // run uninterrupted; reverse only when the user returns to the very top. Scroll is
+  // held until the load-in intro finishes (introHold), so loadTl is always complete by
+  // the time this can fire — no fast-forward needed.
+  let played = false;
+  ScrollTrigger.create({
+    trigger: hero,
+    start: "top top",
+    end: "bottom top",
+    onUpdate: (self) => {
+      if (!played && self.direction === 1 && self.progress > 0.015) {
+        played = true;
+        coverTl.timeScale(1).play();
+      } else if (played && self.direction === -1 && self.progress < 0.01) {
+        played = false;
+        coverTl.timeScale(1.4).reverse();   // tuck back a touch quicker than it played
       }
-      return;
+    },
+  });
+}
+
+/* ============================================================================
+   2c · Intro hold — keep the page pinned at the top while the OPENING load-in
+        animation (pinwheel rise → spin → align to the lockup → title/eyebrow
+        reveal) plays in full, so an early scroll can't cut it off. Scroll is
+        frozen on boot and released the moment loadTl completes.
+   ========================================================================== */
+function introHold() {
+  if (reduce || !loadTl || !document.querySelector("#hero")) return;  // no intro → nothing to guard
+
+  if (smoother) smoother.paused(true);   // freeze the smoothed (desktop) scroll
+  root.style.overflow = "hidden";         // + hard-lock native scroll (touch/mobile)
+  document.body.style.overflow = "hidden";
+
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    if (smoother) smoother.paused(false);
+    root.style.overflow = "";
+    document.body.style.overflow = "";
+  };
+  loadTl.eventCallback("onComplete", release);
+  // Safety net: always release even if onComplete never fires (a stray kill/refresh).
+  gsap.delayedCall((loadTl.delay() || 0) + loadTl.duration() + 0.6, release);
+}
+
+/* ============================================================================
+   2d · Logo top bar — the fixed top-left wordmark (body-level so it stays pinned
+        under ScrollSmoother). Hidden until the user first reaches the BOTTOM of the
+        page; from then on it's the persistent top bar for the content area, but it
+        hides over the hero cover (which shows its own big lockup — no duplicate).
+   ========================================================================== */
+function logoBar() {
+  const logo = document.querySelector(".home-logo");
+  const hero = document.querySelector("#hero");
+  const main = document.querySelector("main");
+  if (!logo || !hero || !main) return;
+
+  if (reduce) { gsap.set(logo, { autoAlpha: 1 }); return; }  // shown statically
+
+  gsap.set(logo, { autoAlpha: 0, y: -8 });
+  let unlocked = false;   // becomes true once the page bottom is reached the first time
+  let visible = false;
+  const show = (v) => {
+    if (v === visible) return;
+    visible = v;
+    gsap.to(logo, { autoAlpha: v ? 1 : 0, y: v ? 0 : -8, duration: 0.5, ease: "power2.out", overwrite: true });
+  };
+
+  // Unlock gate: fire near the very bottom (progress ≥ 0.9). A plain "bottom bottom"
+  // trigger sits at the exact max-scroll edge and won't fire reliably.
+  ScrollTrigger.create({
+    trigger: main,
+    start: "top top",
+    end: "bottom bottom",
+    onUpdate: (self) => { if (!unlocked && self.progress >= 0.9) { unlocked = true; show(true); } },
+  });
+
+  // Once unlocked, the bar shows whenever the hero cover is mostly out of view and
+  // hides again over the cover (so it never doubles the big centred lockup).
+  ScrollTrigger.create({
+    trigger: hero,
+    start: "top top",
+    end: "bottom top",
+    onUpdate: (self) => { if (unlocked) show(self.progress > 0.5); },
+  });
+}
+
+/* ============================================================================
+   2e · Headline fit — the intro title must ALWAYS be exactly two lines with no
+        wrapping. Each `.line` is `white-space:nowrap`; this measures the longest
+        line at the 54px cap and scales the shared font-size down so it fits the
+        space beside the copy column (full width when stacked on mobile). Pure
+        layout, so it runs regardless of reduced motion; re-fit on resize + after
+        the display font loads (Boldonse metrics differ from the fallback).
+   ========================================================================== */
+const HEADLINE_MAX = 54;   // px — Figma cap
+const HEADLINE_MIN = 40;   // px — hard floor; never smaller than this
+function fitHeadline() {
+  const h = document.querySelector(".intro__headline");
+  const row = document.querySelector(".intro__row");
+  if (!h || !row) return;
+  const col = row.querySelector(".intro__col");
+  const lines = gsap.utils.toArray(".line", h);
+
+  // Measure the true single-line width at the cap (drop wrap so scrollWidth is one row).
+  h.classList.remove("intro__headline--wrap");
+  h.style.fontSize = HEADLINE_MAX + "px";
+  let widest = 0;
+  lines.forEach((l) => { widest = Math.max(widest, l.scrollWidth); });
+  if (!widest) return;
+
+  const cs = getComputedStyle(row);
+  const stacked = cs.flexDirection === "column";  // stacked: headline spans the full row
+  const gap = parseFloat(cs.columnGap) || 0;
+  const avail = row.clientWidth - (stacked || !col ? 0 : col.offsetWidth + gap) - 2; // 2px safety
+
+  // Ideal size to keep the longest line on ONE row; clamp to [40, 54].
+  const ideal = widest > avail ? Math.floor(HEADLINE_MAX * avail / widest) : HEADLINE_MAX;
+  h.style.fontSize = Math.min(HEADLINE_MAX, Math.max(HEADLINE_MIN, ideal)) + "px";
+
+  // If even the 40px floor can't fit on one row (phones), allow the title to wrap
+  // rather than shrink below 40 — introScene reveals with a plain fade when wrapped.
+  h.classList.toggle("intro__headline--wrap", ideal < HEADLINE_MIN);
+}
+
+/* ============================================================================
+   2b · Intro scene — once, when the section scrolls into view: the headline's
+        words rise out of their masked lines (hellohello.is style) while the
+        welcome copy and Explore link fade up.
+   ========================================================================== */
+function introScene() {
+  const intro = document.querySelector("#intro");
+  if (!intro) return;
+  const h = intro.querySelector(".intro__headline");
+  const words = gsap.utils.toArray(".intro__headline .word", intro);
+
+  if (reduce) return;               // CSS reduced-motion block shows everything statically
+
+  gsap.set([".intro__copy", ".intro__explore"], { autoAlpha: 0, y: 14 });
+
+  // Build the headline reveal at ENTER time so it matches the current wrap state
+  // (fitHeadline may toggle .intro__headline--wrap after fonts load / on resize). Words
+  // start hidden via CSS until then (masked transform, or opacity in wrap mode).
+  const play = () => {
+    const wrap = h.classList.contains("intro__headline--wrap");
+    const tl = gsap.timeline();
+    if (wrap) {
+      // Wrapped (phones): the per-line clip mask can't hold multiple rows → plain fade-up.
+      gsap.set(words, { clearProps: "transform", autoAlpha: 0, y: 16 });
+      tl.to(words, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.05 }, 0);
+    } else {
+      // Masked word rise (hellohello.is). y:0 zeroes the px offset GSAP parses from the
+      // CSS translateY(118%) start so yPercent doesn't stack (manifestoReveal guard).
+      gsap.set(words, { y: 0, yPercent: 118, autoAlpha: 1 });
+      tl.to(words, { yPercent: 0, duration: 0.9, ease: "power4.out", stagger: 0.07 }, 0);
     }
+    tl.to(".intro__copy", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.3)
+      .to(".intro__explore", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.45);
+  };
 
-    let played = false;
-    ScrollTrigger.create({
-      trigger: hero,
-      start: "top top",
-      end: () => "+=" + window.innerHeight,
-      pin: true,
-      anticipatePin,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        if (!played && self.direction === 1 && self.progress > 0.05) {
-          played = true;
-          if (loadTl) { loadTl.progress(1); loadTl.kill(); loadTl = null; }
-          master.timeScale(1).play();
-          titleTl.timeScale(1).play();
-        } else if (played && self.direction === -1) {
-          played = false;
-          master.timeScale(1).reverse();
-          titleTl.timeScale(2.2).reverse();
-        }
-      },
-    });
-  }
-
-  // matchMedia split: mobile (≤768px) = un-pinned play-once reveal; desktop keeps the
-  // pinned reversible scene (coarse pointer adds anticipatePin to smooth the pin grab).
-  const mm = gsap.matchMedia();
-  mm.add("(max-width: 768px)", () => buildTimedHero({ mobile: true }));
-  mm.add("(min-width: 768.01px) and (pointer: fine)", () => buildTimedHero());
-  mm.add("(min-width: 768.01px) and (pointer: coarse)", () => buildTimedHero({ anticipatePin: 1 }));
+  ScrollTrigger.create({ trigger: intro, start: "top 70%", once: true, onEnter: play });
 }
 
 /* ============================================================================
@@ -257,12 +344,12 @@ function pinwheelScene() {
   gsap.set(spin, { rotation: 0 });
   trav.style.opacity = "1"; // no fade — it's hidden by sitting below the fold until it rises
 
-  const slotScrolled = document.querySelector("#pinwheelSlotScrolled");
   const lerp = (a, b, t) => a + (b - a) * t;
   // `rise` = below-fold → viewport centre. `align` = centre → the lockup slot (both
-  // TIMED by the load timeline). `scrolled` = lockup slot → the after-scroll header slot
-  // (driven on scroll by heroScene's master); it also shrinks the pinwheel to ~120px.
-  const prox = { rise: reduce ? 1 : 0, align: reduce ? 1 : 0, scrolled: reduce ? 1 : 0 };
+  // TIMED by the load timeline). After that the traveler just tracks the slot's live
+  // rect every frame — which is viewport-relative, so native scroll (and coverScroll's
+  // scale-down of the lockup row) moves + shrinks the pinwheel with no extra state.
+  const prox = { rise: reduce ? 1 : 0, align: reduce ? 1 : 0 };
   pinwheelProx = prox;
 
   function place() {
@@ -272,16 +359,9 @@ function pinwheelScene() {
     const centerY = window.innerHeight * 0.5;
     const belowY = window.innerHeight + w / 2 + 60;          // fully off-screen at rest
     const riseY = lerp(belowY, centerY, prox.rise);
-    let x = lerp(centerX, r.left + w / 2, prox.align);       // glide centre → lockup slot
-    let y = lerp(riseY, r.top + r.height / 2, prox.align);
-    let width = w;
-    if (slotScrolled && prox.scrolled > 0) {                 // …then up to the header slot
-      const r2 = slotScrolled.getBoundingClientRect();
-      x = lerp(x, r2.left + r2.width / 2, prox.scrolled);
-      y = lerp(y, r2.top + r2.height / 2, prox.scrolled);
-      width = lerp(w, r2.width, prox.scrolled);
-    }
-    trav.style.width = width + "px";
+    const x = lerp(centerX, r.left + w / 2, prox.align);     // glide centre → lockup slot
+    const y = lerp(riseY, r.top + r.height / 2, prox.align);
+    trav.style.width = w + "px";
     trav.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
   }
   gsap.ticker.add(place);
@@ -326,8 +406,8 @@ function homeBooks() {
   const shelf = document.querySelector("#homeShelf");
   if (!shelf) return;
 
-  hbBooks = gsap.utils.toArray(".book", shelf);
-  hbSpines = gsap.utils.toArray(".spine", shelf);
+  const books = gsap.utils.toArray(".book", shelf);
+  const spines = gsap.utils.toArray(".spine", shelf);
 
   // Mobile (≤768px): the shelf is hidden (CSS) and the static .home-cards take over —
   // no scaling, no parking, no knock/hover physics. The cards are plain <a> links.
@@ -345,28 +425,38 @@ function homeBooks() {
   window.addEventListener("resize", fitShelf);
 
   // Navigation (always wired — works under reduced motion too).
-  hbBooks.forEach((b) => {
+  books.forEach((b) => {
     const href = b.getAttribute("data-href");
     if (!href) return;
     b.addEventListener("click", () => { window.location.href = href; });
   });
 
   if (reduce) {
-    gsap.set(hbBooks, { y: 0, rotation: 0, autoAlpha: 1 }); // shown settled, statically
+    gsap.set(books, { y: 0, rotation: 0, autoAlpha: 1 });   // shown settled, statically
     return;                                                 // spines stay at their CSS rest
   }
 
-  // Pre-park the whole shelf below the fold (clipped by the stage's overflow → no flash;
-  // nothing of the shelf shows on the load state, only after the first scroll). The
-  // rise-in itself is authored into heroScene's master timeline.
+  // Pre-park the whole shelf below the fold (clipped by the intro section's overflow →
+  // no flash; nothing of the shelf shows until the rise plays).
   const START_Y = () => window.innerHeight + 60;
-  hbSpines.forEach((s) => gsap.set(s, { transformOrigin: "50% 100%", y: START_Y() }));
-  hbBooks.forEach((b) => {
+  spines.forEach((s) => gsap.set(s, { transformOrigin: "50% 100%", y: START_Y() }));
+  books.forEach((b) => {
     const tilt = gsap.utils.random(2, 6) * (gsap.utils.random(0, 1) < 0.5 ? -1 : 1);
     gsap.set(b, { transformOrigin: "50% 100%", y: START_Y(), rotation: tilt, autoAlpha: 1 });
   });
 
-  wireBookKnockAndHover(shelf, hbBooks);
+  // Rise-in — once, when the shelf scrolls into view. `y` for the rise, `yPercent`
+  // for the hover lift (separate transform channels, see wireBookKnockAndHover).
+  const riseTl = gsap.timeline({ paused: true });
+  spines.forEach((s, i) => riseTl.to(s, { y: 0, duration: 0.55, ease: "power2.out" }, i * 0.05));
+  books.forEach((b, i) => {
+    riseTl
+      .to(b, { y: 0, duration: 0.62, ease: "back.out(1.3)" }, 0.1 + i * 0.08)
+      .to(b, { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.4)" }, "<0.25");
+  });
+  ScrollTrigger.create({ trigger: shelf, start: "top 92%", once: true, onEnter: () => riseTl.play() });
+
+  wireBookKnockAndHover(shelf, books);
 }
 
 /* ---- Cursor-reactive tilt + hover raise/colour/icon-swap (shared physics). ----
@@ -388,8 +478,8 @@ function wireBookKnockAndHover(shelf, books) {
       .to(el, { rotation: 0, duration: 1.1, ease: "elastic.out(1, 0.5)" });               // rock → settle
   }
 
-  // Listen on the hero (so the outer spines are reachable), gated to the shelf band.
-  const host = shelf.closest("#hero") || shelf;
+  // Listen on the intro section (so the outer spines are reachable), gated to the shelf band.
+  const host = shelf.closest("#intro") || shelf;
   let lastX = null;
   let overIdx = -1;
   host.addEventListener("pointermove", (e) => {
@@ -612,8 +702,7 @@ function magneticButtons() {
    7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
    (the landing "Dive in" button). GSAP fade/scale-in; page scroll is hard-locked
    while open (like menuScene — decoupled from ScrollSmoother, see gotchas.md).
-   No-ops on pages without #aboutModal. "Read the playbook" is a plain <a>, so it
-   needs no wiring here.
+   No-ops on pages without #aboutModal.
    ========================================================================== */
 function aboutModal() {
   const modal = document.querySelector("#aboutModal");
@@ -632,7 +721,8 @@ function aboutModal() {
     modal.hidden = false;
     modal.setAttribute("aria-hidden", "false");
     if (main) main.inert = true;             // background unreachable while open
-    root.style.overflow = "hidden";           // hard-lock page scroll (decoupled from ScrollSmoother)
+    if (smoother) smoother.paused(true);      // freeze ScrollSmoother's rAF while open
+    root.style.overflow = "hidden";           // hard-lock page scroll
     document.body.style.overflow = "hidden";
   }
   function unlock() {
@@ -641,7 +731,8 @@ function aboutModal() {
     if (main) main.inert = false;
     root.style.overflow = "";
     document.body.style.overflow = "";
-    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to "Dive in"
+    if (smoother) smoother.paused(false);
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to "Explore"
   }
 
   // Reduced motion: show/hide instantly (no fade/scale).
@@ -691,29 +782,39 @@ function aboutModal() {
    ========================================================================== */
 if (!window.__GTC_LOCKED__) {
   // Ignore the resize mobile browsers fire when the address bar shows/hides — it would
-  // otherwise refresh ScrollTrigger and jump the hero pin mid-scroll. Real rotations
-  // still refresh (different event).
+  // otherwise refresh ScrollTrigger and jump the scrub positions mid-scroll. Real
+  // rotations still refresh (different event).
   if (ScrollTrigger) ScrollTrigger.config({ ignoreMobileResize: true });
-  smoothScroll();   // create the smoother first so the pinned ScrollTriggers attach to it
+  smoothScroll();   // create the smoother first so chapter-page ScrollTriggers attach to it
   arrowBob();
-  cloudDrift();
+  cloudDrift();     // drift + the scroll parallax down into the intro
   pinwheelScene();  // builds the load-in (loadTl) + parks/spins the pinwheel
-  homeBooks();      // parks the books/spines (hbBooks/hbSpines, read by heroScene)
-  heroScene();      // one-shot scroll master (consumes hbBooks/hbSpines, completes loadTl)
+  introHold();      // hold scroll at top until the load-in intro finishes playing
+  homeBooks();      // parks the books/spines + their rise-in trigger
+  coverScroll();    // timed play-once cover scale-down + arrow fade
+  introScene();     // once-on-enter headline word rise + copy/Explore fade
+  logoBar();        // fixed top-bar logo — fades in when the page bottom is reached
+  fitHeadline();    // scale the two-line title so it never wraps at any width
   menuScene();
   aboutModal();
   magneticButtons();
 
+  // Keep the two-line title fitted as the viewport changes.
+  let fhRt;
+  window.addEventListener("resize", () => { clearTimeout(fhRt); fhRt = setTimeout(fitHeadline, 120); });
+
   // FOUC shield lift — every above-the-fold element now has a gsap.set initial
   // state hiding it (books/spines parked off-screen, pinwheel created, eyebrow/
-  // lockup/clouds/arrow/home-logo/intro reveals autoAlpha:0). Safe to remove the
-  // shield: nothing animated will paint visible until loadTl / heroScene plays.
+  // lockup/clouds/arrow autoAlpha:0; the intro pieces sit below the fold behind
+  // the `.js` CSS hidden states). Safe to remove the shield: nothing animated
+  // will paint visible until loadTl / the scroll scenes play.
   // Done in a rAF so the swap happens after the current paint commits.
   requestAnimationFrame(() => root.classList.remove("js-pending"));
 
-  // Fonts can shift metrics → recompute pin distances once loaded.
+  // Fonts can shift metrics → recompute pin distances + re-fit the title once loaded
+  // (Boldonse is wider than the fallback, so the first fit used the wrong metrics).
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
+    document.fonts.ready.then(() => { ScrollTrigger.refresh(); fitHeadline(); });
   }
-  window.addEventListener("load", () => ScrollTrigger.refresh());
+  window.addEventListener("load", () => { ScrollTrigger.refresh(); fitHeadline(); });
 }

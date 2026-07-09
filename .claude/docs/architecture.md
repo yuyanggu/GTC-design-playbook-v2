@@ -9,7 +9,7 @@ lessons in [gotchas.md](gotchas.md).
 
 | Page(s) | What it is | ScrollSmoother? | Has `#menu`? | Has topbar/rail? |
 |---|---|---|---|---|
-| `index.html` | Landing (cover + after-scroll reveal + landing shelf) | **No** (native scroll) | No | No |
+| `index.html` | Landing (cover + intro section + landing shelf) | Yes (`smooth: 1.7`, heavier glide) | No | No |
 | `playbook.html` | Continuous reader — Foreword + all 3 chapters in one document | Yes | Yes | Yes (shared) |
 | `foreword.html`, `why-we-exist.html`, `our-point-of-view.html`, `stages-of-a-project.html` | Standalone pages (ch0/ch1/ch2/ch3) — kept as a fallback, no longer linked from any live navigation | Yes | Yes (duplicated) | Yes |
 | `about.html` | About page — dark (`#0c1619`, `body.page-dark`, no rail): full-viewport hero (centred title + intro row over the full-bleed bottom `about_hero_dark.webp`), then pinned horizontal photo gallery + masked-line manifesto on scroll. Linked from the drawer's About row; clean path `/about`. Loads `js/about.js` instead of `js/chapter.js`. | Yes | Yes (duplicated) | Yes |
@@ -20,19 +20,25 @@ reader's own drawer rows → in-page `#chN`).
 
 ## HTML files
 
-- **`index.html`** — ONE `<section>` `#hero` (home-v2; no `#intro`/`#introGraphic` anymore). It holds:
-  - the `.clouds`;
-  - the cover: `.eyebrow--top` + centred `.lockup-row` (`#pinwheelSlot` + `<h1 class="lockup">` text) + `#arrow`;
-  - the **after-scroll reveal**: `.home-logo` (top-left `playbook_logo.svg`) + `.intro-reveal`
-    (`#pinwheelSlotScrolled` + `<h2 class="intro__head">` with two clip-wrapped `.line>span`s +
-    `.intro__body` two `<p>`s);
-  - the in-flow **landing shelf** `#homeShelf` / `.home-shelf` → `.shelf__spines` + **five `.book` cards** (book 0 = Foreword, links to `/playbook.html`; books 1–3 link to `/chapter-N`; book 4 `.book--soon`).
+- **`index.html`** — TWO in-flow full-viewport sections (home-v3, no pin anywhere):
+  - `#hero` (cover): the `.clouds` (direct child of `.hero`, outside the `.hero__stage` overflow
+    clip so the scroll parallax can carry them over the intro) + `.hero__stage` with
+    `.eyebrow--top`, the centred `.lockup-row` (`#pinwheelSlot` + `<h1 class="lockup">`) and `#arrow`;
+  - `#intro` (Figma `2082-2203`): `.intro__row` (`.intro__headline` with two masked `.line` wrappers
+    of `.word` spans; `.intro__col` = `.intro__copy` + the `.intro__explore` button,
+    `[data-about-open]` → About popup) + the in-flow **landing shelf** `#homeShelf` / `.home-shelf` →
+    `.shelf__spines` + **five `.book` cards** (books 1–5 → `/chapter-N`; book 0 Foreword retired,
+    kept commented);
+  - `.home-logo` (top-left `playbook_logo.svg` wordmark) — a **fixed top bar**, moved OUT of `#intro`
+    to a direct child of `<body>` (outside `#smooth-wrapper`) so `position:fixed` holds under
+    ScrollSmoother; revealed by `logoBar()` once the page bottom is reached;
   - the **mobile card nav** `<nav class="home-cards">` (hidden on desktop, visible ≤768px) — five `.home-card` horizontal cards, static/no-animation, tap-to-navigate.
 
   The pinwheel is **not** in the markup — JS injects a fixed traveler (rises on load → aligns to
-  `#pinwheelSlot` → on scroll glides up to `#pinwheelSlotScrolled`). Books navigate: book 0 (Foreword)
-  → `/playbook.html`; books 1–3 → `/chapter-N`; book 4 `.book--soon`. This is the **only** place the
-  bookshelf `.book` system is used. See [menu.md](menu.md) for shelf specs + mobile card layout.
+  `#pinwheelSlot`, then just tracks that slot's live rect, so the smoothed scroll + the cover
+  scale-down move/shrink it). `place()` is added to the ticker after ScrollSmoother, so it reads the
+  post-transform rect each frame → tracks cleanly. This is the **only** place the bookshelf `.book`
+  system is used. See [menu.md](menu.md) for shelf specs + mobile card layout.
 
 - **`foreword.html`** — standalone Foreword fallback (ch0). No coloured hero, no TOC. Shell mirrors
   the chapter pages but uses `.page-body.foreword` instead of `.page-hero`; does not load
@@ -54,7 +60,7 @@ sibling `.html`; reader → in-page `#chN`). Opened by any `[data-menu-open]`.
 ## CSS layers (load order matters)
 
 1. **`css/styles.css`** — tokens (`:root`), `@font-face`, type system, layout, `.pinwheel` traveler
-   styles, the after-scroll reveal (`.home-logo`, `.intro-reveal`), the magnetic button component,
+   styles, the intro section (`.intro`, `.home-logo`), the magnetic button component,
    the Menu drawer (`.menu__scrim` / `.menu__drawer` / `.menu__row`), the bookshelf
    `.book`/shelf/spine system (fixed px per Figma — 188px books, 90px gaps — now used only by the
    landing shelf), and motion base states (FOUC-hide of the reveal under `.js`, shown statically
@@ -76,12 +82,15 @@ elements are absent**, so loading `main.js` on a chapter page is a safe no-op fo
 
 | Function | Role | Detail |
 |---|---|---|
-| `smoothScroll()` | Creates ScrollSmoother on `#smooth-wrapper`/`#smooth-content` (`smooth:1`, `smoothTouch:0`). **Skipped under reduced motion AND on the landing page** (`#hero` present → native 1:1 scroll). | [gotchas.md](gotchas.md) (ScrollSmoother) |
+| `smoothScroll()` | Creates ScrollSmoother on `#smooth-wrapper`/`#smooth-content` on **every** surface (`smoothTouch:0`); the landing (`#hero`) gets `smooth:1.7`, others `smooth:1`. **Skipped under reduced motion.** | [gotchas.md](gotchas.md) (ScrollSmoother) |
 | `arrowBob()` | Infinite `y` bob on the arrow (independent of opacity). | — |
-| `cloudDrift()` | One-direction sky drift (left→right, staggered speeds, edge fade, breathe). Rebuilt on resize, no-op under reduced motion. | [motion.md](motion.md) |
-| `heroScene()` | The landing hero scroll master (`#hero`/`#lockupRow`) — one paused, reversible timeline. | [motion.md](motion.md) |
-| `pinwheelScene()` | Builds the fixed pinwheel traveler; `place()` blends position+size; the "wind" spin. | [motion.md](motion.md) |
-| `homeBooks()` | Parks `#homeShelf` books/spines + wires knock/hover. | [menu.md](menu.md) |
+| `cloudDrift()` | One-direction sky drift (left→right, staggered speeds, edge fade, breathe) + the scrubbed container parallax down into the intro. Rebuilt on resize, no-op under reduced motion. | [motion.md](motion.md) |
+| `introHold()` | Freezes page scroll on boot (smoother `paused` + `overflow:hidden`) so the opening `loadTl` animation can't be cut off; releases on `loadTl` complete. No-op under reduced motion. | [motion.md](motion.md) |
+| `coverScroll()` | Unpinned cover exit (`#hero`/`#lockupRow`): a **timed play-once** timeline (uninterruptible) scales the lockup 1→0.55 (pinwheel follows via its slot rect), fades the arrow out + the top-left `.home-logo` in; latched on first downward scroll, reverses at the top. | [motion.md](motion.md) |
+| `introScene()` | Once-on-enter `#intro` reveal: headline word-by-word rise + copy/Explore fade-up. | [motion.md](motion.md) |
+| `logoBar()` | Fixed top-left wordmark (`.home-logo`, body-level): hidden until the page bottom is first reached, then shown as a persistent top bar over the content but hidden over the hero cover (no duplicate lockup). | [motion.md](motion.md) |
+| `pinwheelScene()` | Builds the fixed pinwheel traveler; `place()` blends position via `prox.{rise,align}` + tracks the slot rect; the "wind" spin. | [motion.md](motion.md) |
+| `homeBooks()` | Parks `#homeShelf` books/spines, plays their rise-in once the shelf enters, wires knock/hover. | [menu.md](menu.md) |
 | `menuScene()` | Open/close the `#menu` drawer (one interruptible timeline). | [menu.md](menu.md) |
 | `magneticButtons()` | Wires every `.mag-zone` magnetic button (drives the Explore CTA). | [motion.md](motion.md) |
 

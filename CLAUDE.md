@@ -3,8 +3,8 @@
 A polished, awwwards-grade **static multi-page website** for the GovTech Consulting ("GTC") Design
 Playbook. Plain HTML/CSS/vanilla JS, no build step, fully offline-capable.
 
-The site has three surfaces: the **landing** (`index.html` — animated cover, after-scroll intro
-reveal, and an in-flow bookshelf), the **continuous reader** (`playbook.html` — opens with the
+The site has three surfaces: the **landing** (`index.html` — animated cover that scales away on
+scroll, cloud parallax into an intro section, and an in-flow bookshelf), the **continuous reader** (`playbook.html` — opens with the
 Foreword (`#ch0`), then all five chapters, in one document with a seamless scroll effect; the
 canonical experience), and the **standalone pages** (Foreword + the five chapters, kept as a
 fallback, no longer linked). A right-side **drawer Menu** opens from any hamburger/Explore button.
@@ -33,7 +33,7 @@ Read the file that matches your task — each is focused and cross-linked.
 |---|---|
 | [architecture.md](.claude/docs/architecture.md) | You need the full file map, how the 3 page types relate, the CSS load order, or the `main.js`/`chapter.js` function inventory. **Start here for orientation.** |
 | [design.md](.claude/docs/design.md) | You need the design spec — Figma file/nodes, colour + theme tokens, the type system, or reference layout coordinates. |
-| [motion.md](.claude/docs/motion.md) | You're working on landing motion — hero scroll master, gradient streaks, the pinwheel, after-scroll reveal, cloud drift, or the magnetic button; or need the GSAP-vs-Motion-One / ScrollSmoother-opt-out philosophy. |
+| [motion.md](.claude/docs/motion.md) | You're working on landing motion — the unpinned cover scroll, gradient streaks, the pinwheel, the intro reveal, cloud drift + parallax, or the magnetic button; or need the GSAP-vs-Motion-One / ScrollSmoother philosophy. |
 | [chapter-pages.md](.claude/docs/chapter-pages.md) | You're editing a chapter page — layout, hero, TOC, copy blocks, diagrams/dividers, or the left rail. Also how to build a new chapter. |
 | [reader.md](.claude/docs/reader.md) | You're working on `playbook.html` — panel transitions, snap, the black/rounded-corner look, TOC coexistence, or deep-linking. |
 | [menu.md](.claude/docs/menu.md) | You're working on the drawer Menu or the landing bookshelf. |
@@ -42,8 +42,9 @@ Read the file that matches your task — each is focused and cross-linked.
 ## Tech stack
 
 - **Plain HTML / CSS / vanilla JS** (ES modules). No framework, no build step.
-- **GSAP + ScrollTrigger + ScrollSmoother** own almost all motion (the landing opts out of
-  ScrollSmoother for native scroll). **CustomEase + CustomWiggle** vendored + registered but unused.
+- **GSAP + ScrollTrigger + ScrollSmoother** own almost all motion (every surface uses ScrollSmoother
+  now — the landing at a heavier `smooth: 1.7`, others at `smooth: 1`). **CustomEase + CustomWiggle**
+  vendored + registered but unused.
 - **motion.dev (Motion One)** — one entrance only (`.titleblock__media`).
 - Everything is **vendored locally** (`vendor/`); fonts self-hosted (`assets/fonts/`). Do not switch
   to CDNs. See [architecture.md](.claude/docs/architecture.md) for the full file map.
@@ -66,14 +67,30 @@ project memory `headless-motion-verification`.
 
 ## Status / next
 
-- ✅ **Landing (`index.html`)** — animated cover (eyebrow + lockup + rising pinwheel + arrow) and the
-  after-scroll intro reveal (Figma `2043:1638`); native delay-free scroll; one-direction cloud drift;
-  in-flow landing shelf (**6 books, all interactive**: 0 Foreword + 1 About GTC + 2–4 chapters + 5
-  How We Work; **1578px** (`SHELF_W` in `main.js`), scales to fit narrow viewports via
-  `--shelf-scale`; books fall in, sway, raise + recolour).
-  **Mobile (≤768px):** shelf hidden, static `.home-cards` stacked cards replace it; cover lockup
-  stacks vertically (pinwheel above title, `padding-inline: 20px`) to prevent overflow; hero
-  plays reveal once then scroll is fully native into the cards.
+- ✅ **Landing (`index.html`, home-v3)** — unpinned scroll under ScrollSmoother (`smooth: 1.7`
+  glide; `overscroll-behavior-y: none`): the **opening load-in animation plays fully before scroll
+  is allowed** (`introHold` freezes scroll until `loadTl` completes, so an early wheel/swipe can't
+  cut off the pinwheel rise → spin → align → title reveal); then an animated cover (eyebrow + lockup
+  + pinwheel + arrow) whose lockup **scales down 1→0.55 as a timed, uninterruptible play-once** on
+  first scroll (the
+  fixed pinwheel tracks its slot rect, so it shrinks for free); a **fixed top-bar logo**
+  (`.home-logo`, body-level so `fixed` holds under ScrollSmoother) that reveals once the page bottom
+  is reached and then persists over the content but hides over the hero cover (no duplicate lockup);
+  one-direction cloud drift + a scrubbed **container parallax** that settles the
+  cloud band along the top of the in-flow **`#intro` section** (Figma `2082-2203`: Boldonse "We
+  don't wait for the wind. / We steer the motion." headline — two lines fitted by `fitHeadline()`
+  **clamped to 40–54px** (never under 40px; the intro **stacks ≤1200px** and the title **wraps on
+  phones** so it can stay ≥40px) — with a once-on-enter **word-by-word masked rise** (a plain fade
+  when wrapped), welcome copy + "Sail through →" button → About popup, which pauses
+  the smoother while open); the intro row is **width-matched + centred to the shelf** (shared
+  `--shelf-w`/`--shelf-pad` vars = `SHELF_W`/`SHELF_PAD` in `main.js`) so the headline's left edge
+  aligns with book 1 and the copy's right edge with book 5; in-flow landing shelf inside `#intro`
+  (**5 books, all interactive**: 1 About GTC + 2–4 + 5 How We Work; `--shelf-w` 1300px, scales via
+  `--shelf-scale`; books rise in once the shelf enters, knock/hover raise + recolour).
+  **Mobile (≤768px):** shelf hidden, static `.home-cards` stacked cards replace it; intro section
+  stacks (logo → headline → copy); cover lockup stacks vertically (pinwheel above title,
+  `padding-inline: 20px`) to prevent overflow; `smoothTouch: 0` so touch scrolls natively, same
+  play-once cover scale.
 - ✅ **Menu** — right-side drawer (swipe-in, interruptible, rows-fall-away close, hamburger→X) on all
   chapter pages + foreword standalone + about. `Esc` / scrim / X closes. **7 rows, all
   linked**: 00 Foreword → 01 About GTC → 02 → 03 → 04 → 05 How We Work → About (unnumbered coda

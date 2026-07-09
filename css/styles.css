@@ -60,6 +60,15 @@
   /* Reference width = 1440. Fluid scale helper. */
   --ref: 1440;
 
+  /* Landing shelf geometry — MUST match SHELF_W / SHELF_PAD in js/main.js (fitShelf).
+     The shelf (books 1–5) is --shelf-w wide, centred, and shrinks to fit within
+     --shelf-pad of total side gutter. The intro row reuses these so its edges line
+     up with the outermost books at every width. */
+  --shelf-w: 1300px;
+  --shelf-pad: 80px;
+  /* Effective on-screen shelf/content width: min(1300px, viewport − 80px). */
+  --shelf-width: min(var(--shelf-w), 100% - var(--shelf-pad));
+
   /* Title sizing (Opening_Title.svg native = 606 × 230) */
   --title-w: min(606px, 80vw);
 
@@ -157,10 +166,21 @@ img, svg {
 /* ============================================================================
    HERO  (Cover 1 → reveal stage)  · reference frame 1440 × 1024
    ========================================================================== */
+/* Landing only: kill the vertical rubber-band / scroll-chaining bounce so the
+   cover→intro glide (ScrollSmoother) never overscrolls past the ends. */
+html:has(#hero),
+html:has(#hero) body {
+  overscroll-behavior-y: none;
+}
+
 .hero {
   position: relative;
   height: 100svh;
   width: 100%;
+  /* Clouds live directly under .hero (outside the stage clip) so their scroll parallax
+     can carry them down over the intro. Their drift wraps past the right edge — clip x
+     only (`clip` is the one value that pairs with visible-y; `hidden` would clip both). */
+  overflow-x: clip;
 }
 
 .hero__stage {
@@ -187,6 +207,7 @@ img, svg {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  will-change: transform; /* container `y` = scroll parallax (cloudDrift); children own x/scale/opacity */
 }
 .cloud {
   --enter: 0;            /* load-in factor (0→1, raised by loadTl); ×edge-fade = opacity */
@@ -234,104 +255,138 @@ img, svg {
   white-space: nowrap;
 }
 
-/* Top-left brand mark — appears only in the after-scroll state (same SVG as the
-   chapter-page topbar). Hidden on the cover; faded in by heroScene's master. */
+/* Top-left brand mark — a FIXED top bar (same SVG as the chapter-page topbar),
+   body-level so `fixed` holds under ScrollSmoother. Hidden until the user reaches the
+   bottom of the page, then faded in + kept pinned by logoBar() in main.js. */
 .home-logo {
-  position: absolute;
+  position: fixed;
   top: clamp(28px, 4.7vh, 48px);
   left: clamp(22px, 3.3vw, 48px);
-  z-index: 3;
+  z-index: 40;
   width: clamp(112px, 9.9vw, 142px);
   line-height: 0;
+  pointer-events: none;
 }
 .home-logo img { width: 100%; height: auto; display: block; }
 
-/* After-scroll reveal column (Figma "Text Box") — pinwheel slot + header + body,
-   anchored in the band ABOVE the bottom shelf. Absolutely positioned so it never
-   disturbs the cover lockup; hidden on load, revealed by the scroll master.
-   Layout note: positioned with vh + sized with vh-aware clamps so it scales with the
-   viewport height (px-sized content at a fixed vh top is what let the body run into the
-   books on short/wide screens). `bottom` reserves the 340px shelf band + a gap, and the
-   content vertically centres in the remaining band, biased high. */
-.intro-reveal {
-  position: absolute;
-  top: 0;
-  bottom: 340px;                       /* = the bottom shelf's height, so the band is
-                                          exactly [viewport top → shelf top] and the
-                                          content centres with equal space above/below */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  width: min(604px, 90vw);
+/* ============================================================================
+   INTRO SECTION  (Figma 2082-2203) — in-flow full-viewport section below the
+   cover: Boldonse headline hard-left + serif welcome column hard-right, the
+   book shelf flush to the bottom. The hero's clouds parallax down over its top.
+   ========================================================================== */
+.intro {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;                    /* clips the parked (below-fold) books so they
+                                          never extend the document past the section */
+  padding-inline: 0;                   /* the row sets its own width so its `100%` = the
+                                          viewport; horizontal gutters come from the row's
+                                          margin (matching the shelf). Mobile re-adds pad. */
+  /* Vertically centre the headline + copy in the band BETWEEN the fixed top-bar logo
+     and the shelf: reserve the logo band at top + the shelf band at bottom, then centre
+     the row in what's left. No background — the chalk body shows through and the clouds
+     settle along the top. */
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: clamp(10px, 1.9vh, 24px);
-  text-align: center;
+  padding-top: clamp(80px, 11vh, 112px);       /* reserves the top-bar logo band */
+  padding-bottom: 340px;                        /* reserves the bottom shelf band */
 }
-/* Scrolled pinwheel slot — the target the traveler shrinks to (invisible). vh-aware so
-   it shrinks on short viewports along with the type. */
-.pinwheel-slot--scrolled {
-  width: clamp(72px, min(8.4vw, 12vh), 120px);
-  aspect-ratio: 1 / 1;
+.intro__row {
+  /* Match the shelf: same width + centring, so the headline's left edge aligns with
+     book 1 and the copy's right edge aligns with book 5 at every width. */
+  width: var(--shelf-width);           /* min(1300px, 100% − 80px) — shared with .home-shelf */
+  margin-inline: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(24px, 4vw, 64px);
+  /* vertical position comes from the section's flex centering (no top padding) */
 }
-/* Header — Boldonse, two lines, each clipped for the wipe reveal. Caps at 36 (Figma) but
-   shrinks on short viewports so the block fits above the shelf. */
-.intro__head {
+/* Headline — Boldonse 54/80 (Figma), sentence case (no uppercase transform).
+   ALWAYS exactly two lines: each `.line` is `white-space:nowrap`, and fitHeadline()
+   in main.js scales this shared `font-size` down (capped ≤54px) so the longest line
+   fits the space beside the copy column at any width. The `clamp` here is only a
+   no-JS fallback — JS sets an inline `font-size` that overrides it. */
+.intro__headline {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(22px, min(2.9vw, 4vh), 36px);
-  line-height: 1.3;
-  letter-spacing: 0;
+  font-size: clamp(40px, 3.4vw, 54px);          /* fallback; JS fits the real size (never < 40) */
+  line-height: 1.48;                            /* 80 / 54 */
+  letter-spacing: -0.3px;
   color: var(--midnight);
 }
-/* Boldonse's tall caps + descenders (comma, g) overflow the line box, so a bare
-   overflow:hidden clip cuts the glyph tops/bottoms. Pad the clip box vertically to
-   give them room (the span push-down measures this padded height, so it still hides). */
-.intro__head .line {
+/* Boldonse's tall caps + descenders overflow the line box, so a bare overflow:hidden
+   clip cuts the glyph tops/bottoms — pad the clip box vertically to give them room
+   (same rationale as the retired .intro__head wipe). Words rise inside each line;
+   `nowrap` keeps each line to a single row so the title never breaks. */
+.intro__headline .line {
   display: block;
   overflow: hidden;
+  white-space: nowrap;
   padding-block: 0.2em;
+  margin-block: -0.2em;                /* reclaim the pad so the two lines sit at 80px */
 }
-.intro__head .line > span { display: block; will-change: transform; }
-/* Body — Source Serif / 518px / centred (Figma body copy). vh-aware so it shrinks a
-   little on short viewports to keep the block clear of the shelf. */
-.intro__body {
-  width: min(518px, 100%);
+/* Wrap mode (phones too narrow for a two-line 40px title): fitHeadline() adds this so
+   the title wraps instead of shrinking below 40px. The per-line clip mask can't hold
+   multiple rows, so drop it — introScene reveals with a plain fade in this mode. */
+.intro__headline--wrap .line {
+  overflow: visible;
+  white-space: normal;
+  padding-block: 0;
+  margin-block: 0;
+}
+.intro__headline .word { display: inline-block; will-change: transform; }
+/* Right column — Figma 421px: welcome copy + Explore link. */
+.intro__col {
+  width: min(421px, 100%);
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.intro__copy {
+  margin: 0;
   font-family: var(--font-serif);
   font-weight: 400;
-  font-size: clamp(13px, min(1.1vw, 1.7vh), 16px);
+  font-size: 15px;
   line-height: 1.5;
   letter-spacing: -0.32px;
   color: #000;
 }
-.intro__body p { margin: 0; }
-.intro__body p + p { margin-top: 1.25em; }
-.intro__body em { font-style: italic; }
-
-/* "Dive in" — inline underlined text button that opens the About-this-playbook popup.
-   Native <button> chrome reset; sits below the welcome copy in the reveal column. */
-.intro__dive {
+/* "Explore →" — text + midnight arrow chip; opens the About-this-playbook popup. */
+.intro__explore {
   appearance: none;
   border: 0;
   background: none;
   padding: 0;
   margin: 0;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   cursor: pointer;
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: clamp(14px, min(1.2vw, 1.8vh), 17px);
-  letter-spacing: -0.2px;
+  font-size: 16px;
   color: var(--midnight);
-  text-decoration: underline;
-  text-underline-offset: 5px;
-  text-decoration-thickness: 1.5px;
-  transition: color 0.2s ease, text-underline-offset 0.2s ease;
 }
-.intro__dive:hover,
-.intro__dive:focus-visible { color: var(--orange); text-underline-offset: 7px; }
+.intro__explore-icon {
+  width: 19px;
+  height: 19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--midnight);
+  color: #fff;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.intro__explore:hover .intro__explore-icon,
+.intro__explore:focus-visible .intro__explore-icon {
+  background: var(--orange);
+  color: var(--midnight);
+}
 
 /* Arrow — Figma top:934 / 1024 ≈ 91.2% ; native 57 × 45 */
 .arrow {
@@ -354,7 +409,7 @@ img, svg {
   left: 50%;
   bottom: 0;
   z-index: 2;
-  width: 1300px;                     /* 5×188 + 4×90 (was 1578 with 6 books) */
+  width: var(--shelf-w);             /* 1300px = 5×188 + 4×90; shared with .intro__row */
   height: 340px;
   /* --shelf-scale is set by fitShelf() in main.js so the whole shelf scales down to
      fit narrow viewports (origin bottom-centre → stays centred + flush to the floor). */
@@ -405,28 +460,29 @@ img, svg {
 
 /* Load: the eyebrow / title / clouds / arrow stay hidden on bare chalk while the
    pinwheel rises + spins; the load timeline (main.js) reveals them once it settles.
-   Reduced motion shows them immediately. (All home-only selectors.) */
+   The intro pieces below the fold start hidden until introScene plays them in.
+   Reduced motion shows everything immediately. (All home-only selectors.) */
 .js .eyebrow--top,
 .js .lockup,
 .js .cloud,
 .js #arrow { opacity: 0; }
-/* The after-scroll reveal is hidden on the cover state (revealed by the scroll master).
-   Hide the body's paragraphs (not the container) — the master animates the <p>s. */
 .js .home-logo,
-.js .intro__body p,
-.js .intro__dive { opacity: 0; }
-.js .intro__head .line > span { transform: translateY(110%); }
+.js .intro__copy,
+.js .intro__explore { opacity: 0; }
+.js .intro__headline .word { transform: translateY(118%); }            /* masked hide (clip) */
+.js .intro__headline--wrap .word { transform: none; opacity: 0; }       /* wrap mode → opacity hide */
 @media (prefers-reduced-motion: reduce) {
-  /* No scroll choreography → present the after-scroll composition statically so the
-     welcome copy + Dive-in button are reachable. Clouds stay; the cover-only bits are hidden. */
-  .js .cloud,
-  .js .home-logo,
-  .js .intro__body p,
-  .js .intro__dive { opacity: 1; }
+  /* No pin any more — the cover and the intro are both real in-flow content, so
+     nothing needs hiding: show every state statically. */
   .js .eyebrow--top,
   .js .lockup,
-  .js #arrow { opacity: 0; }
-  .js .intro__head .line > span { transform: none; }
+  .js .cloud,
+  .js #arrow,
+  .js .home-logo,
+  .js .intro__copy,
+  .js .intro__explore { opacity: 1; }
+  .js .intro__headline .word,
+  .js .intro__headline--wrap .word { transform: none; opacity: 1; }
 }
 
 /* ============================================================================
@@ -841,13 +897,26 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 /* ============================================================================
    MOBILE LANDING (≤768px) — replace the rising-books shelf with a static vertical
    stack of horizontal cards (icon · number · divider · title), each with a CSS
-   "spine ledge" below it. No hover/physics (that all stays desktop-only). The hero
-   keeps its cover → intro-reveal scroll story; the cards flow in a normal section
-   below it (js/main.js plays the reveal once, then leaves scroll fully native).
+   "spine ledge" below it. No hover/physics (that all stays desktop-only). Scroll
+   is fully native: cover → stacked intro section → cards.
    ========================================================================== */
 
 /* Desktop: the mobile cards section is not rendered. */
 .home-cards { display: none; }
+
+/* ≤1200px — a two-line 40px title no longer fits beside the 421px copy column, so
+   STACK the intro to one column: the title takes the full shelf-width (staying ≥40px far
+   lower) and the copy sits beneath it. The shelf still shows here (down to 768px), so the
+   top padding is trimmed to leave room above the reserved shelf band. */
+@media (max-width: 1200px) {
+  .intro { padding-top: clamp(64px, 8vh, 96px); }
+  .intro__row {
+    flex-direction: column;
+    align-items: flex-start;          /* title + copy left-aligned to the shelf's left edge */
+    gap: clamp(20px, 3vw, 36px);
+  }
+  .intro__col { width: min(421px, 100%); }   /* readable measure below the title */
+}
 
 @media (max-width: 768px) {
   /* Cover lockup — stack the pinwheel ABOVE the title so the wide "THE GTC DESIGN"
@@ -862,8 +931,14 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   .pinwheel-slot { width: clamp(92px, 24vw, 128px); }
   .lockup { font-size: clamp(20px, 6.4vw, 30px); line-height: 1.32; }
 
-  /* After-scroll reveal centres in the FULL hero (no shelf band to reserve below). */
-  .intro-reveal { bottom: 0; width: min(560px, 86vw); }
+  /* Intro section stacks: headline above the copy column, cards flow right below
+     (no shelf to reserve space for, so the section shrinks to its content). The shelf
+     is hidden here, so the row drops the shelf-width cap and just fills the padded box. */
+  .intro { min-height: auto; padding-block: 96px 12px; padding-inline: clamp(20px, 5.5vw, 32px); overflow: visible; }
+  .intro__row { width: 100%; margin-inline: 0; flex-direction: column; gap: 28px; }
+  .intro__headline { max-width: 100%; font-size: clamp(24px, 7vw, 34px); }
+  .intro__col { width: 100%; }
+  .home-logo { width: 104px; }   /* stays the fixed top bar; just a touch smaller */
 
   /* The desktop rising-books shelf is replaced by the cards below. */
   .home-shelf { display: none; }
@@ -944,7 +1019,7 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 
 /* ============================================================================
    ABOUT-THIS-PLAYBOOK POPUP  (Figma 2038:8068)
-   Full-screen modal opened by the landing "Dive in" button; holds the retired
+   Full-screen modal opened by the landing "Explore" button; holds the retired
    Foreword's two sections. Mechanics/animation in aboutModal() (js/main.js).
    ========================================================================== */
 .about-modal {
@@ -1013,7 +1088,7 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 /* Content - illustration (left) + two text sections (right); the sections split
    into equal halves that line up with the two stacked illustration blocks. */
 .about-modal__content {
-  flex: 1 1 auto;                          /* fill the space so the button sits at the bottom edge */
+  flex: 1 1 auto;                          /* fill the remaining card height */
   display: flex;
   gap: 40px;
   align-items: stretch;
@@ -1074,34 +1149,6 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   border-top: 1px solid var(--midnight);
 }
 
-/* CTA - midnight button with orange arrow chip, bottom-right. */
-.about-modal__cta {
-  align-self: flex-end;
-  margin-top: 40px;
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 12px;
-  background: var(--midnight);
-  color: #fff;
-  text-decoration: none;
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: 16px;
-  transition: background 0.2s ease;
-}
-.about-modal__cta:hover,
-.about-modal__cta:focus-visible { background: #013a58; }
-.about-modal__cta-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 19px;
-  height: 19px;
-  background: var(--orange);
-  color: var(--midnight);
-}
-
 @media (max-width: 768px) {
   .about-modal__card { padding: 72px 20px 32px; }
   .about-modal__title { margin-bottom: 28px; }
@@ -1112,5 +1159,4 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   .about-modal__row { flex-direction: column; gap: 8px; flex-basis: auto; }
   .about-modal__row:first-of-type { padding-bottom: 20px; }
   .about-modal__row:last-of-type { padding-top: 20px; }
-  .about-modal__cta { align-self: stretch; justify-content: center; }
 }

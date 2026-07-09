@@ -22,18 +22,15 @@
     html.js-pending .eyebrow,
     html.js-pending .lockup,
     html.js-pending .lockup-row,
-    html.js-pending .home-logo,
-    html.js-pending .intro-reveal,
     html.js-pending .cloud,
     html.js-pending #arrow,
-    html.js-pending .home-shelf,
+    html.js-pending .home-logo,
     html.js-pending .home-cards,
     html.js-pending .pinwheel { opacity: 0 !important; visibility: hidden !important; }
   </style>
   <noscript><style>
     html.js-pending .eyebrow, html.js-pending .lockup, html.js-pending .lockup-row,
-    html.js-pending .home-logo, html.js-pending .intro-reveal, html.js-pending .cloud,
-    html.js-pending #arrow, html.js-pending .home-shelf, html.js-pending .home-cards
+    html.js-pending .cloud, html.js-pending #arrow, html.js-pending .home-logo, html.js-pending .home-cards
       { opacity: 1 !important; visibility: visible !important; }
   </style></noscript>
   <link rel="stylesheet" href="css/styles.css" />
@@ -44,18 +41,20 @@
   <div id="smooth-wrapper">
     <div id="smooth-content">
   <main>
-    <!-- ───────────────────────── HOME (load: pinwheel aligns to lockup · scroll: books rise in) ───────────────────────── -->
+    <!-- ───────────────────────── HOME (load: pinwheel aligns to lockup · scroll: cover scales away, clouds parallax down into the intro) ───────────────────────── -->
     <section class="hero" id="hero">
-      <div class="hero__stage" id="stage">
+      <!-- Clouds — Rectangle_*.svg gradient blocks, blurred + gently drifting across the sky.
+           Direct child of .hero (NOT .hero__stage) so the scroll parallax can carry them
+           past the stage's overflow clip into the top of the intro section. -->
+      <div class="clouds" aria-hidden="true">
+        <img class="cloud cloud--1" src="assets/Rectangle_1.svg" alt="" />
+        <img class="cloud cloud--2" src="assets/Rectangle_2.svg" alt="" />
+        <img class="cloud cloud--3" src="assets/Rectangle_3.svg" alt="" />
+        <img class="cloud cloud--4" src="assets/Rectangle_4.svg" alt="" />
+        <img class="cloud cloud--5" src="assets/Rectangle_5.svg" alt="" />
+      </div>
 
-        <!-- Clouds — Rectangle_*.svg gradient blocks, blurred + gently drifting across the sky -->
-        <div class="clouds" aria-hidden="true">
-          <img class="cloud cloud--1" src="assets/Rectangle_1.svg" alt="" />
-          <img class="cloud cloud--2" src="assets/Rectangle_2.svg" alt="" />
-          <img class="cloud cloud--3" src="assets/Rectangle_3.svg" alt="" />
-          <img class="cloud cloud--4" src="assets/Rectangle_4.svg" alt="" />
-          <img class="cloud cloud--5" src="assets/Rectangle_5.svg" alt="" />
-        </div>
+      <div class="hero__stage" id="stage">
 
         <p class="eyebrow eyebrow--top">govtech consulting</p>
 
@@ -65,28 +64,35 @@
           <h1 class="lockup">The GTC Design<br />Playbook</h1>
         </div>
 
-        <!-- After-scroll: top-left brand mark (same SVG as the chapter-page topbar);
-             fades in with the reveal. -->
-        <div class="home-logo" aria-hidden="true">
-          <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
-        </div>
-
-        <!-- After-scroll reveal column: the pinwheel rises UP to its slot here, then the
-             welcome copy + "Dive in" button fade up. Hidden on the cover state.
-             (The old two-line "A place to align…" headline was removed 2026-07 in favour
-             of the simpler welcome copy — see git history to revive it.) -->
-        <div class="intro-reveal" id="introReveal">
-          <span class="pinwheel-slot pinwheel-slot--scrolled" id="pinwheelSlotScrolled" aria-hidden="true"></span>
-          <div class="intro__body">
-            <p>Welcome to the GTC Design Team playbook &mdash; a shared space to align on our principles, craft, and how we work. Because design never stands still, neither do we. This remains a living draft, constantly refined as we adapt to new challenges and evolve our methods together.</p>
-          </div>
-          <button class="intro__dive" type="button" data-about-open>Dive in</button>
-        </div>
-
         <img class="arrow" id="arrow" src="assets/arrow.svg" alt="" aria-hidden="true" />
 
-        <!-- Section books — rise in on scroll and settle flush to the bottom (reuse the menu book system) -->
-        <div class="home-shelf" id="homeShelf" aria-label="Playbook sections">
+      </div>
+    </section>
+
+    <!-- ───────────────────────── INTRO (Figma 2082-2203) — headline + welcome copy + shelf.
+         In-flow full-viewport section; the hero's clouds parallax down to settle along its
+         top edge. Headline words rise out of masked lines once on enter (introScene). ───────────────────────── -->
+    <section class="intro" id="intro">
+      <div class="intro__row">
+        <h2 class="intro__headline" id="introHeadline">
+          <span class="line"><span class="word">We</span> <span class="word">don&rsquo;t</span> <span class="word">wait</span> <span class="word">for</span> <span class="word">the</span> <span class="word">wind.</span></span>
+          <span class="line"><span class="word">We</span> <span class="word">steer</span> <span class="word">the</span> <span class="word">motion.</span></span>
+        </h2>
+        <div class="intro__col">
+          <p class="intro__copy">In a landscape of perpetual change, we are proactively redefining discovery, design, and development. As a result, we created this playbook as a living draft, constantly refining our speed and direction as we adapt to new challenges together. Because design never stands still, neither do we.</p>
+          <button class="intro__explore" type="button" data-about-open>
+            <span>Sail through</span>
+            <span class="intro__explore-icon" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 16 16" focusable="false">
+                <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section books — rise in when the shelf scrolls into view, settle flush to the bottom -->
+      <div class="home-shelf" id="homeShelf" aria-label="Playbook sections">
           <!-- decorative gray book-spines (vectors), one cluster per gap region -->
           <div class="shelf__spines" aria-hidden="true">
             <img class="spine" src="assets/book_element_1.svg" alt="" style="--x:-23px; --w:15px;" />
@@ -158,7 +164,7 @@
             </span>
           </button>
 
-          <!-- Book 4 — interactive (The Stages of an Engagement) -->
+          <!-- Book 4 — interactive (Stages of Engagement) -->
           <button class="book book--interactive book--4" type="button" data-book data-href="/chapter-4" style="--book-x:834px;">
             <span class="book__inner">
               <span class="book__num">4</span>
@@ -186,8 +192,6 @@
             </span>
           </button>
         </div>
-
-      </div>
     </section>
 
     <!-- Mobile playbook cards — shown ≤768px in place of the rising-books shelf. Static,
@@ -224,7 +228,7 @@
         <span class="home-card__icon"><img src="assets/menu_4.svg" alt="" /></span>
         <span class="home-card__num">4</span>
         <span class="home-card__rule" aria-hidden="true"></span>
-        <span class="home-card__body"><span class="home-card__title">The Stages of an Engagement</span></span>
+        <span class="home-card__body"><span class="home-card__title">Stages of Engagement</span></span>
       </a>
       <a class="home-card" href="/chapter-5">
         <span class="home-card__icon"><img src="assets/menu_4.svg" alt="" /></span>
@@ -237,8 +241,16 @@
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
 
+  <!-- Fixed top-bar brand mark (same SVG as the chapter-page topbar). Lives OUTSIDE
+       #smooth-wrapper so `position:fixed` stays viewport-anchored under ScrollSmoother
+       (like the pinwheel traveler). Hidden until the user reaches the bottom of the
+       page, then fades in and stays pinned (logoBar() in main.js). -->
+  <div class="home-logo" aria-hidden="true">
+    <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
+  </div>
+
   <!-- ─────────── "About this playbook" popup (Figma 2038:8068) ───────────
-       Opened by the landing "Dive in" button ([data-about-open]); fade/scale-in
+       Opened by the landing "Explore" button ([data-about-open]); fade/scale-in
        via GSAP (aboutModal() in main.js). Holds the retired Foreword's two
        sections. Sits OUTSIDE #smooth-wrapper so main can be made inert while open. -->
   <div class="about-modal" id="aboutModal" role="dialog" aria-modal="true"
@@ -272,15 +284,6 @@
           </section>
         </div>
       </div>
-
-      <a class="about-modal__cta" href="/playbook.html">
-        <span>Read the playbook</span>
-        <span class="about-modal__cta-icon" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 16 16" focusable="false">
-            <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-          </svg>
-        </span>
-      </a>
     </div>
   </div>
 
