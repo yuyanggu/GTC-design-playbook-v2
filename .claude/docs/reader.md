@@ -20,7 +20,7 @@ stacked chapter index now carries a final unnumbered **About** row (`.toc__chapt
 `.chapter-panel--about`, dark), so scrolling past `#ch5` now hands off into it exactly like a
 chapter-to-chapter transition (`#ch5` is no longer the last panel, so `panelTransitions` gives it a
 scale/fade out; About, being last, never scales out). The page's own motion — the gallery's
-staggered rise + pinned horizontal scroll and the manifesto's masked line reveal — is **ported into
+staggered rise + pinned horizontal scroll (the closing credits use the shared `.reveal` batch) — is **ported into
 `aboutPanel()` in `js/chapter.js`** (scoped to `#about`, driven by the reader's shared
 ScrollSmoother); `js/about.js` is NOT loaded here. `aboutPanel()` also toggles `html.reader-dark`
 (topbar logo → chalk) via a live-rect probe — a start/end ScrollTrigger mis-measures because the

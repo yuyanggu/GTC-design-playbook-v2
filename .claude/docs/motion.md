@@ -58,7 +58,7 @@ pieces:
 3. **`introScene()`** — `once:true` at `top 70%`: the headline's **word-by-word rise**
    (hellohello.is style — pre-authored `.word` inline-blocks inside `overflow:hidden` `.line`
    wrappers, `yPercent` 118→0, `power4.out`, stagger 0.07, with the `y:0`-before-`yPercent` guard
-   from `manifestoReveal`), while `.intro__copy` / `.intro__explore` fade up (the top-left
+   from the retired `manifestoReveal`), while `.intro__copy` / `.intro__explore` fade up (the top-left
    `.home-logo` is a separate fixed top bar — see `logoBar`). The Explore button (`[data-about-open]`)
    opens the About popup, which **pauses the smoother** (`smoother.paused(true)`) while open.
 4. **Books/spines rise** — now owned by `homeBooks()`: parked below the fold (clipped by
@@ -135,7 +135,7 @@ this section any more — it's a fixed body-level element (see `logoBar` in the 
   negative margin reclaims it so the two lines keep the Figma 80px rhythm) wrapping
   `display:inline-block` `.word` spans. `introScene` rises them `yPercent` 118→0 — with the **`y:0`
   reset before `yPercent`** guard so the px value GSAP parses from the CSS `translateY(118%)` start
-  doesn't stack (see `manifestoReveal` in `js/about.js` and [gotchas.md](gotchas.md)).
+  doesn't stack (see [gotchas.md](gotchas.md); the pattern originated in about.js's retired `manifestoReveal`).
 - **Two-line fit (`fitHeadline` in main.js):** the title must ALWAYS be exactly two lines with no
   wrap. `fitHeadline` measures the longest line's `scrollWidth` at the 54px cap and scales the shared
   `font-size` to fit the space beside the copy column (full row width when stacked), **clamped to

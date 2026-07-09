@@ -1305,8 +1305,8 @@ a.toc__chapter:hover { color: var(--midnight); }
    viewport hero — topbar at top, head row (Boldonse title left / serif intro
    right, space-between) centred in the gap, the illustration full-bleed along
    the bottom edge. Below on scroll: pinned horizontal photo gallery
-   (js/about.js galleryScroll) + "Less deck. / More impact." masked line reveal
-   (js/about.js manifestoReveal).
+   (js/about.js galleryScroll) + the "Behind the Playbook" credits section
+   (.about-crew — hairline rows, revealed by the shared .reveal batch).
    ========================================================================== */
 body.page-dark { background: #0c1619; }
 body.page-dark .topbar__logo img { filter: brightness(0) invert(1); }  /* white wordmark */
@@ -1329,8 +1329,8 @@ html.reader-dark .topbar__logo img { filter: brightness(0) invert(1); }
   background: #0c1619;
   color: #fff;
 }
-/* Tail room after the manifesto (the shared .page-body padding-bottom is gone). */
-.about-manifesto { padding-bottom: clamp(96px, 16vh, 200px); }
+/* Tail room after the credits (the shared .page-body padding-bottom is gone). */
+.about-crew { padding-bottom: clamp(96px, 16vh, 200px); }
 
 /* ----- Hero: fills the viewport; illustration pinned to the bottom edge, the
    head row centred in the space between the (fixed) topbar and the art. ------ */
@@ -1404,29 +1404,117 @@ html.reader-dark .topbar__logo img { filter: brightness(0) invert(1); }
   border-radius: 4px;
 }
 
-/* ----- Closing manifesto — masked line reveal -------------------------------
-   Each line is an overflow-hidden mask; the inner text starts translated below
-   the mask (under .js) and manifestoReveal slides it up once on enter. */
-.about-manifesto {
-  margin: clamp(80px, 14vh, 160px) auto 0;
+/* ----- Behind the Playbook — credits ----------------------------------------
+   Editorial credits block (ref: "MADE BY" credits table), right-aligned to
+   the page like the hero intro: intro sentence + a hairline-ruled crew list.
+   Each row is its own 3-col grid — portrait | identity (name / playful
+   epithet / role) | bio — sharing hairline top rules like the .ctable.
+   Everything reveals with the page's shared .reveal fade-up batch. */
+.about-crew {
+  margin-top: clamp(96px, 16vh, 200px);
   padding-inline: var(--page-pad);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2rem, 4.6vw, 64px);
-  line-height: 1.6;                    /* generous box — Boldonse caps clip in tight boxes */
-  text-align: center;
   color: #fff;
 }
-.about-manifesto__line { display: block; overflow: hidden; }
-.about-manifesto__text { display: block; }
-.js .about-manifesto__text { transform: translateY(112%); }   /* hidden under the mask until JS reveals */
-.about-manifesto__accent { color: var(--orange); }
+.about-crew__main {
+  max-width: 1040px;
+  margin-left: auto;                   /* hangs off the right edge, like the hero intro */
+}
+.about-crew__intro {
+  margin: 0 0 clamp(56px, 9vh, 110px);
+  font-size: clamp(24px, 2.5vw, 38px);
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
 
-/* Reduced motion → no pin, no line rise (js/about.js early-returns); the strip
-   swipes natively and the manifesto is simply visible. */
+/* Row grid: portrait | identity | bio. */
+.about-crew__row {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 260px) minmax(0, 1fr);
+  column-gap: clamp(24px, 3.5vw, 56px);
+}
+
+.about-crew__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.about-crew__row {
+  padding-block: clamp(28px, 4vh, 40px);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.about-crew__list { border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+
+.about-crew__media { line-height: 0; }
+.about-crew__media img {
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
+}
+/* Two-person row (Quinny & Mark): the portraits stack top and bottom. */
+.about-crew__media--pair {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+.about-crew__id { min-width: 0; }
+.about-crew__name {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #fff;
+}
+.about-crew__epithet {
+  margin: 6px 0 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.78);
+}
+.about-crew__role {
+  margin: 12px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.about-crew__bio {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.65;
+  letter-spacing: -0.16px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.about-crew__thanks { margin-top: clamp(48px, 8vh, 88px); }
+.about-crew__subhead {
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.about-crew__colophon {
+  margin: clamp(40px, 6vh, 64px) 0 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Reduced motion → no pin (js early-returns); the strip swipes natively and
+   the credits are simply visible (the .reveal override lives with .reveal). */
 @media (prefers-reduced-motion: reduce) {
   .about-gallery { overflow-x: auto; }
-  .js .about-manifesto__text { transform: none; }
 }
 
 @media (max-width: 768px) {
@@ -1444,4 +1532,18 @@ html.reader-dark .topbar__logo img { filter: brightness(0) invert(1); }
     gap: 20px;
   }
   .about-gallery__item img { height: min(52vh, 420px); }
+
+  /* Credits stack: each row keeps portrait + identity side by side, the bio
+     drops to a full-width line below. */
+  .about-crew { margin-top: clamp(72px, 12vh, 120px); }
+  .about-crew__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 20px;
+  }
+  .about-crew__media img { width: 96px; height: 96px; }
+  .about-crew__media--pair { gap: 10px; }
+  .about-crew__bio {
+    grid-column: 1 / -1;
+    margin-top: 18px;
+  }
 }

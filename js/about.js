@@ -15,7 +15,6 @@ if (window.__GTC_LOCKED__) {
   copyReveals();
   galleryReveal();
   galleryScroll();
-  manifestoReveal();
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   window.addEventListener("load", () => ScrollTrigger.refresh());
@@ -34,34 +33,6 @@ function copyReveals() {
     start: "top 88%",
     onEnter: (batch) =>
       gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out", stagger: 0.08, overwrite: true }),
-  });
-}
-
-/* ---- Horizontal gallery: the section pins at viewport centre and the strip
-   translates left by its overflow as you keep scrolling — scroll distance =
-   the strip's own width, so the pace feels 1:1. pinType:"transform" is
-   required under ScrollSmoother (see .claude/docs/gotchas.md). Under reduced
-   motion the section stays in flow and the strip swipes natively (CSS
-   overflow-x). ---- */
-/* ---- Manifesto: masked line reveal. Each .about-manifesto__text starts
-   translated below its overflow-hidden .about-manifesto__line (CSS `.js`
-   state); on first enter the lines rise staggered, then stay. ---- */
-function manifestoReveal() {
-  const lines = gsap.utils.toArray(".about-manifesto__text");
-  if (!lines.length) return;
-  if (reduce) {
-    gsap.set(lines, { yPercent: 0, clearProps: "transform" });
-    return;
-  }
-  // y:0 zeroes the px offset GSAP parses out of the CSS translateY(112%) start
-  // state — otherwise it stacks with yPercent and the tween settles half-hidden.
-  gsap.set(lines, { y: 0, yPercent: 112 });
-  gsap.to(lines, {
-    yPercent: 0,
-    duration: 0.9,
-    ease: "power4.out",
-    stagger: 0.14,
-    scrollTrigger: { trigger: ".about-manifesto", start: "top 82%", once: true },
   });
 }
 
@@ -101,6 +72,12 @@ function galleryReveal() {
   );
 }
 
+/* ---- Horizontal gallery: the section pins at viewport centre and the strip
+   translates left by its overflow as you keep scrolling — scroll distance =
+   the strip's own width, so the pace feels 1:1. pinType:"transform" is
+   required under ScrollSmoother (see .claude/docs/gotchas.md). Under reduced
+   motion the section stays in flow and the strip swipes natively (CSS
+   overflow-x). ---- */
 function galleryScroll() {
   if (reduce) return;
   const section = document.querySelector(".about-gallery");

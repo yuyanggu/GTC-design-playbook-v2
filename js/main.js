@@ -316,7 +316,7 @@ function introScene() {
       tl.to(words, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.05 }, 0);
     } else {
       // Masked word rise (hellohello.is). y:0 zeroes the px offset GSAP parses from the
-      // CSS translateY(118%) start so yPercent doesn't stack (manifestoReveal guard).
+      // CSS translateY(118%) start so yPercent doesn't stack (see gotchas.md: yPercent stacking).
       gsap.set(words, { y: 0, yPercent: 118, autoAlpha: 1 });
       tl.to(words, { yPercent: 0, duration: 0.9, ease: "power4.out", stagger: 0.07 }, 0);
     }

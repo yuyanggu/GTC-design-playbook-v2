@@ -12,7 +12,7 @@ lessons in [gotchas.md](gotchas.md).
 | `index.html` | Landing (cover + intro section + landing shelf) | Yes (`smooth: 1.7`, heavier glide) | No | No |
 | `playbook.html` | Continuous reader — Foreword + all 3 chapters in one document | Yes | Yes | Yes (shared) |
 | `foreword.html`, `why-we-exist.html`, `our-point-of-view.html`, `stages-of-a-project.html` | Standalone pages (ch0/ch1/ch2/ch3) — kept as a fallback, no longer linked from any live navigation | Yes | Yes (duplicated) | Yes |
-| `about.html` | About page — dark (`#0c1619`, `body.page-dark`, no rail): full-viewport hero (centred title + intro row over the full-bleed bottom `about_hero_dark.webp`), then pinned horizontal photo gallery + masked-line manifesto on scroll. Linked from the drawer's About row; clean path `/about`. Loads `js/about.js` instead of `js/chapter.js`. | Yes | Yes (duplicated) | Yes |
+| `about.html` | About page — dark (`#0c1619`, `body.page-dark`, no rail): full-viewport hero (centred title + intro row over the full-bleed bottom `about_hero_dark.webp`), then pinned horizontal photo gallery + the "Behind the Playbook" credits section (`.about-crew`) on scroll. Linked from the drawer's About row; clean path `/about`. Loads `js/about.js` instead of `js/chapter.js`. | Yes | Yes (duplicated) | Yes |
 
 All chapter surfaces (standalone + reader panels) share `css/chapter.css` + `js/chapter.js`.
 **Every live menu now points at the reader** (`index.html` shelf → `playbook.html#chN`; the

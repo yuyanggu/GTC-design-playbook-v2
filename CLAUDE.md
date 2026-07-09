@@ -126,9 +126,13 @@ project memory `headless-motion-verification`.
   zeroes the shared `.page-body` 48/280 padding so the hero is exactly one screen. Below on scroll:
   **pinned horizontal photo gallery** (8 team photos, `assets/photos/about-*.jpg`, same
   height/natural widths, 4px radius; strip scrubs left by its overflow, `pinType:"transform"`;
-  reduced-motion → native `overflow-x` swipe) → "Less deck. / More impact." **masked line reveal**
-  (each line rises once out of its overflow-hidden wrapper on enter; `manifestoReveal` in
-  `js/about.js` — note the `y:0` guard so GSAP doesn't stack the CSS start offset). Intro copy is the
+  reduced-motion → native `overflow-x` swipe) → **"Behind the Playbook" credits** (`.about-crew`,
+  2026-07, replaced the "Less deck. / More impact." manifesto): a right-aligned editorial column
+  (max 1040px, `margin-left:auto`) — intro sentence + hairline-ruled crew rows (portrait 128px |
+  name/serif-italic epithet/small-caps role | serif bio), 5 rows (Quinny & Mark share one with
+  stacked portraits, `--pair`), then Special Thanks + an adapted type colophon. Crew portraits are
+  `assets/photos/crew-*.jpg` (400px B&W squares). Rows animate via the shared `.reveal` batch — no
+  bespoke JS. Intro copy is the
   playbook body size (16px). Own module `js/about.js` (not `chapter.js`); CSS is the
   `.about-*`/`page-dark` block at the end of `chapter.css`; clean path `/about` rewrites in
   `vercel.json` / `_redirects` / `serve.json`.
@@ -138,7 +142,7 @@ project memory `headless-motion-verification`.
   chapter-to-chapter scroll effect; per-chapter TOC pins coexist; rail follows the active chapter
   (clipped away over the dark About panel); landing books deep-link in. Scrolling past `#ch5` now
   hands off into About like any chapter boundary; `aboutPanel()` in `js/chapter.js` ports the About
-  page's gallery + manifesto motion (about.js is not loaded here) and inverts the topbar logo over
+  page's gallery motion (about.js is not loaded here; the credits ride the `.reveal` batch) and inverts the topbar logo over
   the dark panel. `urlSync` updates the address bar to `/chapter-1`…`/chapter-5/<section-slug>`,
   `/foreword`, and `/about`. Content is mirrored verbatim between each reader panel and its
   standalone page. **The drawer Menu was removed here (2026-07); the always-open TOC (now including

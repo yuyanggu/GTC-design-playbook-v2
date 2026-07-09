@@ -1429,9 +1429,9 @@
     <!-- ═══════════════════════ ABOUT — embedded reader panel (mirrors about.html) ═══════════════════════
          The reader's terminal panel: scrolling past ch5 transitions seamlessly into About
          (panelTransitions makes ch5 hand off, About being last never scales out). Dark
-         surface (.page-body.about-page), full-bleed hero + pinned horizontal gallery + masked
-         manifesto — the gallery/manifesto/topbar-invert motion is driven by aboutPanel() in
-         js/chapter.js (about.js is NOT loaded here; the reader owns one ScrollSmoother). -->
+         surface (.page-body.about-page), full-bleed hero + pinned horizontal gallery + the
+         "Behind the Playbook" credits — the gallery/topbar-invert motion is driven by aboutPanel()
+         in js/chapter.js (about.js is NOT loaded here; the reader owns one ScrollSmoother). -->
     <section class="section chapter-panel chapter-panel--about" id="about"
              data-rail="about" data-rail-fg="var(--chalk)"
              style="--accent: var(--orange);">
@@ -1465,12 +1465,78 @@
           </div>
         </section>
 
-        <!-- Masked line reveal (aboutPanel/manifestoReveal): each line's text
-             rises out from under its own overflow-hidden wrapper, once, on enter. -->
-        <p class="about-manifesto">
-          <span class="about-manifesto__line"><span class="about-manifesto__text">Less deck.</span></span>
-          <span class="about-manifesto__line"><span class="about-manifesto__text about-manifesto__accent">More impact.</span></span>
-        </p>
+        <!-- Behind the Playbook — credits (mirrors about.html verbatim). Rows fade
+             up via the shared .reveal batch (js/chapter.js copyReveals). -->
+        <section class="about-crew" aria-label="The crew behind the playbook">
+          <div class="about-crew__main">
+            <p class="about-crew__intro reveal">Behind every framework and flow chart is a tight-knit crew of system-mappers, word-smiths, and pixel-pushers trying to make this document a little more human.</p>
+
+            <ul class="about-crew__list">
+              <li class="about-crew__row reveal">
+                <div class="about-crew__media">
+                  <img src="assets/photos/crew-nav.jpg" width="400" height="400" alt="Portrait of Nav" loading="lazy" />
+                </div>
+                <div class="about-crew__id">
+                  <h3 class="about-crew__name">Nav</h3>
+                  <p class="about-crew__epithet">The Navigator</p>
+                  <p class="about-crew__role">Lead &amp; Direction</p>
+                </div>
+                <p class="about-crew__bio">Nav provides the overarching direction and strategic vision for the team, keeping our efforts tightly aligned on the bigger picture. When we get bogged down by details, he adjusts the rudders and steers our creative winds back to clear waters.</p>
+              </li>
+              <li class="about-crew__row reveal">
+                <div class="about-crew__media about-crew__media--pair">
+                  <img src="assets/photos/crew-quinny.jpg" width="400" height="400" alt="Portrait of Quinny" loading="lazy" />
+                  <img src="assets/photos/crew-mark.jpg" width="400" height="400" alt="Portrait of Mark" loading="lazy" />
+                </div>
+                <div class="about-crew__id">
+                  <h3 class="about-crew__name">Quinny &amp; Mark</h3>
+                  <p class="about-crew__epithet">The Masters of Chaos &amp; Playbook Orchestrators</p>
+                  <p class="about-crew__role">Project Leads</p>
+                </div>
+                <p class="about-crew__bio">Quinny and Mark are the dual engines driving the project. They conceptualized the playbook, gathered messy mountains of information, orchestrated endless rounds of feedback, and coaxed everyone across the publication finish line without losing their sanity.</p>
+              </li>
+              <li class="about-crew__row reveal">
+                <div class="about-crew__media">
+                  <img src="assets/photos/crew-qing.jpg" width="400" height="400" alt="Portrait of Jing Qing" loading="lazy" />
+                </div>
+                <div class="about-crew__id">
+                  <h3 class="about-crew__name">Jing Qing</h3>
+                  <p class="about-crew__epithet">The Illustrious Illustrator</p>
+                  <p class="about-crew__role">Visual Designer</p>
+                </div>
+                <p class="about-crew__bio">Jing Qing is the force responsible for the &ldquo;artistic blabla&rdquo; &mdash; meaning the stunning illustrations, graphs, and visual metaphors that stop our ideas from looking like a wall of text.</p>
+              </li>
+              <li class="about-crew__row reveal">
+                <div class="about-crew__media">
+                  <img src="assets/photos/crew-mimi.jpg" width="400" height="400" alt="Portrait of Mimi" loading="lazy" />
+                </div>
+                <div class="about-crew__id">
+                  <h3 class="about-crew__name">Mimi</h3>
+                  <p class="about-crew__epithet">The Chaos Translator</p>
+                  <p class="about-crew__role">Copywriter &amp; Information Designer</p>
+                </div>
+                <p class="about-crew__bio">When internal brainstorms kick up a fog of tangled thoughts and technical jargon, Mimi clears the view by organizing complex ideas into accessible, digestible narratives.</p>
+              </li>
+              <li class="about-crew__row reveal">
+                <div class="about-crew__media">
+                  <img src="assets/photos/crew-yy.jpg" width="400" height="400" alt="Portrait of Yuyang" loading="lazy" />
+                </div>
+                <div class="about-crew__id">
+                  <h3 class="about-crew__name">Yuyang</h3>
+                  <p class="about-crew__epithet">The Last Line of Defense</p>
+                  <p class="about-crew__role">Developer</p>
+                </div>
+                <p class="about-crew__bio">Yuyang guards the border between creative chaos and functional code, transforming our grand ideas and wild sketches into a responsive digital reality. If every click, scroll, and micro-interaction feels butter-smooth, thank YY.</p>
+              </li>
+            </ul>
+
+            <div class="about-crew__thanks reveal">
+              <p class="about-crew__subhead">Special thanks</p>
+              <p class="about-crew__bio">A massive shout-out to friends across the Innovation Team and Design Practice. Thank you for lending fresh perspectives, vetting ideas, and stress-testing the content. This playbook captures our collective experience, and it wouldn&rsquo;t have the same depth without your sharp eyes and candid feedback.</p>
+            </div>
+            <p class="about-crew__colophon reveal">The type you&rsquo;re reading is set in Boldonse, DM Sans, and Source Serif &mdash; open-source typefaces made freely available by their designers. Our sincere gratitude for making the web a more beautiful place to read.</p>
+          </div>
+        </section>
       </section>
      </div><!-- /.chapter-panel__scale -->
     </section>

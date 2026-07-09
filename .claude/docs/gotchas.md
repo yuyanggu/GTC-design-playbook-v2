@@ -35,7 +35,7 @@ These are the highest-value notes in the repo — preserve them.
   `translateY(…%)` start state into a **px** value in its cache; animating `yPercent` then stacks on
   that stale px offset (the reveal settles half-hidden). Either drive the wipe with **px `y`**
   (measured line height → 0) or `gsap.set({y:0, yPercent:…})` before animating `yPercent` (the
-  guard used by `manifestoReveal` in about.js and `introScene`'s word rise in main.js).
+  guard formerly used by about.js's retired `manifestoReveal`, still live in `introScene`'s word rise in main.js).
 
 ## Cross-section travel
 

@@ -37,7 +37,7 @@ if (window.__GTC_LOCKED__) {
   mobileTocBar();
   topbarScrim();
   tocCollapse();
-  aboutPanel(); // reader-only: the embedded About terminal panel's gallery + manifesto motion
+  aboutPanel(); // reader-only: the embedded About terminal panel's gallery + topbar-invert motion
 
   // FOUC shield lift — initChapter has set every .reveal's initial state, the
   // panel transitions are wired, and the rail is in place. Lift the shield on
@@ -673,9 +673,9 @@ function topbarScrim() {
 
 /* ---- About panel (reader-only): the embedded About terminal panel (#about,
    mirrors about.html). Ports the standalone page's motion — the photo gallery's
-   staggered rise + pinned horizontal scroll and the closing manifesto's masked
-   line reveal — scoped to the one #about panel and driven by the reader's shared
-   ScrollSmoother (js/about.js is NOT loaded here). Also inverts the topbar logo
+   staggered rise + pinned horizontal scroll (the closing credits section rides
+   the shared .reveal batch) — scoped to the one #about panel and driven by the
+   reader's shared ScrollSmoother (js/about.js is NOT loaded here). Also inverts the topbar logo
    to chalk while the dark About panel sits under the bar. The panel is the LAST
    .chapter-panel, so panelTransitions leaves it alone (it never scales out) while
    ch5 now hands off into it. ---- */
@@ -699,14 +699,10 @@ function aboutPanel() {
   const gallery = panel.querySelector(".about-gallery");
   const strip = gallery && gallery.querySelector(".about-gallery__strip");
   const items = gsap.utils.toArray(".about-gallery__item", panel);
-  const lines = gsap.utils.toArray(".about-manifesto__text", panel);
-  const manifesto = panel.querySelector(".about-manifesto");
 
-  if (reduce) {
-    // No rise / no pin / no line mask — CSS handles a native swipe + visible manifesto.
-    if (lines.length) gsap.set(lines, { yPercent: 0, clearProps: "transform" });
-    return;
-  }
+  // No rise / no pin — CSS handles a native swipe; the credits' .reveal
+  // elements are shown by the reduced-motion override in chapter.css.
+  if (reduce) return;
 
   // Gallery photos rise once on enter (y only), before the horizontal pin engages.
   // matchMedia rebuilds the right travel on resize/rotate; the pin/scrub lives on
@@ -742,16 +738,6 @@ function aboutPanel() {
     });
   }
 
-  // Manifesto: masked line reveal. y:0 zeroes the px offset GSAP parses out of the
-  // CSS translateY(112%) start state — otherwise it stacks with yPercent and settles
-  // half-hidden (same guard as js/about.js).
-  if (lines.length && manifesto) {
-    gsap.set(lines, { y: 0, yPercent: 112 });
-    gsap.to(lines, {
-      yPercent: 0, duration: 0.9, ease: "power4.out", stagger: 0.14,
-      scrollTrigger: { trigger: manifesto, start: "top 82%", once: true },
-    });
-  }
 }
 
 /* ============================================================================
