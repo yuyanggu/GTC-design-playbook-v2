@@ -233,7 +233,7 @@
 
           <details class="accordion reveal" id="s-42-1" open>
             <summary class="accordion__head">
-              <span class="accordion__title">Subphase 1: Discover What’s True<span class="accordion__sub">To frame a problem</span></span>
+              <span class="accordion__title">Subphase 1: Discover What’s True<span class="accordion__sub">(To frame a problem)</span></span>
             </summary>
             <div class="accordion__body">
               <p>The purpose of Subphase 1 is to define the real problem, and align understanding with our agency partners before a solution is proposed.</p>
@@ -253,6 +253,7 @@
                   <div class="ctable__cell" data-label="Technical discovery (engineer-led)"><p><strong>Identify what tools already exist,</strong> legacy-system constraints, API integration dependencies, and technical risks.</p></div>
                 </div>
               </div>
+              <p><em><strong>Note:</strong> the following are based on Experience Discovery (design-led) only.</em></p>
               <div class="rulegrid">
                 <div class="rulegrid__col">
                   <p class="rulegrid__title">Activities</p>
@@ -294,13 +295,17 @@
 
           <details class="accordion reveal" id="s-42-2">
             <summary class="accordion__head">
-              <span class="accordion__title">Subphase 2: Discover What Works<span class="accordion__sub">To rapidly experiment</span></span>
+              <span class="accordion__title">Subphase 2: Discover What Works<span class="accordion__sub">(To rapidly experiment)</span></span>
             </summary>
             <div class="accordion__body">
               <p>The purpose of Subphase 2 is to transform the understanding from Subphase 1 into a testable object. We hypothesise solutions, then build dynamic prototypes to get real users testing. The prototypes are continuously refined until a validated solution emerges.</p>
               <h4 class="subsection-head">The rapid experimental cycle</h4>
               <p>This subphase is a repeating loop designed to test hypotheses quickly and cheaply. Each loop runs on a two-to-three-week cadence, with the first user-tested prototype available within three weeks.</p>
               <p><strong>The loop:</strong> Hypothesis → Quick build → User test → (repeat)</p>
+              <div class="diagram-ph" role="img" aria-label="Diagram placeholder — the rapid experimental cycle">
+                <span class="diagram-ph__tag">Diagram — to come</span>
+                <p class="diagram-ph__desc">The rapid experimental cycle — a loop of Hypothesis → Quick build → User test → repeat, running on a two-to-three-week cadence.</p>
+              </div>
               <div class="rulegrid rulegrid--3">
                 <div class="rulegrid__col">
                   <p class="rulegrid__title">Hypothesis</p>
@@ -319,12 +324,12 @@
               <h4 class="subsection-head">Core characteristics of Subphase 2</h4>
               <p class="runin">What we run</p>
               <ul>
-                <li><strong>Rapid iteration over scalability.</strong> Prototypes are built to learn, not to ship. Teams work in close collaboration, pooling specialised knowledge to generate prototypes that get progressively closer to the solution. The final build that ships after the rapid experimental cycle may look different from these iterations.</li>
-                <li><strong>Real validation.</strong> True insight comes from testing with the people who will actually use the thing. Internal reviews and stakeholder walkthroughs are a useful start, but they are not validation — real validation requires observing real users interacting with the system in real contexts. Two rules follow: every prototype needs a clear hypothesis it is testing, and a clear way to measure whether it worked. Without both, a test produces opinions rather than signal.</li>
+                <li><strong class="ch-key">Rapid iteration over scalability.</strong> <strong>Prototypes are built to learn, not to ship.</strong> Teams work in close collaboration, pooling specialised knowledge to generate prototypes that get progressively closer to the solution. The final build that ships after the rapid experimental cycle may look different from these iterations.</li>
+                <li><strong class="ch-key">Real validation.</strong> <strong>Internal reviews and stakeholder walkthroughs are a useful start, but they are not validations.</strong> Real validation requires observing real users interacting with the system in real contexts. Every prototype must have a measurable hypothesis to generate signal instead of opinion. <em>(See Rapid Experimental Cycle Chart above.)</em></li>
               </ul>
               <p class="runin">What we build</p>
               <ul>
-                <li><strong>Functional prototypes.</strong> We build functional prototypes that behave like real systems rather than relying on static mockups or click-throughs to validate core logic. Grounded in data insights from earlier discovery, these artifacts integrate directly into real workflows to generate high-signal, actionable validation.</li>
+                <li><strong class="ch-key">Functional prototypes.</strong> <strong>We build functional prototypes that behave like real systems</strong> rather than relying on static mockups or click-throughs to validate core logic. Grounded in data insights from earlier discovery, these artifacts integrate directly into real workflows to generate high-signal, actionable validation.</li>
               </ul>
               <div class="ctable ctable--3">
                 <div class="ctable__row ctable__row--head">
@@ -338,7 +343,7 @@
                   <div class="ctable__cell" data-label="Validation focus"><p><strong>Visual &amp; conceptual alignment.</strong> Best for testing whether the look, feel, and basic concept make sense to users.</p></div>
                 </div>
                 <div class="ctable__row">
-                  <div class="ctable__cell ctable__cell--label">Interactive mockup</div>
+                  <div class="ctable__cell ctable__cell--label">AI mockup</div>
                   <div class="ctable__cell" data-label="Description"><p>Browser-based, fully clickable, built with synthetic data. Fast to produce but cannot replace a real workflow.</p></div>
                   <div class="ctable__cell" data-label="Validation focus"><p><strong>UI navigation.</strong> Best for testing whether users can find their way through a basic step-by-step flow.</p></div>
                 </div>
@@ -350,10 +355,10 @@
               </div>
               <div class="diagram-ph" role="img" aria-label="Diagram placeholder — the prototype spectrum">
                 <span class="diagram-ph__tag">Diagram — to come</span>
-                <p class="diagram-ph__desc">The prototype spectrum — a horizontal scale from Static design → Interactive mockup → Functional prototype, signal value rising to the right, with an arrow marking the functional end as the target.</p>
+                <p class="diagram-ph__desc">The prototype spectrum — a horizontal scale from Static design → AI mockup → Functional prototype, signal value rising to the right, with an arrow marking the functional end as the target.</p>
               </div>
               <ul>
-                <li><strong>Parallel operational mapping.</strong> We map real-world workflows, roles, and policy touchpoints alongside the digital tool rather than relying on automated logic to predict how end-users actually work. These live operational models adapt as we learn, ensuring the physical world is fully ready to adopt the product and solve the core problem seamlessly from day one.</li>
+                <li><strong class="ch-key">Operational prototype.</strong> <strong>We map real-world workflows, roles, and policy touchpoints alongside the digital tool rather than relying on automated logic to predict how end-users actually work.</strong> These live operational models adapt as we learn, ensuring the physical world is fully ready to adopt the product and solve the core problem seamlessly from day one.</li>
               </ul>
 
               <div class="rulegrid">
