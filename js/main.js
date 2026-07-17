@@ -692,43 +692,40 @@ function aboutModal() {
 }
 
 /* ============================================================================
-   Boot — skipped while the password gate is locked (js/gate.js) so no animation
-   runs behind the lock; on unlock the page reloads and boots fresh.
+   Boot
    ========================================================================== */
-if (!window.__GTC_LOCKED__) {
-  // Ignore the resize mobile browsers fire when the address bar shows/hides — it would
-  // otherwise refresh ScrollTrigger and jump the scrub positions mid-scroll. Real
-  // rotations still refresh (different event).
-  if (ScrollTrigger) ScrollTrigger.config({ ignoreMobileResize: true });
-  smoothScroll();   // create the smoother first so chapter-page ScrollTriggers attach to it
-  arrowBob();
-  cloudDrift();     // drift + the scroll parallax down into the intro
-  pinwheelScene();  // builds the load-in (loadTl) + parks/spins the pinwheel
-  introHold();      // hold scroll at top until the load-in intro finishes playing
-  homeBooks();      // parks the books/spines + their rise-in trigger
-  coverScroll();    // timed play-once cover scale-down + arrow fade
-  introScene();     // once-on-enter headline word rise + copy/Explore fade
-  logoBar();        // fixed top-bar logo — fades in when the page bottom is reached
-  fitHeadline();    // scale the two-line title so it never wraps at any width
-  aboutModal();
-  magneticButtons();
+// Ignore the resize mobile browsers fire when the address bar shows/hides — it would
+// otherwise refresh ScrollTrigger and jump the scrub positions mid-scroll. Real
+// rotations still refresh (different event).
+if (ScrollTrigger) ScrollTrigger.config({ ignoreMobileResize: true });
+smoothScroll();   // create the smoother first so chapter-page ScrollTriggers attach to it
+arrowBob();
+cloudDrift();     // drift + the scroll parallax down into the intro
+pinwheelScene();  // builds the load-in (loadTl) + parks/spins the pinwheel
+introHold();      // hold scroll at top until the load-in intro finishes playing
+homeBooks();      // parks the books/spines + their rise-in trigger
+coverScroll();    // timed play-once cover scale-down + arrow fade
+introScene();     // once-on-enter headline word rise + copy/Explore fade
+logoBar();        // fixed top-bar logo — fades in when the page bottom is reached
+fitHeadline();    // scale the two-line title so it never wraps at any width
+aboutModal();
+magneticButtons();
 
-  // Keep the two-line title fitted as the viewport changes.
-  let fhRt;
-  window.addEventListener("resize", () => { clearTimeout(fhRt); fhRt = setTimeout(fitHeadline, 120); });
+// Keep the two-line title fitted as the viewport changes.
+let fhRt;
+window.addEventListener("resize", () => { clearTimeout(fhRt); fhRt = setTimeout(fitHeadline, 120); });
 
-  // FOUC shield lift — every above-the-fold element now has a gsap.set initial
-  // state hiding it (books/spines parked off-screen, pinwheel created, eyebrow/
-  // lockup/clouds/arrow autoAlpha:0; the intro pieces sit below the fold behind
-  // the `.js` CSS hidden states). Safe to remove the shield: nothing animated
-  // will paint visible until loadTl / the scroll scenes play.
-  // Done in a rAF so the swap happens after the current paint commits.
-  requestAnimationFrame(() => root.classList.remove("js-pending"));
+// FOUC shield lift — every above-the-fold element now has a gsap.set initial
+// state hiding it (books/spines parked off-screen, pinwheel created, eyebrow/
+// lockup/clouds/arrow autoAlpha:0; the intro pieces sit below the fold behind
+// the `.js` CSS hidden states). Safe to remove the shield: nothing animated
+// will paint visible until loadTl / the scroll scenes play.
+// Done in a rAF so the swap happens after the current paint commits.
+requestAnimationFrame(() => root.classList.remove("js-pending"));
 
-  // Fonts can shift metrics → recompute pin distances + re-fit the title once loaded
-  // (Boldonse is wider than the fallback, so the first fit used the wrong metrics).
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => { ScrollTrigger.refresh(); fitHeadline(); });
-  }
-  window.addEventListener("load", () => { ScrollTrigger.refresh(); fitHeadline(); });
+// Fonts can shift metrics → recompute pin distances + re-fit the title once loaded
+// (Boldonse is wider than the fallback, so the first fit used the wrong metrics).
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => { ScrollTrigger.refresh(); fitHeadline(); });
 }
+window.addEventListener("load", () => { ScrollTrigger.refresh(); fitHeadline(); });

@@ -32,8 +32,7 @@
    Hovering a link/book prefetches the destination document (HR fetches +
    caches on hover; rel=prefetch is the MPA equivalent).
 
-   Reduced motion / the password gate (window.__GTC_LOCKED__) / missing GSAP →
-   instant navigation, no fade.
+   Reduced motion / missing GSAP → instant navigation, no fade.
    ========================================================================== */
 
 const gsap = window.gsap;
@@ -78,7 +77,7 @@ function destBackground(url) {
 function navigate(href) {
   if (leaving) return;
   const url = new URL(href, location.href);
-  if (reduce || !gsap || window.__GTC_LOCKED__) { location.href = url.href; return; }
+  if (reduce || !gsap) { location.href = url.href; return; }
   leaving = true;
   lockScroll();
   document.body.style.pointerEvents = "none";

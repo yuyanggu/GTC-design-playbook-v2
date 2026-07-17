@@ -32,7 +32,13 @@
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/chapter.css" />
   <link rel="stylesheet" href="css/playbook.css" />
-  <script src="js/gate.js"></script>
+  <script>
+    /* FOUC shield safety net: html.js-pending hides every above-the-fold element
+       until main.js/chapter.js run their initial gsap.set's. If those modules never
+       boot (network error, JS exception), drop the shield anyway so the page can't
+       stay blank-chalk forever. Inline so it needs no request of its own. */
+    setTimeout(function () { document.documentElement.classList.remove("js-pending"); }, 3000);
+  </script>
   <script src="js/routes.js"></script>
   <script>
     // Pre-paint: when deep-linking to a chapter/section path (or legacy #hash), hold the
@@ -40,7 +46,6 @@
     // js/chapter.js positions the page, then reveals it (see handleDeepLink).
     (function () {
       try { history.scrollRestoration = "manual"; } catch (e) {}
-      if (window.__GTC_LOCKED__) return; // gate covers the page; nothing to hide
       var deep =
         (window.GTCRoutes && window.GTCRoutes.isReaderPath(location.pathname)) ||
         (location.hash && location.hash.length > 1);

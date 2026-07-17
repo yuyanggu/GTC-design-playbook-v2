@@ -24,10 +24,7 @@ const panels = gsap.utils.toArray(".chapter-panel");
 // #chN with #ch1 before handleDeepLink reads it. Enabled once entry settles.
 let urlWriteEnabled = false;
 
-if (window.__GTC_LOCKED__) {
-  // Password gate active (js/gate.js): skip all chapter boot so nothing animates
-  // behind the lock. On unlock the page reloads and this runs fresh.
-} else if (panels.length) {
+if (panels.length) {
   // ----- Continuous reader: each chapter scoped to its own panel -----
   panels.forEach(initChapter);
   panelTransitions(panels);
@@ -1111,7 +1108,6 @@ setTimeout(revealDeepLink, 3200);
    `hashchange`, so it can't fight ScrollSmoother. Throttled to one update per frame;
    writes only when the active anchor changes. ---- */
 function urlSync() {
-  if (window.__GTC_LOCKED__) return;
   // DOM order ↔ vertical order, so the last anchor past the active line is the deepest
   // current one (a chapter while in its hero, then its sections).
   const anchors = gsap.utils

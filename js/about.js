@@ -8,10 +8,7 @@ const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-if (window.__GTC_LOCKED__) {
-  // Password gate active (js/gate.js): skip all boot so nothing animates behind
-  // the lock. On unlock the page reloads and this runs fresh.
-} else if (document.querySelector(".page-body.about-page")) {
+if (document.querySelector(".page-body.about-page")) {
   copyReveals();
   galleryReveal();
   galleryScroll();

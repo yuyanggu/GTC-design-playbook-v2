@@ -21,7 +21,13 @@
   </style></noscript>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/chapter.css" />
-  <script src="js/gate.js"></script>
+  <script>
+    /* FOUC shield safety net: html.js-pending hides every above-the-fold element
+       until main.js/chapter.js run their initial gsap.set's. If those modules never
+       boot (network error, JS exception), drop the shield anyway so the page can't
+       stay blank-chalk forever. Inline so it needs no request of its own. */
+    setTimeout(function () { document.documentElement.classList.remove("js-pending"); }, 3000);
+  </script>
 </head>
 <body class="page-dark">
   <header class="topbar">

@@ -8,7 +8,7 @@
    Subsections (#s-XY-Z) deliberately have NO path — the URL stays at the
    section while you read through its subsections (granularity = section).
 
-   Runs FIRST, synchronously, in <head> (a classic script, like gate.js) so
+   Runs FIRST, synchronously, in <head> (a classic script, not a module) so
    window.GTCRoutes exists before the inline anti-flash script and the deferred
    modules (main.js / chapter.js) read it.
 
