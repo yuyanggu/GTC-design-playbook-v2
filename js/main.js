@@ -5,8 +5,8 @@
    (the fixed pinwheel tracks its slot rect, so it shrinks for free), the clouds
    parallax down to settle along the intro's top edge, the intro headline words
    rise once on enter, and the section books rise when the shelf enters.
-   GSAP + ScrollTrigger + ScrollSmoother. The menu overlay code stays for the
-   chapter pages and no-ops here (no #menu on the home).
+   GSAP + ScrollTrigger + ScrollSmoother. (The drawer menu was removed 2026-07;
+   navigation lives in the reader/chapter TOC + the mobile veil.)
    ========================================================================== */
 
 const gsap = window.gsap;
@@ -29,16 +29,15 @@ let loadTl = null;
 // so coverScroll can fast-forward the load-in on first scroll.
 let pinwheelProx = null;
 
-// ScrollSmoother instance (the menu does NOT touch it — it just hard-locks page scroll
-// via documentElement overflow while open, to avoid smoother/menu interaction bugs).
+// ScrollSmoother instance. The About popup hard-locks page scroll via documentElement
+// overflow while open (decoupled from the smoother to avoid interaction bugs).
 let smoother = null;
 
 /* ============================================================================
    0 · Smooth scrolling (GSAP ScrollSmoother) — wraps #smooth-content; the fixed
    pinwheel stays outside and reads live rects. EVERY surface uses it now: the
    landing gets a heavier glide (smooth 1.7), chapter pages + the reader stay at 1.
-   The landing has no #menu, so the menu's overflow hard-lock is moot there; the
-   About popup pauses the smoother while open instead (see aboutModal).
+   The About popup pauses the smoother while open (see aboutModal).
    ========================================================================== */
 function smoothScroll() {
   if (reduce || !window.ScrollSmoother) return;
@@ -259,8 +258,10 @@ function logoBar() {
         layout, so it runs regardless of reduced motion; re-fit on resize + after
         the display font loads (Boldonse metrics differ from the fallback).
    ========================================================================== */
-const HEADLINE_MAX = 54;   // px — Figma cap
-const HEADLINE_MIN = 40;   // px — hard floor; never smaller than this
+const HEADLINE_MAX = 54;         // px — Figma cap
+const HEADLINE_MIN = 40;         // px — floor while the title sits beside the copy column
+const HEADLINE_MIN_STACKED = 26; // px — floor once stacked: phones keep two small lines
+                                 //       instead of four wrapped 40px ones
 function fitHeadline() {
   const h = document.querySelector(".intro__headline");
   const row = document.querySelector(".intro__row");
@@ -280,13 +281,23 @@ function fitHeadline() {
   const gap = parseFloat(cs.columnGap) || 0;
   const avail = row.clientWidth - (stacked || !col ? 0 : col.offsetWidth + gap) - 2; // 2px safety
 
-  // Ideal size to keep the longest line on ONE row; clamp to [40, 54].
-  const ideal = widest > avail ? Math.floor(HEADLINE_MAX * avail / widest) : HEADLINE_MAX;
-  h.style.fontSize = Math.min(HEADLINE_MAX, Math.max(HEADLINE_MIN, ideal)) + "px";
+  // Side-by-side (>1200px): fit beside the copy column, clamped to [40, 54] as before.
+  // Stacked (≤1200px): a full-width 54px title reads oversized on tablets, so the cap
+  // tracks the viewport instead — 54px at the 1200px stack point easing down to ~29px
+  // at 390px (17px + 3.1vw, mirrored by the CSS no-JS fallback clamp) — and the floor
+  // drops to 26px so the two-line form survives far down into phone widths.
+  const cap = stacked
+    ? Math.min(HEADLINE_MAX, Math.max(HEADLINE_MIN_STACKED, 17 + window.innerWidth * 0.031))
+    : HEADLINE_MAX;
+  const floor = stacked ? HEADLINE_MIN_STACKED : HEADLINE_MIN;
+  const fit = widest > avail ? HEADLINE_MAX * avail / widest : HEADLINE_MAX; // one-row size
 
-  // If even the 40px floor can't fit on one row (phones), allow the title to wrap
-  // rather than shrink below 40 — introScene reveals with a plain fade when wrapped.
-  h.classList.toggle("intro__headline--wrap", ideal < HEADLINE_MIN);
+  // If even the floor can't keep the longest line on one row (phones), let the title wrap
+  // (rows balanced via CSS text-wrap:balance) at the viewport-tracked cap rather than
+  // shrink further — introScene reveals with a plain fade when wrapped.
+  const wrap = fit < floor;
+  h.style.fontSize = (wrap ? Math.round(cap) : Math.max(floor, Math.floor(Math.min(cap, fit)))) + "px";
+  h.classList.toggle("intro__headline--wrap", wrap);
 }
 
 /* ============================================================================
@@ -302,7 +313,9 @@ function introScene() {
 
   if (reduce) return;               // CSS reduced-motion block shows everything statically
 
-  gsap.set([".intro__copy", ".intro__explore"], { autoAlpha: 0, y: 14 });
+  // The "Sail through" CTA lives inside .intro__copy now, so it rides this fade —
+  // tweening it separately would nest a second opacity/y on top of its parent's.
+  gsap.set(".intro__copy", { autoAlpha: 0, y: 14 });
 
   // Build the headline reveal at ENTER time so it matches the current wrap state
   // (fitHeadline may toggle .intro__headline--wrap after fonts load / on resize). Words
@@ -320,8 +333,7 @@ function introScene() {
       gsap.set(words, { y: 0, yPercent: 118, autoAlpha: 1 });
       tl.to(words, { yPercent: 0, duration: 0.9, ease: "power4.out", stagger: 0.07 }, 0);
     }
-    tl.to(".intro__copy", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.3)
-      .to(".intro__explore", { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.45);
+    tl.to(".intro__copy", { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.3);
   };
 
   ScrollTrigger.create({ trigger: intro, start: "top 70%", once: true, onEnter: play });
@@ -416,9 +428,11 @@ function homeBooks() {
   const books = gsap.utils.toArray(".book", shelf);
   const spines = gsap.utils.toArray(".spine", shelf);
 
-  // Mobile (≤768px): the shelf is hidden (CSS) and the static .home-cards take over —
+  // Mobile (≤800px): the shelf is hidden (CSS) and the static .home-cards take over —
   // no scaling, no parking, no knock/hover physics. The cards are plain <a> links.
-  if (window.matchMedia("(max-width: 768px)").matches) return;
+  // (800, not 768: below ~800 the scaled shelf drops under ~0.55× and the books read
+  // too small — the cards take over before that.)
+  if (window.matchMedia("(max-width: 800px)").matches) return;
 
   // Scale the whole shelf down to fit narrow viewports (origin bottom-centre, set in CSS)
   // so all five books stay visible + centred. Runs under reduced motion too.
@@ -435,7 +449,11 @@ function homeBooks() {
   books.forEach((b) => {
     const href = b.getAttribute("data-href");
     if (!href) return;
-    b.addEventListener("click", () => { window.location.href = href; });
+    // Route through the navigation fade (js/transition.js) when it's loaded.
+    b.addEventListener("click", () => {
+      if (window.GTCNav) window.GTCNav.to(href);
+      else window.location.href = href;
+    });
   });
 
   if (reduce) {
@@ -520,160 +538,7 @@ function wireBookKnockAndHover(shelf, books) {
   });
 }
 
-/* ============================================================================
-   5 · Menu (bookshelf overlay) — open/close, books fall in, sway, raise.
-   Lives in main.js so it can be reused across pages; no-ops on the home (no #menu).
-   ========================================================================== */
-function menuScene() {
-  const menu = document.querySelector("#menu");
-  // Any element with [data-menu-open] toggles the drawer (the topbar hamburger).
-  const openBtns = gsap.utils.toArray("[data-menu-open]");
-  if (!menu || !openBtns.length) return;
-
-  const main = document.querySelector("main");
-  const scrim = menu.querySelector(".menu__scrim");
-  const drawer = menu.querySelector(".menu__drawer");
-  const eyebrow = menu.querySelector(".menu__eyebrow");
-  const items = gsap.utils.toArray(".menu__item", menu);
-  const closeEls = gsap.utils.toArray("[data-menu-close]", menu);   // the scrim
-  const bars = {
-    top: document.querySelector(".topbar__menu .bar-top"),
-    mid: document.querySelector(".topbar__menu .bar-mid"),
-    bot: document.querySelector(".topbar__menu .bar-bot"),
-  };
-  const hasBars = bars.top && bars.mid && bars.bot;
-  let isOpen = false;
-  let lastFocus = null;
-
-  function setExpanded(open) {
-    openBtns.forEach((b) => {
-      b.setAttribute("aria-expanded", String(open));
-      b.setAttribute("aria-label", open ? "Close menu" : "Open playbook menu");
-    });
-  }
-
-  // Lock the page + route focus into the drawer; reversed on unlock.
-  function lock() {
-    lastFocus = document.activeElement;
-    menu.hidden = false;
-    if (main) main.inert = true;            // background unreachable while open
-    root.style.overflow = "hidden";          // hard-lock page scroll (decoupled from ScrollSmoother)
-    document.body.style.overflow = "hidden";
-  }
-  function unlock() {
-    menu.hidden = true;
-    if (main) main.inert = false;
-    root.style.overflow = "";
-    document.body.style.overflow = "";
-    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
-  }
-  function focusDrawer() { if (drawer) drawer.focus({ preventScroll: true }); }
-
-  // Navigation: a chapter row's data-href is a clean path (/chapter-2). On the reader,
-  // where that path's anchor exists in-page, smooth-scroll to it and close without a
-  // flash; from the landing (anchor absent) it's a full page load to the reader. A
-  // legacy "#id" href still works as an in-page jump.
-  function wireNav(closeFn) {
-    gsap.utils.toArray(".menu__row[data-href]", menu).forEach((row) => {
-      const href = row.getAttribute("data-href");
-      if (!href) return;
-      row.addEventListener("click", (e) => {
-        e.preventDefault();
-        const id = (window.GTCRoutes && window.GTCRoutes.pathToId(href)) ||
-                   (href.charAt(0) === "#" ? href.slice(1) : null);
-        const target = id && document.getElementById(id);
-        if (target) {
-          root.style.overflow = "";
-          document.body.style.overflow = "";
-          const sm = smoother || (window.ScrollSmoother && window.ScrollSmoother.get());
-          const pos = target.classList.contains("chapter-panel") ? "top top" : "top 120px";
-          if (sm) sm.scrollTo(target, false, pos);
-          else target.scrollIntoView();
-          closeFn();
-          // urlSync (js/chapter.js) rewrites the address bar to the clean path as the jump settles.
-        } else {
-          window.location.href = href; // landing → reader, or any non-in-page target
-        }
-      });
-    });
-  }
-
-  // Reduced motion: open/close instantly, no slide/fall (CSS still handles hover colour).
-  if (reduce) {
-    const openR = () => { if (isOpen) return; isOpen = true; lock(); gsap.set(scrim, { autoAlpha: 1 }); gsap.set(drawer, { xPercent: 0, "--card-bg-o": 1 }); gsap.set(items, { autoAlpha: 1, x: 0, y: 0, rotation: 0 }); setExpanded(true); focusDrawer(); };
-    const closeR = () => { if (!isOpen) return; isOpen = false; setExpanded(false); unlock(); };
-    openBtns.forEach((b) => b.addEventListener("click", () => (isOpen ? closeR() : openR())));
-    closeEls.forEach((b) => b.addEventListener("click", closeR));
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) closeR(); });
-    wireNav(closeR);
-    return;
-  }
-
-  // One interruptible timeline (enter → addPause → exit), per the GSAP example: closing
-  // mid-enter REVERSES the slide-in; closing when fully open plays forward into a distinct
-  // exit where the chapter rows FALL away (random rotation, staggered from the last).
-  const X = { top: { x1: 6, y1: 6, x2: 18, y2: 18 }, bot: { x1: 6, y1: 18, x2: 18, y2: 6 } };
-  const H = { top: { x1: 3, y1: 7, x2: 21, y2: 7 }, bot: { x1: 3, y1: 17, x2: 21, y2: 17 } };
-  const FALL = () => window.innerHeight + 300;
-
-  gsap.set(menu, { visibility: "hidden" });
-
-  const tl = gsap.timeline({ paused: true });
-  // ── reset state at t=0 (so a restart after the fall puts everything back) ──
-  tl.set(menu, { visibility: "visible" })
-    .set(scrim, { autoAlpha: 0 }, 0)
-    .set(drawer, { xPercent: 100, "--card-bg-o": 1 }, 0)
-    .set(eyebrow, { autoAlpha: 1 }, 0)
-    .set(items, { autoAlpha: 0, x: 24, y: 0, rotation: 0 }, 0)
-    // ═══ ENTER (reversible) ═══
-    .to(scrim, { autoAlpha: 1, duration: 0.4, ease: "power2.out" }, 0)
-    .to(drawer, { xPercent: 0, duration: 0.6, ease: "back.out(1.1)" }, 0)
-    .to(items, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.15);
-  if (hasBars) {
-    tl.to(bars.top, { attr: X.top, duration: 0.35, ease: "back.out(1.4)" }, 0.06)
-      .to(bars.bot, { attr: X.bot, duration: 0.35, ease: "back.out(1.4)" }, 0.06)
-      .to(bars.mid, { autoAlpha: 0, duration: 0.2, ease: "power2.out" }, 0.06);
-  }
-  tl.addPause();
-  const enterEnd = tl.duration();
-
-  // ═══ EXIT (forward from the pause) — rows fall, card + scrim fade ═══
-  if (hasBars) {
-    tl.to(bars.top, { attr: H.top, duration: 0.25, ease: "power3.in" })
-      .to(bars.bot, { attr: H.bot, duration: 0.25, ease: "power3.in" }, "<")
-      .to(bars.mid, { autoAlpha: 1, duration: 0.2, ease: "power2.in" }, "<");
-  }
-  tl.to(items, { y: FALL, rotation: () => gsap.utils.random(-22, 22), duration: 0.8, ease: "power3.in", stagger: { from: "end", each: 0.04 } }, hasBars ? "<" : ">")
-    .to(drawer, { "--card-bg-o": 0, duration: 0.4, ease: "power2.in" }, "<0.15")
-    .to(eyebrow, { autoAlpha: 0, duration: 0.3, ease: "power2.in" }, "<")
-    .to(scrim, { autoAlpha: 0, duration: 0.35, ease: "power2.in" }, "<0.1")
-    .set(menu, { visibility: "hidden" });
-
-  // Unlock once a close finishes — either the forward exit or a reversed enter.
-  tl.eventCallback("onComplete", () => { if (!isOpen) unlock(); });
-  tl.eventCallback("onReverseComplete", () => { if (!isOpen) unlock(); });
-
-  function toggle() {
-    isOpen = !isOpen;
-    setExpanded(isOpen);
-    if (isOpen) {
-      lock();
-      if (tl.time() >= enterEnd) tl.timeScale(1).restart();  // was mid-exit → restart the enter
-      else tl.timeScale(1).play();
-      focusDrawer();
-    } else if (tl.time() < enterEnd) {
-      tl.timeScale(1.4).reverse();                           // still entering → retract quickly
-    } else {
-      tl.timeScale(1).play();                                // fully open → play forward through the fall
-    }
-  }
-  function close() { if (isOpen) toggle(); }
-
-  openBtns.forEach((b) => b.addEventListener("click", toggle));
-  closeEls.forEach((b) => b.addEventListener("click", close));
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) close(); });
-  wireNav(close);
-}
+/* (5 · Menu drawer removed 2026-07 — the reader/veil TOC is the sole nav.) */
 
 /* ============================================================================
    6 · Magnetic button component ("True button") — wires every `.mag-zone`.
@@ -707,19 +572,39 @@ function magneticButtons() {
 
 /* ============================================================================
    7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
-   (the landing "Dive in" button). GSAP fade/scale-in; page scroll is hard-locked
-   while open (like menuScene — decoupled from ScrollSmoother, see gotchas.md).
-   No-ops on pages without #aboutModal.
+   (the landing "Sail through" button). Entrance is a humanistreview.ai-style
+   counter-translate wipe: the outer .mask (overflow:hidden) and inner .panel move
+   equal-and-opposite so the card holds still while the clip window unrolls UP from
+   the bottom; text lines rise out of their own clip masks and the two images uncover
+   (clip reveal + a slow 1.15→1 inner scale that outlives the reveal). Close rolls the
+   wipe back down. Page scroll is hard-locked while open (decoupled from ScrollSmoother,
+   see gotchas.md). Reduced motion is intentionally ignored here — the animation always
+   plays. No-ops on pages without #aboutModal.
    ========================================================================== */
 function aboutModal() {
   const modal = document.querySelector("#aboutModal");
   const openBtns = gsap.utils.toArray("[data-about-open]");
   if (!modal || !openBtns.length) return;
 
+  // Reference easing (humanistreview.ai --alias-easeOut) — a slight ease-in lead then
+  // a hard decelerate. CustomEase is vendored + registered (precedent: chapter.js).
+  if (window.CustomEase) window.CustomEase.create("hrOut", "0.43, 0.195, 0.02, 1");
+  const EASE = window.CustomEase ? "hrOut" : "power3.out";
+
   const scrim = modal.querySelector(".about-modal__scrim");
+  const mask = modal.querySelector(".about-modal__mask");
+  const panel = modal.querySelector(".about-modal__panel");
   const card = modal.querySelector(".about-modal__card");
+  const closeBtn = modal.querySelector(".about-modal__close");
+  const lines = gsap.utils.toArray(".reveal-line__inner", modal);
+  const illusMasks = gsap.utils.toArray(".about-modal__illus-mask", modal);
+  const illusImgs = gsap.utils.toArray(".about-modal__illus-mask img", modal);
   const closeEls = gsap.utils.toArray("[data-about-close]", modal); // scrim + ✕
   const main = document.querySelector("main");
+  const CLIP_HIDDEN = "inset(100% 0% 0% 0%)"; // clip window collapsed to the bottom edge
+  const CLIP_SHOWN = "inset(0% 0% 0% 0%)";
+  // Every element the open/close tweens touch — killed as a set on interruption.
+  const anim = [scrim, mask, panel, closeBtn, ...lines, ...illusMasks, ...illusImgs];
   let isOpen = false;
   let lastFocus = null;
 
@@ -739,43 +624,66 @@ function aboutModal() {
     root.style.overflow = "";
     document.body.style.overflow = "";
     if (smoother) smoother.paused(false);
-    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to "Explore"
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to "Sail through"
   }
 
-  // Reduced motion: show/hide instantly (no fade/scale).
-  if (reduce) {
-    const openR = () => { if (isOpen) return; isOpen = true; lock(); gsap.set(scrim, { autoAlpha: 1 }); gsap.set(card, { autoAlpha: 1, y: 0, scale: 1 }); if (card) card.focus({ preventScroll: true }); };
-    const closeR = () => { if (!isOpen) return; isOpen = false; unlock(); };
-    openBtns.forEach((b) => b.addEventListener("click", openR));
-    closeEls.forEach((b) => b.addEventListener("click", closeR));
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && isOpen) closeR(); });
-    return;
+  // Park every animated target at its off-screen start. Called at the top of open() so
+  // a re-open always begins clean, wherever a prior close was interrupted.
+  function reset() {
+    gsap.set(scrim, { autoAlpha: 0 });
+    gsap.set(mask, { yPercent: 100 });        // clip window one full height below
+    gsap.set(panel, { yPercent: -100 });      // panel counter-translates up → content at rest
+    gsap.set(closeBtn, { autoAlpha: 0 });
+    gsap.set(lines, { yPercent: 100, autoAlpha: 0 });
+    gsap.set(illusMasks, { clipPath: CLIP_HIDDEN });
+    gsap.set(illusImgs, { scale: 1.15 });
   }
 
-  // Independent open/close tweens (NOT one play/reverse timeline — a completed GSAP
-  // timeline doesn't reliably resume on reverse(), and rapid open→close interleaving
-  // wedges it). killTweensOf makes a mid-flight interruption clean. The `hidden`
-  // attribute (toggled by lock/unlock) does the actual show/hide.
+  // Independent open/close timelines built fresh each call (NOT one play/reverse
+  // timeline — a completed GSAP timeline doesn't reliably resume on reverse(), and
+  // rapid open→close interleaving wedges it). killTweensOf(anim) makes a mid-flight
+  // interruption clean; the `hidden` attribute (lock/unlock) does the show/hide.
   let closing = false;
   function open() {
     if (isOpen) return;
     isOpen = true;
     closing = false;                        // cancel any in-flight close intent
     lock();
-    gsap.killTweensOf([scrim, card]);
-    gsap.to(scrim, { autoAlpha: 1, duration: 0.35, ease: "power2.out" });
-    gsap.fromTo(card, { autoAlpha: 0, y: 24, scale: 0.98 },
-      { autoAlpha: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" });
-    if (card) card.focus({ preventScroll: true });
+    gsap.killTweensOf(anim);
+    reset();
+    // Only the images visible at this breakpoint drive the reveal stagger — the other set
+    // (desktop illustration column vs. per-section stacked images) is display:none, and
+    // including it would pad the stagger with invisible steps. Checked after lock() unhides
+    // the modal so the breakpoint's display rules are live.
+    const vMasks = illusMasks.filter((el) => el.offsetParent !== null);
+    const vImgs = vMasks.map((m) => m.querySelector("img")).filter(Boolean);
+    const tl = gsap.timeline();
+    // The counter-translate pair + scrim, fired together — the clip window unrolls up
+    // from the bottom while the panel holds the card still. Same duration+ease is
+    // load-bearing: any mismatch and the content visibly drifts.
+    tl.to(scrim, { autoAlpha: 1, duration: 0.8, ease: EASE }, 0)
+      .to(mask, { yPercent: 0, duration: 0.8, ease: EASE }, 0)
+      .to(panel, { yPercent: 0, duration: 0.8, ease: EASE }, 0)
+      // Text lines rise out of their masks as the panel settles.
+      .to(lines, { yPercent: 0, autoAlpha: 1, duration: 0.7, ease: EASE, stagger: 0.06 }, 0.28)
+      // Images uncover; the inner scale runs longer so the picture keeps drifting.
+      .to(vMasks, { clipPath: CLIP_SHOWN, duration: 0.8, ease: EASE, stagger: 0.12 }, 0.28)
+      .to(vImgs, { scale: 1, duration: 1.2, ease: EASE, stagger: 0.12 }, 0.28)
+      .to(closeBtn, { autoAlpha: 1, duration: 0.4, ease: "power2.out" }, 0.5);
+    if (card) card.focus({ preventScroll: true }); // after lock() → smoother paused, focus is safe
   }
   function close() {
     if (!isOpen) return;
     isOpen = false;
     closing = true;
-    gsap.killTweensOf([scrim, card]);
-    gsap.to(scrim, { autoAlpha: 0, duration: 0.3, ease: "power2.in" });
-    gsap.to(card, { autoAlpha: 0, y: 16, scale: 0.98, duration: 0.3, ease: "power2.in",
-      onComplete: () => { if (closing) { closing = false; unlock(); } } });
+    gsap.killTweensOf(anim);
+    // Roll the wipe back DOWN (mask/panel to their start), quicker than the open. The
+    // card rides down inside the panel; text/images just travel with it (no restagger).
+    const tl = gsap.timeline({ onComplete: () => { if (closing) { closing = false; unlock(); } } });
+    tl.to(scrim, { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 0)
+      .to(closeBtn, { autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 0)
+      .to(mask, { yPercent: 100, duration: 0.55, ease: EASE }, 0)
+      .to(panel, { yPercent: -100, duration: 0.55, ease: EASE }, 0);
   }
 
   openBtns.forEach((b) => b.addEventListener("click", open));
@@ -802,7 +710,6 @@ if (!window.__GTC_LOCKED__) {
   introScene();     // once-on-enter headline word rise + copy/Explore fade
   logoBar();        // fixed top-bar logo — fades in when the page bottom is reached
   fitHeadline();    // scale the two-line title so it never wraps at any width
-  menuScene();
   aboutModal();
   magneticButtons();
 

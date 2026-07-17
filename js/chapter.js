@@ -119,7 +119,9 @@ function chapterSwitch(root) {
         else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
         // urlSync (below) rewrites the address bar to the clean path as the jump settles.
       } else {
-        window.location.href = href; // standalone page → full load to the reader
+        // standalone page → full load to the reader, through the navigation fade
+        if (window.GTCNav) window.GTCNav.to(href);
+        else window.location.href = href;
       }
     });
   });
@@ -169,16 +171,21 @@ function stickyToc(root) {
   if (reduce) return; // reduced motion → smoother off, native scrolling
   const toc = root.querySelector(".toc");
   const body = root.querySelector(".page-body");
-  if (!toc || !body || window.innerWidth <= 1180) return;
-  ScrollTrigger.create({
-    trigger: toc,
-    start: "top 100px",
-    endTrigger: body,
-    end: "bottom bottom",
-    pin: true,
-    pinSpacing: false,
-    pinType: "transform",
-    invalidateOnRefresh: true,
+  if (!toc || !body) return;
+  // matchMedia (not a one-shot width check) so resizing across the breakpoint
+  // kills/rebuilds the pin — a pin created wide and left alive narrow would
+  // keep transform-gluing the display:none'd TOC over the copy.
+  gsap.matchMedia().add("(min-width: 1025px)", () => {
+    ScrollTrigger.create({
+      trigger: toc,
+      start: "top 100px",
+      endTrigger: body,
+      end: "bottom bottom",
+      pin: true,
+      pinSpacing: false,
+      pinType: "transform",
+      invalidateOnRefresh: true,
+    });
   });
 }
 
@@ -326,6 +333,7 @@ function mobileTocBar() {
   const nextBtn = bar.querySelector(".toc-bar__arrow--next");
   const label = bar.querySelector(".toc-bar__label");
   const sheet = document.querySelector(".toc-sheet");
+  const sheetMask = sheet && sheet.querySelector(".toc-sheet__mask");
   const panel = sheet && sheet.querySelector(".toc-sheet__panel");
   const smoother = window.ScrollSmoother && window.ScrollSmoother.get();
 
@@ -359,7 +367,7 @@ function mobileTocBar() {
   // .toc__row sweep above — append it as a final (unnumbered) entry so the bar's
   // label + arrows step into it, matching the desktop TOC's About row.
   const aboutEl = document.getElementById("about");
-  if (aboutEl) entries.push({ el: aboutEl, num: "", title: "About", accent: accentOf(aboutEl) });
+  if (aboutEl) entries.push({ el: aboutEl, num: "", title: "Behind the playbook", accent: accentOf(aboutEl) });
   if (!entries.length) return;
   bar.hidden = false;
 
@@ -426,9 +434,31 @@ function mobileTocBar() {
   prevBtn.addEventListener("click", () => { closeSheet(); jumpTo(active - 1); });
   nextBtn.addEventListener("click", () => { closeSheet(); jumpTo(active + 1); });
 
-  // ----- slide-up sheet: the full stacked-chapter index -----
-  if (!panel) return;
+  // ----- TOC sheet: the stacked-chapter index on a white surface that wipes up -----
+  if (!panel || !sheetMask) return;
   panel.appendChild(buildSheetIndex());
+
+  // X — the sheet has no scrim to tap, so it gets an explicit close control
+  // (top-right head zone, mirroring the topbar's inset). Esc + bar label still close.
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "toc-sheet__close";
+  closeBtn.setAttribute("aria-label", "Close contents");
+  closeBtn.innerHTML =
+    '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">' +
+    '<line x1="5" y1="5" x2="19" y2="19" /><line x1="19" y1="5" x2="5" y2="19" /></svg>';
+  sheet.appendChild(closeBtn);
+  closeBtn.addEventListener("click", () => closeSheet());
+
+  // Slip a clip wrapper (.toc-sheet__clip, chapter.css) around a chapter row so the
+  // row can rise out of it on open. The row moves as ONE box — its num and name have
+  // different line-heights, so tweening them individually would desync the rise.
+  function wrapInClip(row) {
+    const clip = document.createElement("div");
+    clip.className = "toc-sheet__clip";
+    row.parentNode.insertBefore(clip, row);
+    clip.appendChild(row);
+  }
 
   function buildSheetIndex() {
     const ul = document.createElement("ul");
@@ -440,6 +470,7 @@ function mobileTocBar() {
         '<span class="toc__chapter-num">0</span>' +
         '<span class="toc__chapter-name">Foreword</span></a>';
       li.style.setProperty("--accent", accentOf(foreword));
+      wrapInClip(li.querySelector(".toc__chapter"));
       ul.appendChild(li);
     }
     // One li per chapter. Prefer the li that carries the chapter's section list —
@@ -464,6 +495,15 @@ function mobileTocBar() {
       clone.querySelectorAll(".toc__sub").forEach((s) => s.removeAttribute("style"));
       clone.querySelectorAll(".is-active").forEach((r) => r.classList.remove("is-active"));
       clone.querySelectorAll(".is-current").forEach((r) => r.classList.remove("is-current"));
+      // The preferred clone came from the nav where this chapter is CURRENT —
+      // there its row is inert (no data-href). In the sheet every quiet row
+      // must navigate (only the is-current one, re-marked by syncSheetActive,
+      // stays inert via CSS), so restore the href from the chapter number.
+      const row = clone.querySelector(".toc__chapter");
+      if (row && !row.dataset.href && !row.dataset.target && /^\d+$/.test(num)) {
+        row.dataset.href = "/chapter-" + num;
+      }
+      if (row) wrapInClip(row);
       clone.style.setProperty("--accent", accentOf(source));
       ul.appendChild(clone);
     });
@@ -478,28 +518,97 @@ function mobileTocBar() {
       r.classList.toggle("is-active", on);
       if (on) activeRow = r;
     });
-    // Highlight the chapter you're in (its row, in its own accent).
+    // Highlight the chapter you're in (its row, in its own accent). The foreword
+    // and About panels carry no .toc__row[data-toc] sections, so they can't be
+    // found via activeRow — match their rows directly by id.
     panel.querySelectorAll(".toc__chapter").forEach((c) => {
       const li = c.closest("li");
-      const here = (id === "ch0" && c.dataset.target === "ch0") || (activeRow && li.contains(activeRow));
+      const here =
+        (id === "ch0" && c.dataset.target === "ch0") ||
+        (id === "about" && c.dataset.href === "/about") ||
+        (activeRow && li.contains(activeRow));
       c.classList.toggle("is-current", !!here);
       if (here && !activeRow) activeRow = c;
     });
     return activeRow;
   }
+  /* ----- Sheet motion: the About popup's wipe, ported (aboutModal(), js/main.js).
+     The mask/panel pair counter-translate so the white surface unrolls up out of the
+     bar while the index holds still, then the chapter rows rise out of their clips
+     and the current chapter's section list fades in behind them. Closing just rolls
+     the wipe back down, quicker — the rows ride with it rather than re-staggering.
+     Same ease (hrOut) and the same 0.8s/0.55s split as the popup, deliberately: the
+     two surfaces should read as one gesture. ----- */
+  if (window.CustomEase && !window.CustomEase.get("hrOut")) {
+    window.CustomEase.create("hrOut", "0.43, 0.195, 0.02, 1");
+  }
+  const SHEET_EASE = window.CustomEase ? "hrOut" : "power3.out";
+  const sheetRows = () => gsap.utils.toArray(".toc-sheet__clip > .toc__chapter", panel);
+  const sheetSubs = () => gsap.utils.toArray(".toc__list", panel);
+  // Rows park 100% of their own height down PLUS 8px, clearing the clip's 6px bleed
+  // (chapter.css) so no ascender peeks below the line while they're hidden.
+  const ROW_PARKED = { yPercent: 100, y: 8 };
+  const ROW_SHOWN = { yPercent: 0, y: 0 };
+
+  // Park every animated target at its off-screen start — called once at init (so the
+  // sheet is hidden before its first open) and at the top of openSheet, so a re-open
+  // starts clean wherever a prior close was interrupted.
+  // y:0 is load-bearing — the CSS parked state (chapter.css) is a translateY(100%),
+  // and GSAP parses that into a px `y` on first touch, then stacks yPercent ON TOP of
+  // it. Left alone the pair rests at ±100% instead of 0 (it still LOOKS right, because
+  // the bogus baseline cancels between mask and panel — but the window is parked a
+  // screen too low). Same trap coverScroll() guards in js/main.js; see gotchas.md.
+  function parkSheet() {
+    gsap.set(sheetMask, { y: 0, yPercent: 100 });   // clip window one full height below
+    gsap.set(panel, { y: 0, yPercent: -100 });      // counter-translated → index at rest
+    gsap.set(sheetRows(), ROW_PARKED);
+    gsap.set(sheetSubs(), { autoAlpha: 0 });
+  }
+
+  // Centre the row you're on WITHOUT scrollIntoView: the panel is transformed while
+  // parked, and scrollIntoView would try to scroll the document to chase it. Both
+  // rects carry the same transform, so their delta is translation-invariant.
+  function centerOn(row) {
+    if (!row) return;
+    const pr = panel.getBoundingClientRect();
+    const rr = row.getBoundingClientRect();
+    panel.scrollTop += rr.top - pr.top - (panel.clientHeight - rr.height) / 2;
+  }
+
   function openSheet() {
     const activeRow = syncSheetActive();
     sheet.classList.add("is-open");
     label.setAttribute("aria-expanded", "true");
-    if (activeRow) activeRow.scrollIntoView({ block: "center", behavior: "instant" });
+    const rows = sheetRows(), subs = sheetSubs();
+    gsap.killTweensOf([sheetMask, panel, ...rows, ...subs]);
+    parkSheet();
+    centerOn(activeRow);
+    if (reduce) {   // no wipe — snap the surface open
+      gsap.set([sheetMask, panel], { yPercent: 0 });
+      gsap.set(rows, ROW_SHOWN);
+      gsap.set(subs, { autoAlpha: 1 });
+      return;
+    }
+    // The counter-translate pair fires as one: matching duration + ease is
+    // load-bearing, any mismatch and the index visibly drifts inside the window.
+    gsap.timeline()
+      .to(sheetMask, { yPercent: 0, duration: 0.8, ease: SHEET_EASE }, 0)
+      .to(panel, { yPercent: 0, duration: 0.8, ease: SHEET_EASE }, 0)
+      .to(rows, { ...ROW_SHOWN, duration: 0.7, ease: SHEET_EASE, stagger: 0.06 }, 0.28)
+      .to(subs, { autoAlpha: 1, duration: 0.5, ease: SHEET_EASE }, 0.42);
   }
   function closeSheet() {
     if (!sheet || !sheet.classList.contains("is-open")) return;
     sheet.classList.remove("is-open");
     label.setAttribute("aria-expanded", "false");
+    gsap.killTweensOf([sheetMask, panel]);
+    if (reduce) { parkSheet(); return; }
+    gsap.timeline()
+      .to(sheetMask, { yPercent: 100, duration: 0.55, ease: SHEET_EASE }, 0)
+      .to(panel, { yPercent: -100, duration: 0.55, ease: SHEET_EASE }, 0);
   }
+  parkSheet();
   label.addEventListener("click", () => (sheet.classList.contains("is-open") ? closeSheet() : openSheet()));
-  sheet.querySelector(".toc-sheet__scrim").addEventListener("click", closeSheet);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
 
   // Sheet rows: section/sub rows jump in-page; chapter rows resolve like the
@@ -520,6 +629,8 @@ function mobileTocBar() {
     if (target) {
       if (smoother) smoother.scrollTo(target, !reduce, "top top");
       else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    } else if (window.GTCNav) {
+      window.GTCNav.to(row.dataset.href); // navigation fade (js/transition.js)
     } else {
       window.location.href = row.dataset.href;
     }
@@ -539,8 +650,9 @@ function mobileTocBar() {
    styles override the class's width snap until the tween lands, then
    clearProps hands the resting state back to the CSS. One ScrollTrigger
    refresh after everything settles. Runs before the FOUC lift so a saved
-   "collapsed" never flashes the open TOC. Desktop-only by CSS (≤1180 the
-   controls hide and the state class is inert). ---- */
+   "collapsed" never flashes the open TOC. Desktop-only (≥1181, where the rail
+   + its restore control exist): ≤1180 the controls hide, no collapse, and the
+   matchMedia at the end forces the TOC visible regardless of saved state. ---- */
 function tocCollapse() {
   const tocs = gsap.utils.toArray(".toc");
   const railBtn = document.querySelector(".rail__toc");
@@ -548,16 +660,17 @@ function tocCollapse() {
   const KEY = "gtc-toc";
   const html = document.documentElement;
   const DUR = 0.4;          // must match .copy transition duration in CSS
-  const W = 328, ML = 112;  // .toc resting width / margin-left (css/chapter.css)
   const EASE = window.CustomEase
     ? window.CustomEase.create("tocSlide", "0.4, 0, 0.2, 1") // .copy's exact bezier
     : "power2.inOut";
   const parts = tocs.flatMap((t) => Array.from(t.children)); // .toc__head + .toc__scroll
   let tl = null;
 
-  let saved = null;
-  try { saved = localStorage.getItem(KEY); } catch (e) { /* storage blocked */ }
-  if (saved === "collapsed") {
+  // The collapse feature only exists ≥1181 (with the rail's restore control);
+  // below that the TOC is always shown, so never apply a saved "collapsed" state.
+  const canCollapse = () => window.matchMedia("(min-width: 1181px)").matches;
+  const readSaved = () => { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
+  if (readSaved() === "collapsed" && canCollapse()) {
     html.classList.add("toc-collapsed");
     gsap.set(parts, { autoAlpha: 0 }); // pre-hidden for a clean expand later
   }
@@ -588,6 +701,20 @@ function tocCollapse() {
       const d = Math.abs(b.getBoundingClientRect().top + 14 - mid);
       return !best || d < best.d ? { b, d } : best;
     }, null).b;
+  };
+
+  // The TOC's resting width/margin are fluid (clamp() vars in css/chapter.css),
+  // so the expand target must be MEASURED, not hardcoded: lift the inline
+  // overrides off one column, read the CSS-resolved geometry, put them back —
+  // all in the same frame, so nothing paints in between.
+  const restingTarget = () => {
+    const el = tocs[0];
+    const prev = { w: el.style.width, ml: el.style.marginLeft, mw: el.style.maxWidth };
+    el.style.width = ""; el.style.marginLeft = ""; el.style.maxWidth = "none";
+    const cs = getComputedStyle(el);
+    const t = { w: parseFloat(cs.width), ml: parseFloat(cs.marginLeft) };
+    el.style.width = prev.w; el.style.marginLeft = prev.ml; el.style.maxWidth = prev.mw;
+    return t;
   };
 
   // Freeze the column at its current size inline — interrupt-safe (reads the
@@ -640,14 +767,30 @@ function tocCollapse() {
     }
     hold(); // pin the column closed BEFORE dropping the class — no snap-open
     html.classList.remove("toc-collapsed"); // copy starts sliding back; rail pin fades out
+    const { w, ml } = restingTarget(); // measured AFTER the class drop = true resting values
     tl = gsap.timeline({ onComplete: settle });
-    tl.to(tocs, { width: W, marginLeft: ML, duration: DUR, ease: EASE }, 0)
+    tl.to(tocs, { width: w, marginLeft: ml, duration: DUR, ease: EASE }, 0)
       .to(parts, { autoAlpha: 1, duration: 0.3, ease: "power2.out" }, 0.12);
     refreshSoon(DUR + 0.1, refocus);
   }
   document.querySelectorAll(".toc__collapse").forEach((b) => b.addEventListener("click", (e) => collapse(e.detail === 0)));
   document.querySelectorAll(".toc__head-label").forEach((l) => l.addEventListener("click", () => collapse(false)));
   railBtn.addEventListener("click", (e) => expand(e.detail === 0));
+
+  // Below 1181 there is no rail and no collapse. If the window shrinks into that
+  // band while collapsed, strip the inline hide so the (now always-shown) TOC
+  // can't stay invisible; restore the saved state on re-entry above 1180.
+  gsap.matchMedia().add("(max-width: 1180px)", () => {
+    html.classList.remove("toc-collapsed");
+    gsap.set(parts, { clearProps: "opacity,visibility" });
+    gsap.set(tocs, { clearProps: "width,maxWidth,marginLeft,overflow" });
+    return () => {
+      if (readSaved() === "collapsed") {
+        html.classList.add("toc-collapsed");
+        gsap.set(parts, { autoAlpha: 0 });
+      }
+    };
+  });
 }
 
 /* ---- Top-bar scrim toggle: the soft chalk fade behind the logo/hamburger (mobile,
@@ -683,17 +826,42 @@ function aboutPanel() {
   const panel = document.getElementById("about");
   if (!panel) return;
 
-  // Topbar logo → chalk while the dark About panel sits under the bar. A live-rect
-  // probe (not a start/end ScrollTrigger) because the gallery pin below shifts the
-  // panel's measured geometry — the same reason topbarScrim/railReveal probe rects.
-  // Dark whenever the panel straddles the line just below the topbar.
+  // Topbar scrim + logo follow the dark About panel. A live-rect probe (not a
+  // start/end ScrollTrigger) because the gallery pin below shifts the panel's
+  // measured geometry — the same reason topbarScrim/railReveal probe rects.
+  //
+  // The scrim is two clipped ramps (chalk above --scrim-split, dark below — see
+  // chapter.css), so the split IS the panel's top edge clamped into the band:
+  // while ch5 hands off, the band is chalk backdrop above the rising panel and
+  // dark panel below, and each half gets its own colour. Clamping alone covers
+  // every case — panel far below → split = full height = all chalk; panel owning
+  // the band → split = 0 = all dark — so no class is needed for the scrim.
   const root = document.documentElement;
-  const PROBE = 64;
+  const topbar = document.querySelector(".topbar");
+  const logo = document.querySelector(".topbar__logo");
+  let scrimH = 180;
+  // env(safe-area-inset-top) isn't readable from JS — measure the band instead.
+  const measureScrim = () => {
+    const h = parseFloat(getComputedStyle(topbar, "::before").height);
+    if (h) scrimH = h;
+  };
   const darkUpdate = () => {
     const r = panel.getBoundingClientRect();
-    root.classList.toggle("reader-dark", r.top <= PROBE && r.bottom >= PROBE);
+    root.style.setProperty("--scrim-split", gsap.utils.clamp(0, scrimH, r.top) + "px");
+    // Logo → chalk once the panel's edge passes the logo's middle. It can't use a
+    // fixed line below the bar any more: the scrim no longer pre-paints dark across
+    // the whole band, so flipping early would put a white logo on chalk.
+    if (!logo) return;
+    const lr = logo.getBoundingClientRect();
+    const mid = lr.top + lr.height / 2;
+    root.classList.toggle("reader-dark", r.top <= mid && r.bottom >= mid);
   };
-  ScrollTrigger.create({ start: 0, end: "max", onUpdate: darkUpdate, onRefresh: darkUpdate });
+  ScrollTrigger.create({
+    start: 0, end: "max",
+    onUpdate: darkUpdate,
+    onRefresh: () => { measureScrim(); darkUpdate(); },
+  });
+  measureScrim();
   darkUpdate();
 
   const gallery = panel.querySelector(".about-gallery");
@@ -710,7 +878,7 @@ function aboutPanel() {
   if (items.length && gallery) {
     const mm = gsap.matchMedia();
     mm.add({ isMobile: "(max-width: 768px)", isDesktop: "(min-width: 769px)" }, (ctx) => {
-      const rise = ctx.conditions.isMobile ? 160 : 300;
+      const rise = ctx.conditions.isMobile ? 110 : 300; // gentler on phones (photos ~120px tall)
       gsap.set(items, { y: rise, willChange: "transform", force3D: true });
       gsap.to(items, {
         y: 0, duration: 1.15, delay: 0.15, ease: "expo.out",
@@ -915,13 +1083,19 @@ function handleDeepLink() {
   setTimeout(converge, 80);
 }
 
-/* Fade the held-back content in once positioned (instant under reduced motion). */
+/* Fade the held-back content in once positioned (instant under reduced motion).
+   Duration/ease mirror the site-wide navigation entrance (styles.css gtc-page-in
+   + js/transition.js) — this IS the arrival animation when a landing book
+   deep-links into a chapter, so a quick pop here would undo the slow fade. */
 function revealDeepLink() {
   const root = document.documentElement;
   if (!root.classList.contains("deeplinking")) return;
   const content = document.getElementById("smooth-content");
   if (content && !reduce && gsap) {
-    gsap.fromTo(content, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" });
+    if (window.CustomEase && !window.CustomEase.get("hrOut")) {
+      window.CustomEase.create("hrOut", "0.43, 0.195, 0.02, 1");
+    }
+    gsap.fromTo(content, { opacity: 0 }, { opacity: 1, duration: 1.3, ease: "hrOut" });
   }
   root.classList.remove("deeplinking");
 }

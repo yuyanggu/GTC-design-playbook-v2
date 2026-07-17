@@ -32,7 +32,12 @@ reader's own drawer rows → in-page `#chN`).
   - `.home-logo` (top-left `playbook_logo.svg` wordmark) — a **fixed top bar**, moved OUT of `#intro`
     to a direct child of `<body>` (outside `#smooth-wrapper`) so `position:fixed` holds under
     ScrollSmoother; revealed by `logoBar()` once the page bottom is reached;
-  - the **mobile card nav** `<nav class="home-cards">` (hidden on desktop, visible ≤768px) — five `.home-card` horizontal cards, static/no-animation, tap-to-navigate.
+  - the **mobile card nav** `<nav class="home-cards">` (hidden on desktop, visible ≤800px) — five `.home-card` horizontal cards, static/no-animation, tap-to-navigate.
+  - **`#aboutModal`** (`.about-modal`) — the About popup, a direct child of `<body>` **outside
+    `#smooth-wrapper`** so `position:fixed` holds and `main` can be made `inert` while it's open.
+    Nested `.about-modal__scrim` · `.about-modal__close` (✕, kept OUT of the translating layer) ·
+    `.about-modal__mask` → `.about-modal__panel` → `.about-modal__card` (the counter-translate pair +
+    content). See [motion.md](motion.md) → About popup.
 
   The pinwheel is **not** in the markup — JS injects a fixed traveler (rises on load → aligns to
   `#pinwheelSlot`, then just tracks that slot's live rect, so the smoothed scroll + the cover
@@ -93,6 +98,7 @@ elements are absent**, so loading `main.js` on a chapter page is a safe no-op fo
 | `homeBooks()` | Parks `#homeShelf` books/spines, plays their rise-in once the shelf enters, wires knock/hover. | [menu.md](menu.md) |
 | `menuScene()` | Open/close the `#menu` drawer (one interruptible timeline). | [menu.md](menu.md) |
 | `magneticButtons()` | Wires every `.mag-zone` magnetic button (drives the Explore CTA). | [motion.md](motion.md) |
+| `aboutModal()` | The "Sail through" About popup: a counter-translate wipe entrance (mask/panel ±100%, `hrOut` CustomEase), masked-line text + image clip/scale reveals, scroll-lock while open, ESC/scrim close. Reduced motion intentionally ignored. No-ops without `#aboutModal`. | [motion.md](motion.md) |
 
 ### `js/chapter.js` — runs on chapter surfaces
 
@@ -123,6 +129,22 @@ collide.
 
 **Reader-only extras** (run when `.chapter-panel`s exist) — see [reader.md](reader.md):
 `panelTransitions()`, `railSync()`, `railReveal()`, `handleDeepLink()`, `urlSync()`.
+
+### `js/transition.js` — cross-page navigation fade (runs on every page)
+
+Loaded last (after `main.js`/`chapter.js`/`about.js`) on all 9 pages. The humanistreview.ai-style
+sequential fade between pages: a delegated click interceptor gives every internal `<a>` a **1.0s
+`hrOut` body fade-out** (html carries the backdrop; heading to/from the dark About page the html
+`background-color` cross-fades to the destination's colour so the document swap is invisible), then
+really navigates; scroll is locked during the exit. Exposes **`window.GTCNav.to(href)`** for the
+JS-driven navigations (shelf books in `main.js`, `chapterSwitch` + `.toc-sheet` rows in
+`chapter.js` — all fall back to `location.href` when absent). Hovering a link/`[data-href]`
+prefetches the destination. The **entrance** is pure CSS (`gtc-page-in` in `styles.css`, 1.3s, fill
+`backwards` — see [gotchas.md](gotchas.md): CSS animation fill vs GSAP) + a `pageshow` handler that
+replays the fade on bfcache restores (browser back/forward). Deep-linked reader arrivals get their
+entrance from `revealDeepLink` (`chapter.js`), matched to the same 1.3s/`hrOut`. Skips (instant
+nav): reduced motion, the password gate, same-page hash links, modifier/new-tab clicks. Full
+choreography in [motion.md](motion.md).
 
 ### `js/routes.js` — clean-URL route table (reader + landing)
 

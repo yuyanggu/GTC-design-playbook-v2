@@ -13,8 +13,10 @@ button. Chapter/reader motion lives with its surface ([chapter-pages.md](chapter
   touch scrolls natively). GSAP also drives the scrubbed/once scenes, scroll fades, the pinwheel,
   the intro reveal, the Menu drawer, the landing shelf, the cloud drift + parallax, and the Explore
   magnetic pull.
-- **CustomEase + CustomWiggle** (now-free GSAP plugins) are vendored + registered but **currently
-  unused** (the idle `wiggle()` was removed — the button is static at rest); kept for a possible
+- **CustomEase** (now-free GSAP plugin) is vendored + registered and **in use**: the About popup's
+  `hrOut` ease (`cubic-bezier(0.43,0.195,0.02,1)`, ported from humanistreview.ai — see the popup
+  section below) and `chapter.js`'s `tocSlide`. **CustomWiggle** is vendored + registered but
+  **unused** (the idle `wiggle()` was removed — the button is static at rest); kept for a possible
   hover wiggle.
 - **motion.dev (Motion One)** is used for **one** entrance only (`.titleblock__media` load-in).
   Everything else is GSAP — see the "two libraries over one property" gotcha.
@@ -59,8 +61,9 @@ pieces:
    (hellohello.is style — pre-authored `.word` inline-blocks inside `overflow:hidden` `.line`
    wrappers, `yPercent` 118→0, `power4.out`, stagger 0.07, with the `y:0`-before-`yPercent` guard
    from the retired `manifestoReveal`), while `.intro__copy` / `.intro__explore` fade up (the top-left
-   `.home-logo` is a separate fixed top bar — see `logoBar`). The Explore button (`[data-about-open]`)
-   opens the About popup, which **pauses the smoother** (`smoother.paused(true)`) while open.
+   `.home-logo` is a separate fixed top bar — see `logoBar`). The "Sail through" button
+   (`[data-about-open]`) opens the **About popup** — a counter-translate wipe entrance; see its own
+   section below.
 4. **Books/spines rise** — now owned by `homeBooks()`: parked below the fold (clipped by
    `.intro{overflow:hidden}`), risen by a paused timeline played by a `once:true` trigger at
    `top 92%` of the shelf. Rise uses `y`, hover lift uses `yPercent` (separate channels).
@@ -136,27 +139,128 @@ this section any more — it's a fixed body-level element (see `logoBar` in the 
   `display:inline-block` `.word` spans. `introScene` rises them `yPercent` 118→0 — with the **`y:0`
   reset before `yPercent`** guard so the px value GSAP parses from the CSS `translateY(118%)` start
   doesn't stack (see [gotchas.md](gotchas.md); the pattern originated in about.js's retired `manifestoReveal`).
-- **Two-line fit (`fitHeadline` in main.js):** the title must ALWAYS be exactly two lines with no
+- **Two-line fit (`fitHeadline` in main.js):** the title wants to be exactly two lines with no
   wrap. `fitHeadline` measures the longest line's `scrollWidth` at the 54px cap and scales the shared
-  `font-size` to fit the space beside the copy column (full row width when stacked), **clamped to
-  [40px, 54px]** — the title never goes under 40px. It runs regardless of reduced motion, on resize,
-  and **again after `document.fonts.ready`** (Boldonse is wider than the fallback). The CSS
-  `font-size` clamp is only a no-JS fallback — JS sets an inline size that overrides it. Two moves
-  keep the 40px floor from clashing with the two-line rule:
+  `font-size` to fit the space beside the copy column, clamped to **[40px, 54px] while side-by-side
+  (>1200px)**. Once the row **stacks (≤1200px)** the cap instead **tracks the viewport** —
+  `min(54, max(26, 17px + 3.1vw))` ≈ 54px at the 1200px stack point easing to ~29px at 390px — so the
+  full-width title scales DOWN as the screen narrows (it used to jump to the 54px cap), with the
+  floor dropped to **26px**. It runs regardless of reduced motion, on resize, and **again after
+  `document.fonts.ready`** (Boldonse is wider than the fallback). The CSS `font-size` clamp
+  (`clamp(26px, 17px + 3.1vw, 54px)`) is only a no-JS fallback — JS sets an inline size that
+  overrides it.
   - **Stack ≤1200px:** below the width where a two-line 40px title stops fitting beside the 421px
     copy column, `@media (max-width:1200px)` flips `.intro__row` to a column (title full shelf-width
-    on top, copy beneath) so the title stays ≥40px far lower. (Above 1200px = the Figma side-by-side.)
-  - **Wrap on phones:** where even the full width can't fit a 40px line (≲700px), `fitHeadline` adds
-    `.intro__headline--wrap` (`white-space:normal`, mask off) so the title **wraps** at 40px instead
-    of shrinking. The per-line clip mask can't hold multiple rows, so `introScene` **branches at
-    `onEnter`**: masked word-rise when not wrapping, a plain fade-up when wrapping.
+    on top, copy beneath). (Above 1200px = the Figma side-by-side.)
+  - **Wrap on narrow phones:** where even the 26px floor can't fit a full line (≲466px), `fitHeadline`
+    adds `.intro__headline--wrap` (`white-space:normal`, **`text-wrap:balance`** so rows break evenly
+    — no lone "wind." widow — mask off) and sizes the title at the viewport-tracked cap. The per-line
+    clip mask can't hold multiple rows, so `introScene` **branches at `onEnter`**: masked word-rise
+    when not wrapping, a plain fade-up when wrapping.
 - **`.intro{overflow:hidden}`** (desktop) clips the parked books so they never extend the document;
   mobile sets it back to `visible` (shelf hidden there, nothing to clip).
-- **Mobile (≤768px):** the row stacks (already stacked at ≤1200px), the intro top padding clears the
-  fixed logo bar, the shelf is `display:none` and the `.home-cards` nav follows the section. The cover
-  `.lockup-row` still stacks (pinwheel above title, `padding-inline:20px`,
-  `font-size: clamp(20px, 6.4vw, 30px)`).
+- **Mobile (≤800px — was 768; widened 2026-07 because the scaled shelf read too small under ~0.55×):**
+  the row stacks (already stacked at ≤1200px), the intro top padding clears the fixed logo bar, the
+  shelf is `display:none` and the `.home-cards` nav follows the section. The cover `.lockup-row`
+  still stacks (pinwheel above title, `padding-inline:20px`, `font-size: clamp(20px, 6.4vw, 30px)`).
 - **Reduced motion:** `introScene` bails; the CSS reduced-motion block shows everything statically.
+
+## About-this-playbook popup — entrance wipe + responsive layout
+
+Opened by the intro's "Sail through" button (`[data-about-open]`); full-screen modal, markup outside
+`#smooth-wrapper` (so `main` can go `inert`). All behaviour is `aboutModal()` in `main.js`; styling is
+the `.about-modal*` block in `styles.css`. **Reduced motion is intentionally ignored here** — the
+animation always plays (the `reduce` early-return was removed on purpose).
+
+**Layer structure** (order matters):
+`.about-modal` (fixed scroll container, transparent) → `.about-modal__scrim` (dimmed backdrop,
+`rgba(1,34,51,.6)`, also the click-catcher) → **`.about-modal__close`** (fixed ✕) →
+`.about-modal__mask` (outer, `overflow:hidden`) → `.about-modal__panel` (inner, white `#fff`) →
+`.about-modal__card`. The **✕ is a sibling of the mask, NOT inside the translating panel** — a
+`position:fixed` element inside a translated ancestor anchors to *that* ancestor, not the viewport
+(same gotcha ScrollSmoother hits), so left inside it the ✕ would ride the wipe.
+
+**The entrance = a humanistreview.ai-style counter-translate wipe** (verified from their source; ours
+is the mirrored direction — unrolls UP from the bottom):
+- **The mass:** `.mask` `yPercent 100→0` and `.panel` `yPercent -100→0` fire together, equal +
+  opposite, so the two offsets cancel every frame — **the card content holds dead still while only
+  the clip window climbs** (a plain single-element slide would drag the content and read far
+  cheaper). **Same duration + ease on both is load-bearing** — any mismatch and the content visibly
+  drifts. The three boxes (mask/panel/card) are flexed to **equal heights** so `±100%` is the same
+  pixel amount (a percentage `min-height` chain silently collapsed the panel and drifted the content).
+- **Ease:** `hrOut` = `CustomEase.create("hrOut", "0.43, 0.195, 0.02, 1")` (their `--alias-easeOut`;
+  a slight ease-in lead then a hard decelerate). Registered once in `aboutModal()`.
+- **Scrim** fades `autoAlpha 0→1` over the wipe. **Text** (`.reveal-line__inner`) rises out of clip
+  masks (`yPercent 100→0` + `autoAlpha`, stagger), the clip being `.reveal-line{overflow:visible;
+  clip-path:inset(-0.25em 0)}` — the em-bleed lets Boldonse caps / serif descenders breathe instead
+  of being shaved (cleaner than `overflow:hidden`; same shared `.reveal-line` markup wraps the h2,
+  every h3, every p). **Images** uncover via `.about-modal__illus-mask` `clipPath inset(100%→0%)`
+  while the inner `<img>` scales `1.15→1` over a *longer* duration so the picture keeps drifting
+  after it's uncovered. **✕** fades in last. **Close** rolls the wipe back DOWN (mask/panel to their
+  start), quicker than the open.
+- **Interruption model:** open/close are **two independent timelines built fresh each call, NOT one
+  reversible timeline** — a completed GSAP timeline doesn't reliably `reverse()`, and rapid
+  open→close wedges it. `gsap.killTweensOf(anim)` + a `closing` flag (so a re-open cancels the
+  pending `unlock()` in close's `onComplete`) keep interruption clean. `reset()` re-parks every
+  target at its off-screen start at the top of `open()`. **Preserve this** — the comment records a
+  real bug.
+- **Scroll lock (belt-and-braces):** `lock()` sets `smoother.paused(true)` **and**
+  `documentElement`/`body` `overflow:hidden` (the pause alone doesn't freeze the smoothed landing
+  scroll; see [gotchas.md](gotchas.md)), plus `main.inert`. ESC and scrim-click close; focus moves to
+  the card and returns to the trigger on close.
+
+**Responsive layout** (the reveal targets differ per breakpoint — see the duplicate-images note):
+- **Desktop two-column (>1024px):** a fluid illustration column
+  `width: calc((100svh − 200px) × 0.8954)` (`0.8954` = 582/650) holds two **touching** images
+  (`aspect-ratio: 582/325`, never cropped/stretched) beside the two text sections. The height-derived
+  width makes the two images **fill the viewport height so the space below them equals the 40px above
+  the title (no scroll)**, and each image lines up with its section (rows `flex:1 1 0`, the image seam
+  landing on the divider rule). `max-width:55%` guards portrait screens.
+- **Narrow two-column (1025–1200px):** the image + a 230px heading *label* would squeeze the
+  paragraph to ~120px, so the heading **stacks above** the paragraph here (paragraph gets the full
+  text-column width). Above 1200px the desktop 230px-label layout returns.
+- **Stacked (≤1024px) — the Figma mobile/tablet design (node `2171-3347`):** interleaved **per
+  section** (image → heading → paragraph, repeated), **16px side padding** (not full-bleed), **no
+  divider**. Title + sections **cap to 640px and centre** so images don't blow up on tablets. Figma
+  spacing: 72 top · title →28→ image →24→ heading →8→ paragraph · **48 between sections**.
+- **Duplicate images:** the desktop `.about-modal__illus` column and the per-section
+  `.about-modal__illus-mask--stack` images are **both in the markup**; the off-breakpoint set is
+  `display:none`. So the reveal filters `illusMasks` to the **visible** set (`offsetParent !== null`,
+  checked in `open()` after `lock()` unhides the modal) before the image stagger — otherwise the
+  hidden duplicates would pad the stagger with invisible steps.
+
+## Cross-page navigation fade (`js/transition.js`, all 9 pages)
+
+The humanistreview.ai **sequential page fade**, adapted to this MPA (their site is a custom SPA
+router — decompiled 2026-07: hover-prefetch, pushState, old page fades out **1.0s**, scroll snaps
+to top, new page fades in **1.3s**, everything on `cubic-bezier(0.43,0.195,0.02,1)` = our `hrOut`).
+Ours plays the same beats around a real page load:
+
+- **Exit (JS):** a delegated interceptor catches every internal `<a>` click (skipping same-page
+  hash jumps via `e.defaultPrevented`, new-tab/modifier clicks, downloads, cross-origin);
+  `GTCNav.to(href)` covers the non-anchor navigations (shelf books, `chapterSwitch`, `.toc-sheet`
+  rows). It fades `document.body` to 0 over 1.0s — the backdrop stays because **`html` now carries
+  the page background too** (`styles.css`; `html:has(body.page-dark)` for About) — locks scroll
+  (smoother paused + wheel/touchmove blocked, HR-style), then sets `location.href` on complete.
+  **Toward/away from the dark About page the html `background-color` tweens to the destination's
+  colour during the exit**, so the browser's document swap lands on an identical backdrop (no
+  chalk→dark flash).
+- **Entrance (CSS):** every load fades `body` in via the `gtc-page-in` keyframes (1.3s, the same
+  bezier) — CSS so a JS failure can never strand a hidden page. **Fill-mode must stay `backwards`**
+  (a filled animation outranks GSAP's inline opacity and swallows the exit fade — see
+  [gotchas.md](gotchas.md)); `navigate()` also sets `body.style.animation = "none"` in case an exit
+  starts inside the first 1.3s. The chapter hero text/`.reveal` entrances overlap the fade's tail —
+  one continuous arrival.
+- **Reader deep links** (landing book → `/chapter-N`): the entrance there is `revealDeepLink`
+  (`chapter.js`) fading `#smooth-content` once positioned — slowed from its old 0.2s pop to the
+  same 1.3s/`hrOut` so the book click reads as one slow cross-fade.
+- **bfcache:** browser back/forward restores a frozen page (finished CSS animation + possibly the
+  exit's inline `opacity:0`) — the `pageshow (persisted)` handler unwinds the exit state and
+  replays the fade with GSAP, which is what gives the back button its fade.
+- **Prefetch:** `pointerover` on any `a[href]`/`[data-href]` appends `<link rel="prefetch">` (HR
+  fetch-caches on hover), so the beat between fade-out and fade-in stays a quiet blink.
+- **Skips to an instant navigation:** reduced motion, the password gate, an already-transitioning
+  page (`leaving` latch).
 
 ## Arrow fade (load-in + cover-exit over one property)
 

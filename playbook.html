@@ -89,8 +89,9 @@
     </button>
   </nav>
   <div class="toc-sheet" id="toc-sheet" role="dialog" aria-label="Table of contents">
-    <div class="toc-sheet__scrim"></div>
-    <div class="toc-sheet__panel"></div>
+    <div class="toc-sheet__mask">
+      <div class="toc-sheet__panel"></div>
+    </div>
   </div>
 
   <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
@@ -1545,9 +1546,8 @@
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
 
-  <!-- Drawer Menu removed on the reader (2026-07): the always-visible Table of Contents
-       (now including About) is the sole navigation. menuScene() in js/main.js early-returns
-       when neither #menu nor a [data-menu-open] trigger is present. -->
+  <!-- Drawer Menu removed site-wide (2026-07): the always-visible Table of Contents
+       (now including About) + the mobile veil are the sole navigation. -->
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
@@ -1556,5 +1556,6 @@
   <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>
   <script type="module" src="js/chapter.js"></script>
+  <script type="module" src="js/transition.js"></script>
 </body>
 </html>

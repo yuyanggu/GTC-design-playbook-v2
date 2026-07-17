@@ -82,6 +82,33 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
+/* ============================================================================
+   Cross-page navigation fade (js/transition.js) — humanistreview.ai style.
+   `html` carries the page backdrop so the exit fade (body opacity → 0) sinks
+   the content into the background instead of flashing white; the dark About
+   page keeps its own backdrop via :has. The entrance is pure CSS — every load
+   fades the body in over 1.3s on the hrOut curve — so a JS failure can never
+   strand a hidden page (the animation always completes on its own). bfcache
+   restores skip CSS animations; transition.js replays the fade on pageshow.
+   ========================================================================== */
+html { background: var(--chalk, #f6f2e7); }
+html:has(body.page-dark) { background: #0c1619; }
+
+@keyframes gtc-page-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* fill-mode MUST stay `backwards`, never `both`/`forwards` — a filled CSS
+   animation outranks inline styles in the cascade, so it would pin the body at
+   opacity 1 and silently swallow transition.js's GSAP exit fade (found via
+   CDP: the html bg crossfaded but the body never faded). */
+body { animation: gtc-page-in 1.3s cubic-bezier(0.43, 0.195, 0.02, 1) backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none; }
+}
+
 body {
   margin: 0;
   background: var(--chalk);
@@ -299,20 +326,26 @@ html:has(#hero) body {
   margin-inline: auto;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  /* Side-by-side (>1200px): centre the headline and the copy column against each
+     other — their heights are close but never equal, and a flush-top pair read as
+     two unrelated blocks. Harmless below 1200: the stacked media query re-sets
+     align-items to flex-start, where it means horizontal (left) alignment instead. */
+  align-items: center;
   gap: clamp(24px, 4vw, 64px);
   /* vertical position comes from the section's flex centering (no top padding) */
 }
 /* Headline — Boldonse 54/80 (Figma), sentence case (no uppercase transform).
    ALWAYS exactly two lines: each `.line` is `white-space:nowrap`, and fitHeadline()
-   in main.js scales this shared `font-size` down (capped ≤54px) so the longest line
-   fits the space beside the copy column at any width. The `clamp` here is only a
-   no-JS fallback — JS sets an inline `font-size` that overrides it. */
+   in main.js scales this shared `font-size` (capped ≤54px) so the longest line fits
+   the space beside the copy column; once the row stacks (≤1200px) the cap tracks the
+   viewport (17px + 3.1vw ≈ 54px @1200 → 29px @390, floor 26px) so the full-width
+   title scales DOWN as the screen narrows. The `clamp` here is only a no-JS
+   fallback — JS sets an inline `font-size` that overrides it. */
 .intro__headline {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(40px, 3.4vw, 54px);          /* fallback; JS fits the real size (never < 40) */
+  font-size: clamp(26px, 17px + 3.1vw, 54px);   /* fallback; JS fits the real size */
   line-height: 1.48;                            /* 80 / 54 */
   letter-spacing: -0.3px;
   color: var(--midnight);
@@ -334,59 +367,54 @@ html:has(#hero) body {
 .intro__headline--wrap .line {
   overflow: visible;
   white-space: normal;
+  text-wrap: balance;      /* even rows — avoids a lone "wind." widow on phones */
   padding-block: 0;
   margin-block: 0;
 }
 .intro__headline .word { display: inline-block; will-change: transform; }
-/* Right column — Figma 421px: welcome copy + Explore link. */
+/* Right column — Figma 421px: the welcome copy (which now carries the CTA inline). */
 .intro__col {
   width: min(421px, 100%);
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 .intro__copy {
   margin: 0;
   font-family: var(--font-serif);
   font-weight: 400;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
   letter-spacing: -0.32px;
   color: #000;
 }
-/* "Explore →" — text + midnight arrow chip; opens the About-this-playbook popup. */
+/* The inline CTA that closes the welcome copy — opens the About-this-playbook
+   popup (aboutModal()). Lives INSIDE .intro__copy (2026-07, replacing the midnight
+   arrow chip that sat below it): a subtle inline run continuing the paragraph, so
+   it must read as emphasis in the sentence, not a button beside it. `font: inherit`
+   + `color: inherit` take the serif copy's face, 16px size and ink — the hairline
+   underline is the ONLY thing marking it (no arrow, no colour shift), which is the
+   whole point of the treatment. `display:inline` so it reflows with the text. */
 .intro__explore {
   appearance: none;
   border: 0;
   background: none;
   padding: 0;
   margin: 0;
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
+  display: inline;
   cursor: pointer;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 16px;
-  color: var(--midnight);
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(0, 0, 0, 0.35);
+  transition: text-decoration-color 0.2s ease;
 }
-.intro__explore-icon {
-  width: 19px;
-  height: 19px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--midnight);
-  color: #fff;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-.intro__explore:hover .intro__explore-icon,
-.intro__explore:focus-visible .intro__explore-icon {
-  background: var(--orange);
-  color: var(--midnight);
-}
+.intro__explore:hover,
+.intro__explore:focus-visible { text-decoration-color: currentColor; }
+.intro__explore:focus-visible { outline: 2px solid var(--midnight); outline-offset: 3px; }
 
 /* Arrow — Figma top:934 / 1024 ≈ 91.2% ; native 57 × 45 */
 .arrow {
@@ -467,8 +495,7 @@ html:has(#hero) body {
 .js .cloud,
 .js #arrow { opacity: 0; }
 .js .home-logo,
-.js .intro__copy,
-.js .intro__explore { opacity: 0; }
+.js .intro__copy { opacity: 0; }   /* .intro__explore is inside .intro__copy — it rides this */
 .js .intro__headline .word { transform: translateY(118%); }            /* masked hide (clip) */
 .js .intro__headline--wrap .word { transform: none; opacity: 0; }       /* wrap mode → opacity hide */
 @media (prefers-reduced-motion: reduce) {
@@ -479,8 +506,7 @@ html:has(#hero) body {
   .js .cloud,
   .js #arrow,
   .js .home-logo,
-  .js .intro__copy,
-  .js .intro__explore { opacity: 1; }
+  .js .intro__copy { opacity: 1; }
   .js .intro__headline .word,
   .js .intro__headline--wrap .word { transform: none; opacity: 1; }
 }
@@ -526,153 +552,6 @@ html:has(#hero) body {
   will-change: transform;
 }
 .mag-btn:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
-
-/* ============================================================================
-   MENU  (right-side drawer overlay) — scrim + a chalk card that swipes in from the
-   right. On close the chapter rows fall away while the card fades (see menuScene in
-   js/main.js). One shared block per page (playbook + chapter pages). The bookshelf
-   .book system below is kept — index.html's landing shelf still uses it.
-   ========================================================================== */
-.menu {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: block;
-}
-.menu[hidden] { display: none; }
-
-/* Dimmed backdrop — click to close (carries data-menu-close). */
-.menu__scrim {
-  position: absolute;
-  inset: 0;
-  background: rgba(1, 34, 51, 0.4);   /* midnight scrim */
-  cursor: pointer;
-}
-
-/* The drawer — a floating card pinned to the top-right with even spacing, sized to
-   its contents. overflow:visible so the rows can fall past it on close. The chalk
-   panel itself is the ::before layer, faded independently of the falling rows via
-   the GSAP-driven --card-bg-o (kept off the rows so they stay solid as they drop). */
-.menu__drawer {
-  --card-bg-o: 1;
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  bottom: auto;
-  width: clamp(320px, 92vw, 440px);
-  color: var(--midnight);
-  padding: clamp(20px, 3vh, 28px);
-  overflow: visible;
-  outline: none;
-}
-.menu__drawer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: var(--chalk);
-  border-radius: 16px;                                 /* all four corners */
-  box-shadow: 0 18px 50px rgba(1, 34, 51, 0.18);
-  opacity: var(--card-bg-o, 1);
-}
-
-.menu__eyebrow {
-  position: relative;
-  z-index: 1;
-  margin: 0 0 clamp(16px, 3.5vh, 30px);
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-size: 14px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--midnight);
-  opacity: 0.6;
-}
-
-.menu__list {
-  position: relative;
-  z-index: 1;                /* above the ::before card so falling rows stay on top */
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* A chapter row — mono icon left, number + title right. */
-.menu__row {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: clamp(14px, 2vh, 20px) 8px;
-  text-decoration: none;
-  color: var(--midnight);
-  border-bottom: 1px solid rgba(1, 34, 51, 0.1);
-  border-radius: 10px;
-  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
-}
-.menu__item:last-child .menu__row { border-bottom: 0; }
-
-.menu__icon {
-  position: relative;
-  flex: 0 0 auto;
-  width: 56px;
-  height: 56px;
-}
-.menu__icon img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.menu__icon-hover { opacity: 0; transition: opacity 0.25s ease; }
-
-.menu__text {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.menu__num {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  opacity: 0.5;
-}
-.menu__title {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: clamp(18px, 2.4vw, 22px);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-.menu__soon {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 12px;
-  opacity: 0.6;
-  margin-top: 2px;
-}
-
-/* Hover / focus — orange accent, colour icon, slight nudge (interactive rows only). */
-@media (hover: hover) {
-  a.menu__row:hover {
-    background: rgba(249, 165, 24, 0.1);
-    color: var(--orange);
-    transform: translateX(4px);
-  }
-  a.menu__row:hover .menu__icon-hover { opacity: 1; }
-  a.menu__row:hover .menu__num { opacity: 0.85; }
-}
-a.menu__row:focus-visible {
-  outline: 3px solid var(--orange);
-  outline-offset: 2px;
-  color: var(--orange);
-}
-a.menu__row:focus-visible .menu__icon-hover { opacity: 1; }
-
-.menu__row--soon { opacity: 0.45; cursor: default; }
 
 /* Decorative gray book-spines (the book_element_*.svg vectors), behind the books,
    bottom-aligned and shorter (294px) than the 340px cards. Placed in the 5 gaps. */
@@ -895,30 +774,32 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 }
 
 /* ============================================================================
-   MOBILE LANDING (≤768px) — replace the rising-books shelf with a static vertical
+   MOBILE LANDING (≤800px) — replace the rising-books shelf with a static vertical
    stack of horizontal cards (icon · number · divider · title), each with a CSS
    "spine ledge" below it. No hover/physics (that all stays desktop-only). Scroll
-   is fully native: cover → stacked intro section → cards.
+   is fully native: cover → stacked intro section → cards. (800, not 768: below
+   ~800 the scaled shelf drops under ~0.55× and the books read too small.)
    ========================================================================== */
 
 /* Desktop: the mobile cards section is not rendered. */
 .home-cards { display: none; }
 
 /* ≤1200px — a two-line 40px title no longer fits beside the 421px copy column, so
-   STACK the intro to one column: the title takes the full shelf-width (staying ≥40px far
-   lower) and the copy sits beneath it. The shelf still shows here (down to 768px), so the
+   STACK the intro to one column: the title takes the full shelf-width (its size now
+   tracking the viewport via fitHeadline, ~54px here shrinking as the screen narrows)
+   and the copy sits beneath it. The shelf still shows here (down to 800px), so the
    top padding is trimmed to leave room above the reserved shelf band. */
 @media (max-width: 1200px) {
   .intro { padding-top: clamp(64px, 8vh, 96px); }
   .intro__row {
     flex-direction: column;
     align-items: flex-start;          /* title + copy left-aligned to the shelf's left edge */
-    gap: clamp(20px, 3vw, 36px);
+    gap: clamp(28px, 4vw, 44px);      /* more air between the full-width title and the copy */
   }
   .intro__col { width: min(421px, 100%); }   /* readable measure below the title */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   /* Cover lockup — stack the pinwheel ABOVE the title so the wide "THE GTC DESIGN"
      line gets the full width and can't run off the edge. Side padding as a safety net. */
   .lockup-row {
@@ -933,11 +814,12 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 
   /* Intro section stacks: headline above the copy column, cards flow right below
      (no shelf to reserve space for, so the section shrinks to its content). The shelf
-     is hidden here, so the row drops the shelf-width cap and just fills the padded box. */
-  .intro { min-height: auto; padding-block: 96px 12px; padding-inline: clamp(20px, 5.5vw, 32px); overflow: visible; }
-  .intro__row { width: 100%; margin-inline: 0; flex-direction: column; gap: 28px; }
-  .intro__headline { max-width: 100%; font-size: clamp(24px, 7vw, 34px); }
-  .intro__col { width: 100%; }
+     is hidden here, so the row drops the shelf-width cap and just fills the padded box.
+     Headline size comes from fitHeadline() (viewport-tracked, floor 26px). */
+  .intro { min-height: auto; padding-block: 96px 28px; padding-inline: clamp(20px, 5.5vw, 32px); overflow: visible; }
+  .intro__row { width: 100%; margin-inline: 0; flex-direction: column; gap: 36px; }
+  .intro__headline { max-width: 100%; }
+  .intro__col { width: 100%; }   /* copy fills the padded box (CTA is inline in it) */
   .home-logo { width: 104px; }   /* stays the fixed top bar; just a touch smaller */
 
   /* The desktop rising-books shelf is replaced by the cards below. */
@@ -947,9 +829,9 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   .home-cards {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 24px;
     margin: 0;
-    padding: 6px clamp(16px, 5vw, 28px) clamp(48px, 12vw, 80px);
+    padding: 20px clamp(16px, 5vw, 28px) clamp(56px, 12vw, 88px);
     background: var(--chalk);
   }
   .home-card {
@@ -1020,28 +902,57 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 /* ============================================================================
    ABOUT-THIS-PLAYBOOK POPUP  (Figma 2038:8068)
    Full-screen modal opened by the landing "Explore" button; holds the retired
-   Foreword's two sections. Mechanics/animation in aboutModal() (js/main.js).
+   Foreword's two sections. Entrance is a humanistreview.ai-style counter-translate
+   wipe — see aboutModal() (js/main.js): the outer .about-modal__mask (overflow:hidden)
+   and inner .about-modal__panel move by equal-and-opposite translateY so the card
+   holds still while the clip window unrolls up from the bottom.
    ========================================================================== */
 .about-modal {
   position: fixed;
   inset: 0;
   z-index: 100;
   overflow-y: auto;
-  background: #fff;                         /* white full-screen surface (Figma) */
+  background: transparent;                  /* the white surface is now .about-modal__panel */
 }
 .about-modal[hidden] { display: none; }
 
-/* Full-bleed click-to-close catcher (side gutters). */
+/* Dimmed backdrop (midnight tint, not pure black) — also the click-to-close catcher.
+   GSAP fades opacity 0→0.6; only visible while the panel is mid-wipe. */
 .about-modal__scrim {
   position: fixed;
   inset: 0;
+  background: rgba(1, 34, 51, 0.6);
+  opacity: 0;
   cursor: pointer;
 }
 
-/* Full-width content, top-aligned, fixed sizing so it fits one screen (button visible). */
-.about-modal__card {
+/* Counter-translate pair. .mask is the clipping window that travels; .panel is the
+   white surface that moves equal-and-opposite inside it so the card never drifts.
+   Both are flexed so panel height == mask height EXACTLY at every viewport — the
+   counter-translate only cancels if the two boxes are the same height (a percentage
+   min-height chain silently collapsed the panel to content height → visible drift). */
+.about-modal__mask {
   position: relative;
   min-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+.about-modal__panel {
+  flex: 1 1 auto;                           /* fill the mask's height exactly */
+  display: flex;
+  flex-direction: column;
+  background: #fff;                         /* white full-screen surface (Figma) */
+  will-change: transform;
+}
+
+/* Full-width content, top-aligned, fixed sizing so it fits one screen (button visible).
+   flex:1 1 auto (not min-height:100%) fills the panel so the card is the panel's full
+   height regardless of the percentage-height chain — keeps the images at full height. */
+.about-modal__card {
+  position: relative;
+  flex: 1 1 auto;
   width: 100%;
   padding: 40px;
   display: flex;
@@ -1073,7 +984,7 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
 
 /* Header - left-aligned display title, no rule above; generous space below. */
 .about-modal__title {
-  margin: 0 0 48px;
+  margin: 0 0 80px;
 }
 .about-modal__title h2 {
   margin: 0;
@@ -1085,28 +996,70 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   color: var(--midnight);
 }
 
-/* Content - illustration (left) + two text sections (right); the sections split
-   into equal halves that line up with the two stacked illustration blocks. */
+/* Masked line rise — the inner rises out of the clip on open (yPercent 100→0, GSAP).
+   clip-path with an em-bleed (not overflow:hidden) so ascenders/descenders aren't
+   shaved — Boldonse caps + serif descenders overflow the line box. */
+.reveal-line {
+  display: block;
+  overflow: visible;
+  clip-path: inset(-0.25em 0);
+}
+.reveal-line__inner {
+  display: block;
+  will-change: transform;
+}
+
+/* Content — illustration column (left) + two text sections (right); the sections split
+   into equal halves that line up with the two stacked illustration blocks. Below 1120px
+   (tablet + mobile) this stacks: the images move ABOVE the text, edge-to-edge. */
 .about-modal__content {
-  flex: 1 1 auto;                          /* fill the remaining card height */
+  flex: 0 0 auto;                          /* natural height — driven by the images, so the
+                                              illustration column isn't over-stretched (which
+                                              bunched the images at the top and broke alignment) */
   display: flex;
   gap: 40px;
-  align-items: stretch;
+  align-items: stretch;                    /* text column matches the image column height → the
+                                              two text sections split to line up with the images */
   min-height: 0;
 }
+/* Fluid width — scales with the viewport (was a fixed 582px). Its height is driven by the
+   two images (which touch, no gap), and the text column stretches to match, so each image
+   lines up with its section and the image seam lands on the divider rule.
+   Width is derived from the viewport HEIGHT so the two stacked images fill it exactly: the
+   space left below them equals the 40px above the title (no scroll). 200px = the fixed
+   chrome (40 pad-top + 40 title + 80 title-margin + 40 pad-bottom); ×582/650 (0.8954)
+   converts "vertical room for both images" into "one image's width" (each is 325/582 of its
+   width tall, so two are 650/582 of the column width). max-width guards tall/portrait
+   screens from squeezing the text column. */
 .about-modal__illus {
-  flex: 0 0 582px;
+  flex: 0 0 auto;
+  width: calc((100svh - 200px) * 0.8954);
+  max-width: 55%;
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
-.about-modal__illus img {
+/* Clip box — the image uncovers from behind this on open (GSAP), while the <img> inside
+   scales 1.15→1. aspect-ratio (with the width coming from the fluid column) keeps the
+   source 582×325 proportions at every size — the image scales up on wide/"More Space"
+   displays but never crops or stretches. */
+.about-modal__illus-mask {
   display: block;
   width: 100%;
-  flex: 1 1 0;                             /* two blocks share the (now taller) column height */
-  min-height: 0;
-  object-fit: cover;
+  aspect-ratio: 582 / 325;
+  flex: 0 0 auto;
+  overflow: hidden;
 }
+.about-modal__illus-mask img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+/* Per-section images used only in the stacked (≤1024) layout — hidden on desktop, where the
+   dedicated .about-modal__illus column is used instead. */
+.about-modal__illus-mask--stack { display: none; }
 
 .about-modal__text {
   flex: 1 1 auto;
@@ -1149,14 +1102,34 @@ html.gtc-locked body { visibility: hidden; }   /* hide the page; gate re-shows i
   border-top: 1px solid var(--midnight);
 }
 
-@media (max-width: 768px) {
-  .about-modal__card { padding: 72px 20px 32px; }
-  .about-modal__title { margin-bottom: 28px; }
+/* Tablet + mobile (≤1024): stacked, interleaved per section — image → heading → paragraph,
+   repeated (Figma node 2171-3347). Each section's image lives inside the section (the desktop
+   .about-modal__illus column is hidden), with 16px side padding and no divider. The title +
+   sections cap to a comfortable reading width and centre, so images don't blow up on wider
+   tablets. Spacing per Figma: 72 top · title → 28 → image → 24 → heading → 8 → paragraph ·
+   48 between sections. */
+@media (max-width: 1024px) {
+  .about-modal__card { padding: 72px 16px 48px; }
+  .about-modal__title { margin: 0 0 28px; }
   .about-modal__title h2 { font-size: 28px; }
-  .about-modal__content { flex-direction: column; gap: 22px; }
-  .about-modal__illus { flex-basis: auto; width: 100%; }
-  .about-modal__text { flex-basis: auto; width: 100%; }
-  .about-modal__row { flex-direction: column; gap: 8px; flex-basis: auto; }
-  .about-modal__row:first-of-type { padding-bottom: 20px; }
-  .about-modal__row:last-of-type { padding-top: 20px; }
+  .about-modal__title,
+  .about-modal__content { width: 100%; max-width: 640px; margin-inline: auto; }
+
+  .about-modal__content { flex-direction: column; gap: 48px; } /* between sections */
+  .about-modal__illus { display: none; }                        /* desktop image column off */
+  .about-modal__illus-mask--stack { display: block; }           /* per-section images on */
+
+  .about-modal__row { flex-direction: column; gap: 0; align-items: stretch; flex: 0 0 auto; padding: 0; }
+  .about-modal__illus-mask--stack { margin-bottom: 24px; }      /* image → heading */
+  .about-modal__row h3 { flex: 0 0 auto; margin: 0 0 8px; }     /* heading → paragraph */
+
+  .about-modal__rule { display: none; }                          /* no divider */
+}
+
+/* Narrow two-column (1025–1200): the image column + the 230px heading label would squeeze
+   the paragraph to ~120px, so stack the heading above the paragraph here — the image stays
+   beside its section, and the paragraph gets the full text-column width. */
+@media (min-width: 1025px) and (max-width: 1200px) {
+  .about-modal__row { flex-direction: column; gap: 8px; }
+  .about-modal__row h3 { flex: 0 0 auto; }
 }

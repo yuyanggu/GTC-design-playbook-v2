@@ -56,7 +56,7 @@ function galleryReveal() {
   mm.add(
     { isMobile: "(max-width: 768px)", isDesktop: "(min-width: 769px)" },
     (ctx) => {
-      const rise = ctx.conditions.isMobile ? 160 : 300;   // dramatic; gentler on phones
+      const rise = ctx.conditions.isMobile ? 110 : 300;   // dramatic; gentler on phones (photos ~120px tall there)
       gsap.set(items, { y: rise, willChange: "transform", force3D: true });
       gsap.to(items, {
         y: 0,

@@ -20,13 +20,23 @@ background, followed by a full-width orb banner image (`assets/foreword_Graphic.
 guard was broadened to `document.querySelector(".page-hero, .page-body.foreword")` so `copyReveals`
 still runs on the no-hero page. In the reader the clean URL is `/foreword` (a `routes.js` special-case).
 
-## Layout (reference 1440)
+## Layout (reference 1440, fluid to 1025)
 
-- The rail is `position:fixed` (outside `#smooth-wrapper`).
-- The body is a centred 1440 canvas. The **TOC** floats left (`.toc { float:left }`, in a
-  `display:contents` `.body-left`) at x132; `.copy` is `margin-left:626; width:604`.
+- The rail is `position:fixed` (outside `#smooth-wrapper`), 94px wide, shown **only ≥1181**.
+  `--rail-w` flips to `0` at ≤1180 and the rail is `display:none` there.
+- The body is a centred 1440 canvas. The two-column geometry is **var-driven**
+  (`:root` in `css/chapter.css`: `--rail-w` / `--page-margin` / `--toc-w` / `--toc-gap` /
+  `--copy-right` / `--toc-ml`): at ≥1440 it resolves to the original spec (TOC 328, copy offset
+  ~600 with a **24px rail→TOC gap**), and eases linearly down to 1025px (TOC 240, gutter floor
+  56px) so TOC and copy can never collide. `--toc-ml = rail-w + 24px` (≥1181) or `--page-margin`
+  (≤1180, logo inset) so the TOC's left edge aligns to the wordmark once the rail is gone. The
+  TOC's type scales on the same slope (15→12.5 / 16→13.5, `min-width:1025px` block after the
+  `.toc__subrow` rules). ≤1024 the desktop TOC retires (mobile bar below).
+- The **TOC** floats left (`.toc { float:left }`, in a `display:contents` `.body-left`);
+  `.copy` takes `margin-left: calc(ml + toc + gap)`.
 - Float — **not** absolute/grid — so ScrollTrigger can pin the TOC (see [gotchas.md](gotchas.md):
-  pinning under ScrollSmoother).
+  pinning under ScrollSmoother). The pin lives in a `gsap.matchMedia("(min-width: 1025px)")`
+  context so resizing across the breakpoint kills/rebuilds it cleanly.
 
 ## Hero
 
@@ -41,14 +51,14 @@ only, via `heroFlowerSpin`) sized `min(700px,70vw)` × `--flower-aspect` (ch1 `5
 **Mobile (≤768px):** the hero switches to `min-height:100svh` (small viewport height) so it fits the
 visible viewport without reflowing as the browser toolbar slides — plain `100vh` is the *largest*
 viewport, which overflows and pushes the bottom-anchored title below the fold when the toolbar shows.
-The title's `bottom` is also lifted to `calc(56px + clamp(16px,3vh,32px))` to clear the fixed 56px
+The title's `bottom` is also lifted to `calc(64px + clamp(16px,3vh,32px))` to clear the fixed 64px
 `.toc-bar` now that the hero ends exactly at the viewport bottom.
 
 ## TOC (`.toc`)
 
 Pinned nav (`stickyToc`). Structure (stacked-chapter redesign, 2026-06):
 
-- **`.toc__scroll`** — inner scroll viewport wrapping everything. On desktop (>1180px) it's capped
+- **`.toc__scroll`** — inner scroll viewport wrapping everything. On desktop (>1024px) it's capped
   to `calc(100vh - 160px)` with a hidden scrollbar; while the stack overflows, JS adds
   `.is-overflowing` → a CSS `mask-image` fades ~48px at the top + bottom edges, and
   `tableOfContents` tweens `scrollTop` to keep the active (sub-)row vertically centred. The follow
@@ -69,14 +79,21 @@ Pinned nav (`stickyToc`). Structure (stacked-chapter redesign, 2026-06):
   sub-rows get their stale `is-active` cleared. Indented 26px under the chapter row. Active main/sub
   track scroll off each heading's id (`#s-31`, `#s-31-1`, …).
 
-≤768px the whole `.toc` is hidden — the mobile section bar below replaces it.
+≤1024px the whole `.toc` is hidden — the mobile section bar below replaces it (the copy becomes
+a centred single column, max 720px). The **rail retires entirely at ≤1180** (below the label
+breakpoint it was just a bare divider line; `--rail-w → 0`), so from 1025–1180 the desktop TOC
+shows with no rail, its left edge aligned to the topbar logo inset (`--page-margin`), and the
+menu stays reachable from the topbar hamburger. The **collapse feature is gated to ≥1181** (where
+the rail + its `.rail__toc` restore control live); below that the TOC is a plain always-open index
+(`tocCollapse` has a `matchMedia("(max-width:1180px)")` that force-shows it and ignores a saved
+"collapsed" state).
 
-## Mobile section bar (`.toc-bar` + `.toc-sheet`, ≤768px)
+## Mobile section bar (`.toc-bar` + `.toc-sheet`, ≤1024px)
 
-A fixed bar at the viewport bottom — `◀ [ 3.1 · section title ] ▶`, midnight bg, number in the
-chapter accent (`--bar-accent`). Markup sits **outside `#smooth-wrapper`** (fixed elements can't
-survive the smoother transform) in the 3 chapter pages + `playbook.html` (`foreword.html` fallback
-skipped); z-order: scrim/sheet 45 · bar 46 (rail 40 < these < menu 50). `mobileTocBar()` in
+A fixed 64px bar at the viewport bottom — `◀ [ 3.1 · section title ] ▶`, midnight bg, number in
+the chapter accent (`--bar-accent`). Markup sits **outside `#smooth-wrapper`** (fixed elements
+can't survive the smoother transform) in the chapter pages + `playbook.html` (`foreword.html`
+fallback skipped); z-order: sheet 45 · bar 46 (< menu 50). `mobileTocBar()` in
 `js/chapter.js` (one per document, both boot branches) drives it:
 
 - **Heading list** built from the `.toc` navs' `[data-toc]` rows in DOM order — single source of
@@ -87,12 +104,41 @@ skipped); z-order: scrim/sheet 45 · bar 46 (rail 40 < these < menu 50). `mobile
   Cross-chapter jumps **re-aim after the smooth scroll stops** (up to 6 corrections): the panel
   transitions' `pinSpacing:false` consumes scroll without moving layout, so one rect-measured
   `scrollTo` undershoots — same reason `handleDeepLink` converges. Any wheel/touch input cancels.
-- **Tapping the label** slides up `.toc-sheet` (scrim + chalk panel anchored above the bar): the
-  full stacked-chapter index, cloned from the `.toc` navs at boot — sub-lists forced open (inline
-  accordion heights stripped), per-chapter `--accent` set inline on each block, all `is-current`/
-  `is-active` cleared then re-synced (+ auto-scrolled to the active row) on open. Section/sub rows
-  jump in-page; chapter rows resolve like the menu. Esc / scrim / label closes; `aria-expanded`
-  reflects state.
+- **Tapping the label** opens the `.toc-sheet` — a **solid white surface that unrolls up out of the
+  bar** (2026-07; replaced the Figma 2161:2120 gradient-blur frost veil, which couldn't survive an
+  opaque sliding surface: a `backdrop-filter` and a see-through top only work on a layer that fades
+  in place). The wipe is **ported from the landing's About popup** (`aboutModal()`, `js/main.js`) so
+  the two surfaces read as one gesture — same `hrOut` CustomEase, same 0.8s open / 0.55s close:
+  - `.toc-sheet__mask` is the clipping window that travels (`yPercent 100→0`);
+    `.toc-sheet__panel` **counter-translates** inside it (`-100→0`), so the index holds still and
+    only the window unrolls. Both are `inset:0` of the sheet → **identical heights, which is the
+    only reason the counter-translate cancels**. Break that and the index visibly drifts.
+  - `.toc-sheet` carries its own `overflow:hidden` to clip the parked mask (else white leaks down
+    over the bar). The parked transforms are declared in CSS **and** re-set by `parkSheet()`, so
+    nothing flashes before JS boots.
+  - ⚠️ `parkSheet()` sets **`y:0` alongside `yPercent`**. GSAP parses the CSS `translateY(100%)`
+    into a px `y` on first touch and stacks `yPercent` on top — leave it and the pair rests at
+    ±100% instead of 0. It still *looks* right (the bogus baseline cancels between mask and panel),
+    so only a transform probe catches it. Same trap `coverScroll()` guards; see gotchas.md.
+  - Chapter rows then **rise out of their own clips**, staggered (`0.7s, stagger 0.06`, starting at
+    `0.28`) — the popup's `.reveal-line` idea, adapted: `buildSheetIndex` wraps each row in a
+    `.toc-sheet__clip` (`clip-path: inset(-6px 0)` — the bleed keeps Boldonse caps/descenders from
+    being shaved). Rows park at `yPercent:100, y:8`; the 8px **overshoots the 6px bleed** so nothing
+    peeks. The row moves as ONE box — its num and name have different line-heights, so tweening them
+    separately would desync the rise. The current chapter's section list fades in behind them.
+  - Closing just rolls the wipe back down; rows ride with it rather than re-staggering. Under
+    reduced motion `openSheet`/`closeSheet` set the end state outright — **GSAP owns visibility
+    now**, so an early `return` would leave the sheet parked and invisible.
+  - Content: the stacked-chapter index cloned from the `.toc` navs at boot, below a 76px head zone
+    (the topbar logo is *covered* by the opaque panel now, not seen through, so it no longer needs
+    clearing — only the X does) that carries an X close button
+  (`.toc-sheet__close`, created by JS, top-right at the topbar inset). **Only the current chapter's
+  section list is shown** (`li:not(:has(.is-current)) .toc__list { display:none }` — is-current is
+  re-synced on every open, so the expansion follows the reader); other chapter rows are quiet,
+  tappable wayfinding (buildSheetIndex restores `data-href="/chapter-N"` on clones that came from
+  the nav where that chapter was current and its row inert). The index ends in a **"Behind the
+  playbook"** row (`.toc__chapter--about` → `/about`). Section/sub rows jump in-page; chapter rows
+  navigate. Esc / X / label closes; `aria-expanded` reflects state.
 
 ## Copy blocks (in `.copy`, accent/midnight on chalk, Source Serif body)
 

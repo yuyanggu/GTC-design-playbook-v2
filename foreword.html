@@ -33,16 +33,11 @@
        The vertical divider runs the full height; the rotated label, the hamburger
        (opens the bookshelf Menu) and the search icon ride in the rail. Lives OUTSIDE
        #smooth-wrapper so it stays viewport-anchored, like the menu/pinwheel. -->
-  <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
+  <!-- Top header: logo (→ home) -->
   <header class="topbar">
     <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
     </a>
-    <button class="topbar__menu" type="button" data-menu-open aria-haspopup="dialog" aria-controls="menu" aria-label="Open playbook menu">
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line class="bar bar-top" x1="3" y1="7" x2="21" y2="7" /><line class="bar bar-mid" x1="3" y1="12" x2="21" y2="12" /><line class="bar bar-bot" x1="3" y1="17" x2="21" y2="17" />
-      </svg>
-    </button>
   </header>
 
   <div class="rail" aria-label="Section navigation">
@@ -77,104 +72,6 @@
     </div><!-- /#smooth-content -->
   </div><!-- /#smooth-wrapper -->
 
-  <!-- ───────────────────────── MENU (bookshelf overlay) — shared with index.html ───────────────────────── -->
-  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Playbook menu" hidden>
-    <!-- Right-side drawer: scrim (click-to-close) + chalk card of chapter rows. Swipes in
-         from the right; on close the rows fall away (see menuScene in js/main.js). The
-         close control is the topbar hamburger (morphs to an X) / the scrim / Esc. -->
-    <div class="menu__scrim" data-menu-close aria-hidden="true"></div>
-    <nav class="menu__drawer" aria-label="Chapters" tabindex="-1">
-      <p class="menu__eyebrow">The Design Playbook</p>
-      <ul class="menu__list">
-        <!-- Foreword menu row: RETIRED 2026-07 (Foreword hidden site-wide; kept for revert)
-        <li class="menu__item">
-          <a class="menu__row" data-href="foreword.html" href="foreword.html">
-            <span class="menu__icon">
-              <img class="menu__icon-base" src="assets/menu_0.svg" alt="" />
-              <img class="menu__icon-hover" src="assets/menu_0_hover.svg" alt="" aria-hidden="true" />
-            </span>
-            <span class="menu__text">
-              <span class="menu__num">00</span>
-              <span class="menu__title">Foreword</span>
-            </span>
-          </a>
-        </li>
-        -->
-        <li class="menu__item">
-          <a class="menu__row" data-href="about-govtech-consulting.html" href="about-govtech-consulting.html">
-            <span class="menu__icon">
-              <img class="menu__icon-base" src="assets/menu_1.svg" alt="" />
-              <img class="menu__icon-hover" src="assets/menu_1_hover.svg" alt="" aria-hidden="true" />
-            </span>
-            <span class="menu__text">
-              <span class="menu__num">01</span>
-              <span class="menu__title">About GovTech Consulting</span>
-            </span>
-          </a>
-        </li>
-        <li class="menu__item">
-          <a class="menu__row" data-href="our-point-of-view.html" href="our-point-of-view.html">
-            <span class="menu__icon">
-              <img class="menu__icon-base" src="assets/menu_2.svg" alt="" />
-              <img class="menu__icon-hover" src="assets/menu_2_hover.svg" alt="" aria-hidden="true" />
-            </span>
-            <span class="menu__text">
-              <span class="menu__num">02</span>
-              <span class="menu__title">Our Point of View</span>
-            </span>
-          </a>
-        </li>
-        <li class="menu__item">
-          <a class="menu__row" data-href="our-approach.html" href="our-approach.html">
-            <span class="menu__icon">
-              <img class="menu__icon-base" src="assets/menu_3.svg" alt="" />
-              <img class="menu__icon-hover" src="assets/menu_3_hover.svg" alt="" aria-hidden="true" />
-            </span>
-            <span class="menu__text">
-              <span class="menu__num">03</span>
-              <span class="menu__title">Our Approach</span>
-            </span>
-          </a>
-        </li>
-        <li class="menu__item">
-          <a class="menu__row" data-href="stages-of-a-project.html" href="stages-of-a-project.html">
-            <span class="menu__icon">
-              <img class="menu__icon-base" src="assets/menu_4.svg" alt="" />
-              <img class="menu__icon-hover" src="assets/menu_4_hover.svg" alt="" aria-hidden="true" />
-            </span>
-            <span class="menu__text">
-              <span class="menu__num">04</span>
-              <span class="menu__title">Stages of Engagement</span>
-            </span>
-          </a>
-        </li>
-        <li class="menu__item">
-          <a class="menu__row" data-href="how-we-work.html" href="how-we-work.html">
-            <span class="menu__icon">
-              <img class="menu__icon-base" src="assets/menu_5.svg" alt="" />
-              <img class="menu__icon-hover" src="assets/menu_5_hover.svg" alt="" aria-hidden="true" />
-            </span>
-            <span class="menu__text">
-              <span class="menu__num">05</span>
-              <span class="menu__title">How We Work</span>
-            </span>
-          </a>
-        </li>
-        <li class="menu__item">
-          <a class="menu__row" data-href="about.html" href="about.html">
-            <span class="menu__icon">
-              <img class="menu__icon-base" src="assets/menu_about.svg" alt="" />
-              <img class="menu__icon-hover" src="assets/menu_about_hover.svg" alt="" aria-hidden="true" />
-            </span>
-            <span class="menu__text">
-              <span class="menu__title">About</span>
-            </span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
   <script src="vendor/ScrollSmoother.min.js"></script>
@@ -182,5 +79,6 @@
   <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>
   <script type="module" src="js/chapter.js"></script>
+  <script type="module" src="js/transition.js"></script>
 </body>
 </html>

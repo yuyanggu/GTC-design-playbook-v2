@@ -79,15 +79,10 @@
           <span class="line"><span class="word">We</span> <span class="word">steer</span> <span class="word">the</span> <span class="word">motion.</span></span>
         </h2>
         <div class="intro__col">
-          <p class="intro__copy">In a landscape of perpetual change, we are proactively redefining discovery, design, and development. As a result, we created this playbook as a living draft, constantly refining our speed and direction as we adapt to new challenges together. Because design never stands still, neither do we.</p>
-          <button class="intro__explore" type="button" data-about-open>
-            <span>Sail through</span>
-            <span class="intro__explore-icon" aria-hidden="true">
-              <svg width="12" height="12" viewBox="0 0 16 16" focusable="false">
-                <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-              </svg>
-            </span>
-          </button>
+          <!-- The CTA sits INSIDE the paragraph (2026-07, replacing the "Sail through"
+               chip button that sat below it) — an inline underlined run closing the copy.
+               It rides the paragraph's own fade-up in introScene (no separate tween). -->
+          <p class="intro__copy">In a landscape of perpetual change, we are proactively redefining discovery, design, and development. As a result, we created this playbook as a living draft, constantly refining our speed and direction as we adapt to new challenges together. Because design never stands still, neither do we. <button class="intro__explore" type="button" data-about-open>Learn what this playbook is for.</button></p>
         </div>
       </div>
 
@@ -194,7 +189,7 @@
         </div>
     </section>
 
-    <!-- Mobile playbook cards — shown ≤768px in place of the rising-books shelf. Static,
+    <!-- Mobile playbook cards — shown ≤800px in place of the rising-books shelf. Static,
          tap-to-navigate (no hover/physics); each card has a CSS spine ledge below it.
          Hidden on desktop, where #homeShelf is used instead. -->
     <nav class="home-cards" aria-label="Playbook sections">
@@ -250,38 +245,48 @@
   </div>
 
   <!-- ─────────── "About this playbook" popup (Figma 2038:8068) ───────────
-       Opened by the landing "Explore" button ([data-about-open]); fade/scale-in
-       via GSAP (aboutModal() in main.js). Holds the retired Foreword's two
-       sections. Sits OUTSIDE #smooth-wrapper so main can be made inert while open. -->
+       Opened by the landing "Explore" button ([data-about-open]). Entrance is a
+       humanistreview.ai-style counter-translate wipe (aboutModal() in main.js): the
+       outer .about-modal__mask (overflow:hidden) and inner .about-modal__panel move
+       by equal-and-opposite translateY so the card content holds still while the
+       clip window unrolls UP from the bottom; text lines + images then rise out of
+       their own masks. Holds the retired Foreword's two sections. The ✕ is a sibling
+       of the mask (NOT inside the translating panel) so its position:fixed stays
+       viewport-anchored. Sits OUTSIDE #smooth-wrapper so main can be made inert. -->
   <div class="about-modal" id="aboutModal" role="dialog" aria-modal="true"
        aria-labelledby="aboutModalTitle" hidden aria-hidden="true">
     <div class="about-modal__scrim" data-about-close aria-hidden="true"></div>
-    <div class="about-modal__card" tabindex="-1">
-      <button class="about-modal__close" type="button" data-about-close aria-label="Close">
-        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-          <path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-        </svg>
-      </button>
+    <button class="about-modal__close" type="button" data-about-close aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      </svg>
+    </button>
+    <div class="about-modal__mask">
+      <div class="about-modal__panel">
+        <div class="about-modal__card" tabindex="-1">
+          <div class="about-modal__title">
+            <h2 id="aboutModalTitle"><span class="reveal-line"><span class="reveal-line__inner">About this playbook</span></span></h2>
+          </div>
 
-      <div class="about-modal__title">
-        <h2 id="aboutModalTitle">About this playbook</h2>
-      </div>
-
-      <div class="about-modal__content">
-        <div class="about-modal__illus" aria-hidden="true">
-          <img src="assets/about_modal_1.png" alt="" width="582" height="325" />
-          <img src="assets/about_modal_2.png" alt="" width="582" height="325" />
-        </div>
-        <div class="about-modal__text">
-          <section class="about-modal__row">
-            <h3>For GTC Designers</h3>
-            <p>This is not a manual for design mechanics, research techniques, or workshop instructions. Instead, it captures how we work, our point of view on where our craft is heading, and what it means to do this work in government, for the public, right now. Treat this playbook as a reference &mdash; somewhere to revisit, question, and build from as we keep learning.</p>
-          </section>
-          <hr class="about-modal__rule" />
-          <section class="about-modal__row">
-            <h3>For Friends of Design</h3>
-            <p>Our playbook is open because no one should have to figure this out alone. As technology transforms our craft and we continue to experiment, we know shared learning is what helps the wider tech community move forward together. Whether you are a fellow designer, a partner, or just curious about how we work, this space exists to spark new conversations and shape our collective thinking as we build this future together.</p>
-          </section>
+          <div class="about-modal__content">
+            <div class="about-modal__illus" aria-hidden="true">
+              <span class="about-modal__illus-mask"><img src="assets/about_modal_1.png" alt="" width="582" height="325" /></span>
+              <span class="about-modal__illus-mask"><img src="assets/about_modal_2.png" alt="" width="582" height="325" /></span>
+            </div>
+            <div class="about-modal__text">
+              <section class="about-modal__row">
+                <span class="about-modal__illus-mask about-modal__illus-mask--stack" aria-hidden="true"><img src="assets/about_modal_1.png" alt="" width="582" height="325" /></span>
+                <h3><span class="reveal-line"><span class="reveal-line__inner">For GTC Designers</span></span></h3>
+                <p><span class="reveal-line"><span class="reveal-line__inner">This is not a manual for design mechanics, research techniques, or workshop instructions. Instead, it captures how we work, our point of view on where our craft is heading, and what it means to do this work in government, for the public, right now. Treat this playbook as a reference &mdash; somewhere to revisit, question, and build from as we keep learning.</span></span></p>
+              </section>
+              <hr class="about-modal__rule" />
+              <section class="about-modal__row">
+                <span class="about-modal__illus-mask about-modal__illus-mask--stack" aria-hidden="true"><img src="assets/about_modal_2.png" alt="" width="582" height="325" /></span>
+                <h3><span class="reveal-line"><span class="reveal-line__inner">For Friends of Design</span></span></h3>
+                <p><span class="reveal-line"><span class="reveal-line__inner">Our playbook is open because no one should have to figure this out alone. As technology transforms our craft and we continue to experiment, we know shared learning is what helps the wider tech community move forward together. Whether you are a fellow designer, a partner, or just curious about how we work, this space exists to spark new conversations and shape our collective thinking as we build this future together.</span></span></p>
+              </section>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -293,5 +298,6 @@
   <script src="vendor/CustomEase.min.js"></script>
   <script src="vendor/CustomWiggle.min.js"></script>
   <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/transition.js"></script>
 </body>
 </html>

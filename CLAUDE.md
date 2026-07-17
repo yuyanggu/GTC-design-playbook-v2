@@ -7,7 +7,9 @@ The site has three surfaces: the **landing** (`index.html` — animated cover th
 scroll, cloud parallax into an intro section, and an in-flow bookshelf), the **continuous reader** (`playbook.html` — opens with the
 Foreword (`#ch0`), then all five chapters, in one document with a seamless scroll effect; the
 canonical experience), and the **standalone pages** (Foreword + the five chapters, kept as a
-fallback, no longer linked). A right-side **drawer Menu** opens from any hamburger/Explore button.
+fallback, no longer linked). **The drawer Menu + topbar hamburger were removed site-wide
+(2026-07)** — navigation is the reader/chapter **TOC** (desktop) and the mobile **`.toc-sheet`**,
+both of which end in a "Behind the playbook" row (→ the About page / `#about` panel).
 
 **Structure (v0.6 draft, 2026-07):** six parts, **all built** — `00 Foreword` ·
 `01 About GovTech Consulting` · `02 Our Point of View` · `03 Our Approach` ·
@@ -78,26 +80,46 @@ project memory `headless-motion-verification`.
   is reached and then persists over the content but hides over the hero cover (no duplicate lockup);
   one-direction cloud drift + a scrubbed **container parallax** that settles the
   cloud band along the top of the in-flow **`#intro` section** (Figma `2082-2203`: Boldonse "We
-  don't wait for the wind. / We steer the motion." headline — two lines fitted by `fitHeadline()`
-  **clamped to 40–54px** (never under 40px; the intro **stacks ≤1200px** and the title **wraps on
-  phones** so it can stay ≥40px) — with a once-on-enter **word-by-word masked rise** (a plain fade
-  when wrapped), welcome copy + "Sail through →" button → About popup, which pauses
-  the smoother while open); the intro row is **width-matched + centred to the shelf** (shared
+  don't wait for the wind. / We steer the motion." headline — two lines fitted by `fitHeadline()`:
+  **40–54px while side-by-side (>1200px)**; once the intro **stacks (≤1200px)** the cap **tracks the
+  viewport** (`17px + 3.1vw`, ≈54px @1200 → ~29px @390, floor 26px) so the full-width title scales
+  DOWN as the screen narrows; below ~466px it **wraps** at the tracked size with
+  `text-wrap: balance` (even rows, no widow) — with a once-on-enter **word-by-word masked rise** (a
+  plain fade when wrapped), welcome copy + "Sail through →" button → **About popup**
+  (`aboutModal()`: a humanistreview.ai-style counter-translate wipe — mask/panel move ±100% so the
+  card holds still while the clip unrolls up; `hrOut` CustomEase; masked-line text + image clip/scale
+  reveals; pauses the smoother while open; reduced motion intentionally ignored. Layout is desktop
+  two-column [fluid illus column, aspect-locked touching images that fill to a no-scroll fit] →
+  ≤1024px stacked **interleaved per-section** [Figma `2171-3347`: image→heading→paragraph, 16px pad,
+  capped/centred] — see [motion.md](.claude/docs/motion.md)); the intro row is **width-matched +
+  centred to the shelf** (shared
   `--shelf-w`/`--shelf-pad` vars = `SHELF_W`/`SHELF_PAD` in `main.js`) so the headline's left edge
   aligns with book 1 and the copy's right edge with book 5; in-flow landing shelf inside `#intro`
   (**5 books, all interactive**: 1 About GTC + 2–4 + 5 How We Work; `--shelf-w` 1300px, scales via
   `--shelf-scale`; books rise in once the shelf enters, knock/hover raise + recolour).
-  **Mobile (≤768px):** shelf hidden, static `.home-cards` stacked cards replace it; intro section
+  **Mobile (≤800px — was 768, widened 2026-07 so the shrinking shelf never drops under ~0.55×):**
+  shelf hidden, static `.home-cards` stacked cards replace it; intro section
   stacks (logo → headline → copy); cover lockup stacks vertically (pinwheel above title,
   `padding-inline: 20px`) to prevent overflow; `smoothTouch: 0` so touch scrolls natively, same
-  play-once cover scale.
-- ✅ **Menu** — right-side drawer (swipe-in, interruptible, rows-fall-away close, hamburger→X) on all
-  chapter pages + foreword standalone + about. `Esc` / scrim / X closes. **7 rows, all
-  linked**: 00 Foreword → 01 About GTC → 02 → 03 → 04 → 05 How We Work → About (unnumbered coda
-  row, hand-written `menu_about*.svg` icons). Standalone menus use file hrefs. `menu_4.svg` is reused
-  for row 05. **The reader (`playbook.html`) no longer has the drawer** (hamburger + `#menu`
-  removed, 2026-07): its **always-open TOC** — now ending in an **About** row and with the
-  collapse/hide control dropped — is the sole navigation.
+  play-once cover scale. (Chapter pages/reader keep their own 768px mobile breakpoint.)
+- ✅ **Navigation (drawer Menu removed site-wide, 2026-07)** — the right-side drawer + topbar
+  hamburger were deleted from every page (markup, `.menu` CSS in `styles.css`, `menuScene()` in
+  `main.js`). Navigation is now: the **TOC** (desktop, all chapter pages + the reader — a stacked
+  chapter index ending in a **"Behind the playbook"** row → `/about`), and the mobile **`.toc-sheet`**
+  (built from the TOC, so it inherits that row). `about.html` (a coda, no TOC) keeps a **"The
+  Playbook →"** link in its topbar (`.topbar__enter`) back to the reader. The `menu_*.svg` icon
+  assets are now unused. The desktop TOC's collapse/hide control survives only ≥1181 (see
+  [chapter-pages.md](.claude/docs/chapter-pages.md)).
+- ✅ **Cross-page navigation fade (2026-07, `js/transition.js` on all 9 pages)** — the
+  humanistreview.ai sequential fade around every internal navigation (desktop + mobile): 1.0s
+  `hrOut` body fade-out (scroll locked; html carries the backdrop, and it cross-fades to `#0c1619`
+  to/from the dark About page so the swap is seamless) → real page load → 1.3s CSS body fade-in
+  (`gtc-page-in`, fill `backwards` — NOT `both`, see [gotchas.md](.claude/docs/gotchas.md)) with
+  the hero/`.reveal` entrances overlapping its tail. Anchors are intercepted site-wide; shelf
+  books / `chapterSwitch` / `.toc-sheet` rows go through `window.GTCNav.to()`; reader deep-link
+  arrivals fade via `revealDeepLink` (slowed to the same 1.3s/`hrOut`); hover prefetches the
+  destination; `pageshow` replays the fade on bfcache back/forward. Reduced motion + the gate
+  navigate instantly. See [motion.md](.claude/docs/motion.md) → "Cross-page navigation fade".
 - ✅ **Foreword** — reader panel `#ch0` (`.chapter-panel--foreword`, chalk, no hero, no TOC) + standalone
   `foreword.html` (fallback only, no longer linked from live nav). Entry: shelf book 0 and mobile
   card link to `/playbook.html` (reader top = ch0). Clean path `/foreword` maps in `routes.js` +
@@ -113,12 +135,18 @@ project memory `headless-motion-verification`.
   **`.accordion`**, the **`.diagram-ph`** dashed placeholder (every "blue" section that still needs a
   drawn diagram), `.pullquote` (01 closes on one), the **`.runin`** lead-in, `.source-note` (05.4).
   **TOC** is a stacked chapter index (01–05, all linkable now), the current one accent + expanded to
-  its sections; **≤768px** a fixed bottom `.toc-bar` + slide-up `.toc-sheet` replaces it. See
+  its sections; fluid var-driven width 1025–1440 (guaranteed ≥56px gutter to the copy, type scales
+  down with the column); **≤1024px** a fixed bottom 64px `.toc-bar` + the `.toc-sheet` (a **solid
+  white surface that unrolls up out of the bar** — the landing About popup's counter-translate wipe
+  ported over, chapter rows rising out of their own clips; no scrim, X close, only the current
+  chapter expanded. Replaced the gradient-blur frost veil 2026-07) replaces it. The
+  **rail retires ≤1180** (TOC aligns to the logo inset; collapse feature gated to ≥1181). See
   [chapter-pages.md](.claude/docs/chapter-pages.md) for the block catalogue.
 - ✅ **About page (`about.html`)** — standalone **dark** page (Figma `2052:1275`, bg `#0c1619`,
-  menu-only entry, not on the landing shelf; **no left rail**; `body.page-dark` inverts the topbar —
-  white wordmark via CSS filter, chalk hamburger that flips back to midnight while the chalk drawer
-  is open via `:has(.menu:not([hidden]))`). Layout: **full-viewport hero** (`.about-hero`,
+  reached via the TOC/veil "Behind the playbook" row → `/about`, not on the landing shelf; **no left
+  rail**; `body.page-dark` inverts the topbar — white wordmark via CSS filter). Its topbar carries a
+  chalk **"The Playbook →"** link (`.topbar__enter`) back to the reader (its only nav — it's a coda).
+  Layout: **full-viewport hero** (`.about-hero`,
   `min-height:100svh`) — head row (Boldonse "About" hard-left + 639px serif intro hard-right,
   `space-between`, **centred vertically** in the gap between the fixed topbar and the art via
   `flex:1`; stacks ≤768px) sits above the **full-bleed** `assets/about_hero_dark.webp` illustration
@@ -145,12 +173,21 @@ project memory `headless-motion-verification`.
   page's gallery motion (about.js is not loaded here; the credits ride the `.reveal` batch) and inverts the topbar logo over
   the dark panel. `urlSync` updates the address bar to `/chapter-1`…`/chapter-5/<section-slug>`,
   `/foreword`, and `/about`. Content is mirrored verbatim between each reader panel and its
-  standalone page. **The drawer Menu was removed here (2026-07); the always-open TOC (now including
-  an About row, collapse control dropped) is the sole nav.**
+  standalone page. **No drawer Menu (removed site-wide 2026-07); the always-open TOC (ending in a
+  "Behind the playbook" row) + the mobile `.toc-sheet` are the sole nav.**
 - ✅ **Mobile topbar (≤768px, chapter pages + reader)** — topbar drops its stacking context so the
-  logo (z 44) sits behind the wide menu drawer while the hamburger/X (z 60) stays on top; a soft
+  fixed logo (z 44) sits above the soft chalk scrim (the hamburger is gone); a soft
   chalk scrim (`.topbar::before`, z 42) fades scrolling copy out under the logo; `topbarScrim()`
-  hides it over coloured heroes. Left **rail hidden** on mobile; `.copy` runs full-width with even
+  hides it over coloured heroes. The scrim is **two clipped ramps, not one** (2026-07): during a
+  panel hand-off the top band is split by the rising panel's edge, so no single colour is right for
+  both sides of it (a chalk scrim washed over the dark About panel as it rose). `::before` carries
+  the chalk ramp clipped ABOVE `--scrim-split`, `::after` the dark ramp clipped BELOW it; both share
+  the same viewport-anchored ramp so alpha stays continuous and only the colour changes at the seam.
+  `--scrim-split` = the About panel's top edge clamped into the band (`aboutPanel()` in `chapter.js`;
+  `body.page-dark` pins it to `0` for standalone `about.html`); unset → full height → all chalk, so
+  chapter pages are unchanged. The logo's chalk invert (`html.reader-dark`) tracks the **logo's own
+  box**, not a fixed 64px line — the scrim no longer pre-paints dark across the whole band, so an
+  early flip would put a white logo on chalk. Left **rail hidden** on mobile; `.copy` runs full-width with even
   side padding; foreword drops its `--fw-rail` gutter. Desktop unchanged. See [menu.md](.claude/docs/menu.md).
 - All surfaces: responsive + reduced-motion, no console errors.
 - ⏭️ **Placeholder art / diagrams still wanted.** Chapter **05** reuses `4_Graphic.svg` (hero),

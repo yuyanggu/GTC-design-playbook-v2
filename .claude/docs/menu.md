@@ -1,9 +1,16 @@
 # The Menu drawer + the bookshelf
 
-The right-side drawer overlay (`menuScene`) and the related landing bookshelf. The Explore button
-that *opens* the menu is the magnetic button component documented in [motion.md](motion.md).
+> **⚠️ The drawer Menu was REMOVED site-wide (2026-07).** The `#menu` markup, its `.menu` CSS
+> (`styles.css`), and `menuScene()` (`main.js`) were all deleted; the topbar hamburger is gone from
+> every page. Navigation is now the **TOC** (desktop) + the mobile **`.toc-sheet`**, both ending in a
+> "Behind the playbook" row (→ `/about`); `about.html` has a `.topbar__enter` "The Playbook →" link.
+> See [chapter-pages.md](chapter-pages.md). **The section below is retained for historical reference
+> and the still-live landing bookshelf only — the drawer no longer exists.**
 
-## The Menu (drawer overlay)
+The (retired) right-side drawer overlay (`menuScene`) and the related landing bookshelf. The Explore
+button is the magnetic button component documented in [motion.md](motion.md).
+
+## The Menu (drawer overlay) — REMOVED, historical
 
 Lives in `menuScene()`. `#menu` is a `position:fixed` overlay (z 50), `hidden` until opened, holding
 a `.menu__scrim` (dimmed midnight backdrop, `data-menu-close`) + a `.menu__drawer` card. Any
@@ -85,12 +92,12 @@ shelf** (`#homeShelf`):
   min(1, (innerWidth − 32) / 1300)` is set inline and updated on resize. `.home-shelf` applies
   `transform: translateX(-50%) scale(var(--shelf-scale))` with `transform-origin: 50% 100%` so
   all five books stay visible + bottom-anchored on narrow viewports.
-- `homeBooks()` early-returns on `(max-width: 768px)` — no scaling, no parking, no hover/physics.
+- `homeBooks()` early-returns on `(max-width: 800px)` — no scaling, no parking, no hover/physics.
   The mobile `.home-cards` take over instead.
-- **Mobile (≤768px):** `#homeShelf` is `display:none`. A `<nav class="home-cards">` below `#hero`
+- **Mobile (≤800px):** `#homeShelf` is `display:none`. A `<nav class="home-cards">` below `#hero`
   shows a vertical stack of five horizontal cards (icon · 32px number · fixed 3×40px divider · title).
   Cards use `padding-block: 32px`, 48px icons, `linear-gradient(90deg, #aed3ed 0%, #4f94cf 47.12%)`,
-  18px gap. No hover/physics — tap navigates. Book 4 uses `.home-card--soon` (gray). The Foreword
+  24px gap. No hover/physics — tap navigates. Book 4 uses `.home-card--soon` (gray). The Foreword
   card links to `/playbook.html` (reader top = ch0); chapter cards link to `/chapter-N`.
 - `homeBooks()` parks books/spines below the fold, plays their rise-in via its own `once:true`
   ScrollTrigger when the shelf enters, and calls `wireBookKnockAndHover()` (cursor-knock +

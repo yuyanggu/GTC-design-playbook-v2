@@ -7,12 +7,44 @@
 body { background: var(--chalk); }
 
 /* ---------------------------------------------------------------------------
+   Fluid two-column layout variables — ONE source of truth for the rail / TOC /
+   copy geometry. Every value resolves to the original fixed 1440-canvas spec at
+   ≥1440px (ml 112 / toc 328 / gap 154 / right 112) and eases down linearly to a
+   compact-but-readable column at 1025px (ml ~80 / toc 240 / gap 56 / right 32),
+   so the TOC and copy can never collide: the gutter between them bottoms out at
+   56px. Below 1025px the desktop TOC retires entirely (mobile toc-bar takes
+   over — see the ≤1024 blocks). Consumed by .rail, .toc, .copy and the
+   collapse rules; js/chapter.js (tocCollapse) measures the resolved values.
+   --------------------------------------------------------------------------- */
+:root {
+  --rail-w: 94px;
+  /* Page margin used when the rail is gone (≤1180) — matches the topbar logo
+     inset so the TOC's left edge lines up with the wordmark. */
+  --page-margin: clamp(22px, 3vw, 44px);
+  /* TOC column: 240px @1025 → 328px @1440 */
+  --toc-w: clamp(240px, 21.2vw + 22.6px, 328px);
+  /* TOC ↔ copy gutter: 56px @1025 → 154px @1440 — the guaranteed minimum gap */
+  --toc-gap: clamp(56px, 23.6vw - 186px, 154px);
+  /* Copy's right gutter: 32px @1025 → 112px @1440 */
+  --copy-right: clamp(32px, 19.3vw - 165.6px, 112px);
+  /* TOC outer margin: clears the fixed rail with a 24px breathing gap so the
+     TOC never hugs the rail's divider line. */
+  --toc-ml: calc(var(--rail-w) + 24px);
+}
+/* ≤1180 the rail retires entirely — below the label breakpoint it was only a
+   bare divider line, so we drop it and reclaim the space: --rail-w → 0 and the
+   two-column block aligns to the page margin (logo inset) instead. */
+@media (max-width: 1180px) {
+  :root { --rail-w: 0px; --toc-ml: var(--page-margin); }
+}
+
+/* ---------------------------------------------------------------------------
    Left rail (fixed) — divider + rotated label + hamburger (opens menu) + search
    --------------------------------------------------------------------------- */
 .rail {
   position: fixed;
   inset: 0 auto 0 0;          /* top:0 bottom:0 left:0 */
-  width: 94px;
+  width: var(--rail-w);
   z-index: 40;
   pointer-events: none;        /* only the controls catch the pointer */
 }
@@ -53,7 +85,7 @@ body { background: var(--chalk); }
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 94px;
+  width: var(--rail-w);
   height: 95px;
   display: grid;
   place-items: center;
@@ -99,16 +131,16 @@ body { background: var(--chalk); }
    the button occupies (36, 96) to (36+H, 96+W) directly.
 
    Only rendered while html.toc-collapsed (desktop two-column layout only;
-   ≤1180 the TOC is an inline block and the collapse feature is inert).
-   Counterpart of .toc__collapse (see the TOC section). */
+   ≤1024 the TOC retires to the mobile toc-bar and the collapse feature is
+   inert). Counterpart of .toc__collapse (see the TOC section). */
 .rail__toc {
   position: absolute;
   top: 96px;                       /* just below the topbar logo band */
   left: 36px;                      /* mirrors .rail__label horizontal indent */
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  display: none;                   /* ≤1180 hides the control entirely; the
-                                      1181+ MQ below re-enables it as an
+  display: none;                   /* ≤1024 hides the control entirely; the
+                                      1025+ MQ below re-enables it as an
                                       always-in-DOM element that fades. */
   flex-direction: row;
   align-items: center;
@@ -156,6 +188,9 @@ body { background: var(--chalk); }
   border-color: var(--midnight);
 }
 .rail__toc-arrow { display: block; }
+/* Tied to the rail: the collapse feature (and this restore control) exists only
+   where the full rail does — ≥1181. Below that the rail is gone and the TOC is
+   always shown, so there is nothing to collapse or restore. */
 @media (min-width: 1181px) {
   /* Rendered permanently on desktop (so it can fade), but invisible + inert
      until the TOC is collapsed. The 0.25s fade is timed to overlap the tail
@@ -197,22 +232,27 @@ body { background: var(--chalk); }
   padding: clamp(20px, 2.6vh, 30px) clamp(22px, 3vw, 44px);
   pointer-events: none;          /* only the controls catch the pointer */
 }
-.topbar__logo,
-.topbar__menu { pointer-events: auto; }
-.topbar__logo { display: block; }
+.topbar__logo { pointer-events: auto; display: block; }
 .topbar__logo img { display: block; width: clamp(118px, 11vw, 157px); height: auto; }
-.topbar__menu {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--midnight);
-  cursor: pointer;
+
+/* "The Playbook →" — a way back into the reader from the About coda (about.html
+   only). Chalk on the dark page; the arrow nudges on hover. */
+.topbar__enter {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  color: var(--chalk);
+  white-space: nowrap;
 }
-.topbar__menu:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
+.topbar__enter span { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+.topbar__enter:hover span { transform: translateX(4px); }
+.topbar__enter:focus-visible { outline: 2px solid var(--chalk); outline-offset: 4px; }
 
 /* ---------------------------------------------------------------------------
    HERO (orange cover)
@@ -299,7 +339,7 @@ body { background: var(--chalk); }
    --------------------------------------------------------------------------- */
 .chapter-panel--foreword .page-body.foreword,
 .page-body.foreword.chapter-panel--foreword {
-  --fw-rail: 94px;                         /* mirrors .rail width (see @media 1180) */
+  --fw-rail: var(--rail-w);                /* tracks the rail width automatically */
   min-height: 100vh;
   padding-top: clamp(96px, 12vh, 140px);   /* clears the topbar logo/hamburger */
 }
@@ -327,17 +367,17 @@ body { background: var(--chalk); }
    children. The pin (js/why-we-exist.js) holds it through the body, then releases. */
 .toc {
   float: left;
-  width: 328px;
-  /* 112px mirrors the copy's right margin (see .copy width) so the two-column
-     block sits symmetrically in the canvas; still clears the 94px fixed rail. */
-  margin-left: 112px;
+  width: var(--toc-w);
+  /* Clears the fixed rail with a small gutter; at 1440+ this resolves to the
+     original 112px so the two-column block sits symmetrically in the canvas. */
+  margin-left: var(--toc-ml);
 }
 /* Inner scroll viewport — on desktop (pinned) the stack is capped to the viewport
    and slides under soft fade masks while JS keeps the active row centred
    (tableOfContents). The mask only applies while the stack actually overflows
    (.is-overflowing, toggled by JS), so short chapters keep crisp edges. */
 .toc__scroll { position: relative; }
-@media (min-width: 1181px) {
+@media (min-width: 1025px) {
   .toc__scroll {
     max-height: calc(100vh - 160px);
     overflow-y: auto;
@@ -355,8 +395,8 @@ body { background: var(--chalk); }
    (js/chapter.js tocCollapse) tucks the whole column away: html.toc-collapsed
    zeroes the float and the copy re-centres into the freed width (transition
    below); the rail's .rail__toc pin brings it back. State persists in
-   localStorage across pages and the reader. Desktop-only: ≤1180 the TOC is an
-   inline centred block, so the header hides and the state class is inert. */
+   localStorage across pages and the reader. Desktop-only: ≤1024 the TOC hides
+   behind the mobile toc-bar, so the header hides and the state class is inert. */
 .toc__head {
   display: flex;
   align-items: center;
@@ -403,17 +443,18 @@ body { background: var(--chalk); }
      tocCollapse): the copy slides via the CSS transition below while GSAP
      tweens the TOC column's real width/margin closed/open on the SAME
      0.4s curve, fading its contents in sync. .toc__head/.toc__scroll keep
-     the column's fixed 328px measure so the shrinking column clips them at
+     the column's fluid measure so the shrinking column clips them at
      its sweeping edge — nothing squashes. The html.toc-collapsed rules are
      the resting state; GSAP's inline styles override them only while the
-     gesture runs, then clearProps hands back to these. */
+     gesture runs, then clearProps hands back to these. Gated to ≥1181 (with
+     the rail): below that the TOC is always shown and can't be collapsed. */
   .copy {
     transition:
       margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .toc__head,
-  .toc__scroll { width: 328px; }   /* fixed measure = clip, don't squash */
+  .toc__scroll { width: var(--toc-w); }   /* fixed measure = clip, don't squash */
   html.toc-collapsed .toc {
     width: 0;
     margin-left: 0;
@@ -424,10 +465,12 @@ body { background: var(--chalk); }
   html.toc-collapsed .toc > * { pointer-events: none; }
   /* Freed width → the copy takes its full 820px measure, centred (equal gutters). */
   html.toc-collapsed .copy:not(.foreword__copy) {
-    margin-left: max(112px, calc((100% - 820px) / 2));
-    width: min(820px, calc(100% - 224px));
+    margin-left: max(var(--toc-ml), calc((100% - 820px) / 2));
+    width: min(820px, calc(100% - var(--toc-ml) - var(--copy-right)));
   }
 }
+/* No collapse below 1181 (no rail → no restore control), so hide the header +
+   collapse button there. The TOC below 1181 is a plain always-open index. */
 @media (max-width: 1180px) {
   .toc__head { display: none; }
 }
@@ -472,6 +515,10 @@ a.toc__chapter:hover { color: var(--midnight); }
   font-size: 15px;
   line-height: 1.5;
 }
+/* The About row carries an empty num span (kept in the markup — buildSheetIndex
+   reads its textContent) — drop its 12px box + 14px gap so "Behind the playbook"
+   sits flush with the chapter numbers, in the desktop TOC and the sheet alike. */
+.toc__chapter--about .toc__chapter-num { display: none; }
 /* Current chapter — accent, inert (you are here). */
 .toc__chapter.is-current { color: var(--accent, var(--orange)); pointer-events: none; }
 /* Chapter 4 — not built yet (mirrors the menu's "coming soon" row). */
@@ -569,36 +616,54 @@ a.toc__chapter:hover { color: var(--midnight); }
 }
 .toc__subrow.is-active .toc__subtitle { color: var(--midnight); }
 
-/* ----- Mobile section bar (≤768px) -----
-   On phones the inline TOC disappears and a fixed bar pinned to the viewport
-   bottom takes over: ◀ [ 3.1 · how we engage ] ▶. Its markup lives OUTSIDE
+/* Fluid TOC type — the column width (--toc-w) eases 328→240px through the
+   1440→1025 band, so the type eases with it (15→12.5 / 16→13.5) and labels
+   keep their measure instead of wrapping line by line. Scoped to the desktop
+   band: the mobile toc-sheet reuses these classes ≤1024, where the full-width
+   panel wants the fixed sizes above. Indents and the number rule scale on the
+   same slope so the rows keep their proportions. */
+@media (min-width: 1025px) {
+  .toc__chapter-num,
+  .toc__chapter-name,
+  .toc__num { font-size: clamp(12.5px, 0.6vw + 6.4px, 15px); }
+  .toc__title,
+  .toc__subtitle { font-size: clamp(13.5px, 0.6vw + 7.4px, 16px); }
+  .toc__rule { height: clamp(28px, 1.45vw + 13.2px, 34px); }
+  .toc__list { padding-left: clamp(18px, 1.93vw - 1.8px, 26px); }
+  .toc__subrow { padding-left: clamp(28px, 2.4vw + 3.4px, 38px); }
+}
+
+/* ----- Mobile section bar (≤1024px) -----
+   On phones AND tablets the inline TOC disappears and a fixed bar pinned to the
+   viewport bottom takes over: ◀ [ 3.1 · how we engage ] ▶. Its markup lives OUTSIDE
    #smooth-wrapper (fixed elements can't survive the ScrollSmoother transform);
    js/chapter.js (mobileTocBar) builds the heading list from the .toc navs,
    drives the label, and wires the arrows + the slide-up sheet. */
 .toc-bar, .toc-sheet { display: none; }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .toc { display: none; }
   /* Keep the page end (footer block) clear of the fixed bar. */
-  .page { padding-bottom: 56px; }
+  .page { padding-bottom: 64px; }
 
-  /* Fixed 56px — NOT env(safe-area-inset-bottom): that inset is 0 while mobile
-     Chrome's toolbar is shown but jumps to the gesture-nav height once it
-     retracts on scroll, which would make the bar grow taller mid-scroll. */
+  /* Fixed 64px (generous touch target) — NOT env(safe-area-inset-bottom): that
+     inset is 0 while mobile Chrome's toolbar is shown but jumps to the
+     gesture-nav height once it retracts on scroll, which would make the bar
+     grow taller mid-scroll. */
   .toc-bar {
     position: fixed;
     inset: auto 0 0 0;
-    z-index: 46;            /* above the rail (40) + sheet (45), below the menu (50) */
+    z-index: 46;            /* above the sheet (45), below the menu (50) */
     display: flex;
     align-items: stretch;
-    height: 56px;
+    height: 64px;
     background: var(--midnight);
     color: var(--chalk);
   }
   .toc-bar[hidden] { display: none; }
   .toc-bar__arrow {
     flex: none;
-    width: 56px;
+    width: 64px;
     display: grid;
     place-items: center;
     border: 0;
@@ -625,7 +690,7 @@ a.toc__chapter:hover { color: var(--midnight); }
   .toc-bar__num {
     flex: none;
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1;
     color: var(--bar-accent, var(--orange));
   }
@@ -635,107 +700,189 @@ a.toc__chapter:hover { color: var(--midnight); }
     white-space: nowrap;
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: 13px;
-    letter-spacing: -0.26px;
+    font-size: 14px;
+    letter-spacing: -0.28px;
     text-transform: uppercase;
   }
 
-  /* Slide-up TOC sheet — the stacked-chapter index (same .toc__* rows as the
-     desktop TOC) on a chalk panel anchored just above the bar; a scrim covers
-     the page behind. Opened by tapping the bar label. */
+  /* TOC sheet — a solid white surface that unrolls UP out of the bar. Ported from
+     the landing's About popup (aboutModal(), js/main.js): .toc-sheet__mask is the
+     clipping window that travels (yPercent 100→0) while .toc-sheet__panel
+     counter-translates inside it (-100→0), so the index holds still and only the
+     window unrolls. Both are inset:0 of the sheet → identical heights, which is the
+     whole reason the counter-translate cancels; break that and the index visibly
+     drifts. The sheet's own overflow:hidden clips the parked mask so no white leaks
+     down over the bar. (Replaced the gradient-blur frost veil, 2026-07 — a
+     backdrop-filter and a see-through top can't survive an opaque sliding surface.) */
   .toc-sheet {
     display: block;
     position: fixed;
-    inset: 0 0 56px 0;       /* sits flush on top of the fixed 56px bar */
+    inset: 0 0 64px 0;       /* runs down to the fixed 64px bar */
     z-index: 45;
+    overflow: hidden;
     pointer-events: none;
   }
-  .toc-sheet__scrim {
+  /* The parked transforms are declared here as well as in GSAP's init so the sheet
+     is never visible in the gap before js/chapter.js runs. */
+  .toc-sheet__mask {
     position: absolute;
     inset: 0;
-    background: rgba(1, 34, 51, 0.45);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    overflow: hidden;
+    transform: translateY(100%);
+    will-change: transform;
   }
   .toc-sheet__panel {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    max-height: min(70vh, 100%);
+    inset: 0;
     overflow-y: auto;
     scrollbar-width: none;
-    padding: 14px 22px 20px;
-    background: var(--chalk);
-    border-radius: 14px 14px 0 0;
-    transform: translateY(102%);
-    transition: transform 0.34s cubic-bezier(0.32, 0.72, 0.25, 1);
+    overscroll-behavior: contain;
+    /* 76px head zone clears the ✕ (the topbar logo is covered now, not seen
+       through); the first row's own 24px completes the gap to ~100px. */
+    padding: 76px 22px 32px;
+    background: #fff;
+    transform: translateY(-100%);
+    will-change: transform;
   }
   .toc-sheet__panel::-webkit-scrollbar { display: none; }
   .toc-sheet.is-open { pointer-events: auto; }
-  .toc-sheet.is-open .toc-sheet__scrim { opacity: 1; }
-  .toc-sheet.is-open .toc-sheet__panel { transform: translateY(0); }
-  /* Inside the sheet every chapter's sub-rows are simply open (no accordion). */
+  /* Masked rise for the chapter rows (the popup's .reveal-line, adapted):
+     buildSheetIndex wraps each row in this clip and GSAP rises the row out of it.
+     The negative inset bleeds 6px vertically so Boldonse caps and descenders
+     aren't shaved at rest — openSheet's parked state overshoots that bleed by 8px
+     so nothing peeks below the clip. */
+  .toc-sheet__clip { display: block; clip-path: inset(-6px 0); }
+  /* X — top-right of the head zone, mirroring the topbar controls' inset. */
+  .toc-sheet__close {
+    position: absolute;
+    top: clamp(16px, 2.2vh, 26px);
+    right: clamp(14px, 2vw, 36px);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--midnight);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .toc-sheet__close svg { display: block; }
+  .toc-sheet__close:focus-visible { outline: 2px solid var(--midnight); outline-offset: 2px; }
+  .toc-sheet.is-open .toc-sheet__close {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+  }
+  /* Index rhythm (Figma): airier chapter rows than the desktop column, and
+     ONLY the chapter you're reading expands its section list — the rest stay
+     quiet, tappable wayfinding rows. syncSheetActive re-marks is-current on
+     every open, so the expansion follows you through the reader. */
+  .toc-sheet .toc__chapters > li { padding: 24px 0; }
+  .toc-sheet .toc__chapters > li:not(:has(.toc__chapter.is-current)) .toc__list { display: none; }
+  /* Every quiet chapter row navigates (buildSheetIndex restores data-href on
+     the clones); only the re-marked is-current row stays inert. */
+  .toc-sheet .toc__chapter[data-href] { cursor: pointer; }
+  /* Inside the sheet the current chapter's sub-rows are simply open (no accordion). */
   .toc-sheet .toc__sub { height: auto; }
+}
 
+/* Top-bar restack is a PHONE-only behavior — it must not widen with the
+   toc-bar's 1024 breakpoint above (the desktop-band topbar stays intact on
+   tablets, where the rail + fixed topbar still lay out normally). */
+@media (max-width: 768px) {
   /* --- Top bar on mobile ---------------------------------------------------
-     Free the logo + hamburger from the bar's own stacking context so the open
-     menu card can sit BETWEEN them: the wide drawer slides OVER the logo
-     (z 44, under the menu's 50) while the hamburger/X stays on top (z 60, so
-     it's always tappable). To do that the bar itself must stop being a fixed
-     stacking context (→ position:static); the logo + button are pinned
-     individually instead. A soft chalk scrim (::before) sits behind both so
-     scrolling body copy fades out under them rather than clashing; topbarScrim()
-     (js/chapter.js) switches it off whenever a coloured hero fills the top band
-     (dark logo on colour, no text to mask — a chalk fade would just show as a
-     band there). */
+     Drop the fixed bar's stacking context (→ position:static) and pin the logo
+     individually so it sits above the soft chalk scrim. (The hamburger/drawer
+     was removed 2026-07; the fixed bottom toc-bar is the sole nav here.) A soft
+     chalk scrim (::before) sits behind the logo so scrolling body copy fades
+     out under it rather than clashing; topbarScrim() (js/chapter.js) switches it
+     off whenever a coloured hero fills the top band (dark logo on colour, no
+     text to mask — a chalk fade would just show as a band there). */
   .topbar {
     position: static;
     display: block;
     padding: 0;
+    --scrim-h: calc(180px + env(safe-area-inset-top));
   }
-  /* A soft chalk fade behind the logo/hamburger so scrolling body copy fades out
+  /* A soft chalk fade behind the logo so scrolling body copy fades out
      under them instead of clashing; switched off over a coloured hero
-     (html.topbar-clear) where the dark logo sits on colour with no text to mask. */
-  .topbar::before {
+     (html.topbar-clear) where the dark logo sits on colour with no text to mask.
+
+     TWO layers, not one: during a chapter→chapter hand-off the top band is split
+     by the rising panel's top edge, so no single scrim colour is right for both
+     sides of it (a chalk scrim washes over the dark About panel; a dark one bands
+     over the chalk backdrop above it). ::before carries the chalk ramp and is
+     clipped to ABOVE the edge, ::after carries the dark ramp clipped to BELOW it.
+     Both share the same viewport-anchored ramp, so the alpha is continuous across
+     the seam and only the colour changes. --scrim-split is that edge in px,
+     defaulting to the full height = all chalk; aboutPanel() (js/chapter.js) tracks
+     the About panel's top edge into it. ::after paints over ::before at the same
+     z-index, and both stay under the logo (44). */
+  .topbar::before,
+  .topbar::after {
     content: "";
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: calc(180px + env(safe-area-inset-top));
+    height: var(--scrim-h);
     z-index: 42;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .topbar::before {
     background: linear-gradient(
       to bottom,
       var(--chalk) 0,
       var(--chalk) 20%,
       rgba(246, 242, 231, 0) 90%
     );
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    /* chalk only above the split */
+    clip-path: inset(0 0 calc(var(--scrim-h) - var(--scrim-split, var(--scrim-h))) 0);
   }
-  html.topbar-clear .topbar::before { opacity: 0; }
+  .topbar::after {
+    background: linear-gradient(
+      to bottom,
+      #0c1619 0,
+      #0c1619 20%,
+      rgba(12, 22, 25, 0) 90%
+    );
+    /* dark only below the split */
+    clip-path: inset(var(--scrim-split, var(--scrim-h)) 0 0 0);
+  }
+  html.topbar-clear .topbar::before,
+  html.topbar-clear .topbar::after { opacity: 0; }
 
   .topbar__logo {
     position: fixed;
     top: clamp(20px, 2.6vh, 30px);
     left: clamp(22px, 3vw, 44px);
-    z-index: 44;            /* above the rail (40), below the menu (50) */
+    z-index: 44;
   }
-  .topbar__menu {
+  /* The About coda's "back in" link pins top-right (where the hamburger sat),
+     aligned to the logo's baseline band. */
+  .topbar__enter {
     position: fixed;
     top: clamp(20px, 2.6vh, 30px);
     right: clamp(22px, 3vw, 44px);
-    /* Match the logo block's height (wordmark aspect 157:44) and keep the icon
-       centred, so the hamburger holds its current vertical alignment now that
-       the flex bar no longer centres the two together. */
     height: calc(clamp(118px, 11vw, 157px) * 44 / 157);
-    z-index: 60;            /* above the menu (50) → the X stays on top + tappable */
+    z-index: 44;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .toc-sheet__scrim, .toc-sheet__panel { transition: none; }
+  /* The panel/mask wipe is GSAP-owned (openSheet parks them outright under
+     reduced motion); only the ✕ still transitions in CSS. */
+  .toc-sheet__close { transition: none; }
 }
 
 /* ----- Body copy (right column) ----- */
@@ -748,13 +895,14 @@ a.toc__chapter:hover { color: var(--midnight); }
      ctable get the larger one (they read as denser blocks, so they need more air). */
   --block-gap: 44px;
   --block-gap-lg: 64px;
-  /* 594 = 112 (TOC outer margin) + 328 (TOC) + 154 (column gap); the 112px right
-     margin in the width calc mirrors the TOC's left margin, so both outer
-     gutters of the two-column block are equal. */
-  margin-left: 594px;
+  /* Offset = TOC outer margin + TOC column + gutter (fluid vars, :root). At
+     1440+ this resolves to the original 594px; the vars shrink linearly down
+     to 1025px so the copy keeps a readable measure and the gutter to the TOC
+     never drops below 56px. */
+  margin-left: calc(var(--toc-ml) + var(--toc-w) + var(--toc-gap));
   /* Fluid comfortable measure: grows with the canvas, capped so line length stays
      readable, and never collides with the canvas's right edge. */
-  width: min(820px, calc(100% - 594px - 112px));
+  width: min(820px, calc(100% - var(--toc-ml) - var(--toc-w) - var(--toc-gap) - var(--copy-right)));
   padding-top: 78px;           /* 1150 − 1072 */
   color: var(--midnight);
 }
@@ -1204,36 +1352,19 @@ a.toc__chapter:hover { color: var(--midnight); }
    Responsive fallback — single column under the 1440 canvas
    --------------------------------------------------------------------------- */
 @media (max-width: 1180px) {
-  .rail { width: 64px; }
-  .rail__label { display: none; }
-  /* Foreword: track the narrower rail so the title/banner still clear it. */
-  .chapter-panel--foreword .page-body.foreword,
-  .page-body.foreword.chapter-panel--foreword { --fw-rail: 64px; }
-  .rail__menu { top: 24px; width: 64px; height: 64px; }
-  .rail__search { bottom: 28px; }
+  /* The rail retires here — below the label breakpoint it was only a bare
+     divider line. --rail-w → 0 at :root; the menu stays reachable from the
+     topbar hamburger. The nav drawer/menu never lived in the rail. */
+  .rail { display: none; }
 
   .page-hero__title { left: clamp(20px, 5vw, 44px); top: auto; bottom: clamp(28px, 5vh, 64px); }
   .hero-flower { left: auto; right: -70px; width: clamp(300px, 46vw, 520px); }
 
   .page-body__canvas { width: 100%; }
-  .toc {
-    position: static;
-    width: min(360px, 100%);
-    margin: 0 auto 56px;
-    padding-left: 84px;
-  }
-  .copy {
-    margin-left: 0;
-    width: auto;
-    max-width: 720px;
-    margin-inline: auto;
-    padding: 0 32px 0 96px;
-  }
 }
 
 @media (max-width: 680px) {
-  .toc { padding-left: 76px; }
-  .copy { --block-gap: 32px; --block-gap-lg: 44px; padding-left: 84px; padding-right: 22px; }
+  .copy { --block-gap: 32px; --block-gap-lg: 44px; }
   .copy .rulegrid,
   .copy .rulegrid--3 { grid-template-columns: 1fr; }
   .copy .callout { padding: 22px 20px; }
@@ -1265,20 +1396,37 @@ a.toc__chapter:hover { color: var(--midnight); }
   .page-hero__title span { white-space: normal; }
 }
 
+/* Tablet band (769–1024): the inline TOC retires (the fixed bottom toc-bar takes
+   over — see the ≤1024 TOC block above); the copy becomes a centred single
+   column. The rail is already gone (≤1180), so the padding is symmetric — no
+   rail to clear. After the ≤1180/≤680 blocks so it wins the cascade. */
+@media (max-width: 1024px) {
+  .copy {
+    margin-left: 0;
+    width: auto;
+    max-width: 720px;
+    margin-inline: auto;
+    padding: 0 clamp(24px, 4vw, 40px);
+  }
+  /* The fixed 64px toc-bar owns the viewport bottom now — lift the
+     bottom-anchored hero title clear of it. */
+  .page-hero__title { bottom: calc(64px + clamp(16px, 3vh, 32px)); }
+}
+
 /* Reader on mobile (≤768): drop the left rail and let the copy run the full width
    with even side padding (matching the logo's inset) instead of being indented to
    clear the rail. After the ≤1180/≤680 blocks so it overrides their rail offsets. */
 @media (max-width: 768px) {
-  .rail { display: none; }
+  /* (.rail is already hidden at ≤1180.) */
 
   /* Size the hero to the *small* viewport (svh) — plain 100vh on mobile is the
      largest viewport (toolbar hidden), so with the toolbar showing the hero
      overflows and its bottom-anchored title drops below the fold. svh is stable
      (never reflows as the toolbar slides) and keeps the title on-screen. */
   .page-hero { min-height: 100svh; }
-  /* Lift the bottom-anchored title clear of the fixed 56px section bar now that
+  /* Lift the bottom-anchored title clear of the fixed 64px section bar now that
      the hero ends exactly at the viewport bottom. */
-  .page-hero__title { bottom: calc(56px + clamp(16px, 3vh, 32px)); }
+  .page-hero__title { bottom: calc(64px + clamp(16px, 3vh, 32px)); }
 
   /* Shorter tail on phones — a smaller screen wants proportionally less dwell
      chalk before the chapter transition than the 280px desktop tail. */
@@ -1310,10 +1458,6 @@ a.toc__chapter:hover { color: var(--midnight); }
    ========================================================================== */
 body.page-dark { background: #0c1619; }
 body.page-dark .topbar__logo img { filter: brightness(0) invert(1); }  /* white wordmark */
-body.page-dark .topbar__menu { color: var(--chalk); }
-/* The hamburger/X (z 60) floats above the chalk drawer (z 50) — flip it back
-   to midnight while the menu is open so the X stays visible on chalk. */
-body.page-dark:has(.menu:not([hidden])) .topbar__menu { color: var(--midnight); }
 
 /* ----- About embedded in the reader (playbook.html #about terminal panel) ------
    The standalone page is body.page-dark throughout; in the reader ONLY the terminal
@@ -1518,20 +1662,34 @@ html.reader-dark .topbar__logo img { filter: brightness(0) invert(1); }
 }
 
 @media (max-width: 768px) {
-  /* Head row stacks; the mobile topbar scrim (chalk on other pages) goes dark —
-     on the standalone page (body.page-dark) and over the reader's About panel
-     (html.reader-dark). */
-  body.page-dark .topbar::before,
-  html.reader-dark .topbar::before {
-    background: linear-gradient(to bottom, #0c1619 0, #0c1619 20%, rgba(12, 22, 25, 0) 90%);
-  }
+  /* The standalone page is dark top to bottom, so the split sits at 0 and the
+     scrim is the dark ramp all the way up. (In the reader the split moves —
+     aboutPanel() tracks the About panel's top edge — so it isn't set here.) */
+  body.page-dark { --scrim-split: 0px; }
+
   .about-hero__head {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     gap: 20px;
   }
-  .about-gallery__item img { height: min(52vh, 420px); }
+
+  /* Compact hero: drop the full-viewport stretch (the desktop 100svh + bottom-
+     pinned frieze reads as dead space on a phone) and give the frieze a fixed,
+     tight gap instead of the auto viewport-fill. */
+  .about-hero {
+    min-height: 0;
+    padding-top: clamp(112px, 20vw, 160px);
+  }
+  .about-hero__frieze { margin-top: clamp(48px, 9vh, 88px); }
+
+  /* Gallery: ~1.5–2 photos per viewport, so each one reads as a subject rather
+     than a thumbnail. Photo height also sets strip.scrollWidth, which in turn
+     sets the pinned scroll distance (the pin's x/end are function-based) — so
+     taller photos lengthen the horizontal scrub for free. */
+  .about-gallery { margin-top: clamp(72px, 12vh, 120px); }
+  .about-gallery__strip { gap: 12px; }
+  .about-gallery__item img { height: clamp(200px, 50vw, 320px); }
 
   /* Credits stack: each row keeps portrait + identity side by side, the bio
      drops to a full-width line below. */

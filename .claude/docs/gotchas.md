@@ -14,6 +14,13 @@ These are the highest-value notes in the repo — preserve them.
   start from the element, which the entrance `from(autoAlpha:0)` leaves at 0, making it a `0→0` no-op
   that never animates or restores; (2) kill the entrance tweens on first scroll, or their *late
   completion* snaps the value back to 1 and overrides the (possibly paused) scrub.
+- **A filled CSS animation outranks GSAP's inline styles** (same cascade rule as the Motion One
+  gotcha above — CSS Animations beat non-important inline declarations). The `gtc-page-in` body
+  entrance (`styles.css`) with `fill-mode: both` silently pinned body opacity at 1 and swallowed
+  `transition.js`'s GSAP exit fade — the tween "ran" (its html-bg sibling visibly tweened) but the
+  page never faded. Keep the fill **`backwards`** so the animation stops applying once finished,
+  and have `navigate()` set `body.style.animation = "none"` before tweening in case the entrance is
+  still mid-flight.
 - Use **`autoAlpha`** (opacity + visibility) for fade-outs so faded elements are truly gone.
 - **GSAP-animated CSS custom props must be declared with a real initial value** (e.g.
   `--streak-hide: 100%`), otherwise GSAP reads an empty start and jumps to the end value.
@@ -36,6 +43,12 @@ These are the highest-value notes in the repo — preserve them.
   that stale px offset (the reveal settles half-hidden). Either drive the wipe with **px `y`**
   (measured line height → 0) or `gsap.set({y:0, yPercent:…})` before animating `yPercent` (the
   guard formerly used by about.js's retired `manifestoReveal`, still live in `introScene`'s word rise in main.js).
+  **A counter-translate pair hides this bug in plain sight** (bitten 2026-07 porting the About
+  popup's wipe to the mobile `.toc-sheet`, `parkSheet()` in chapter.js): when a mask and an inner
+  panel both pick up the same stale px baseline, it *cancels between them* — the content lands
+  exactly where it should and the animation looks perfect, while the clip window actually rests a
+  full screen out of position. Screenshots and rect probes both pass. Only asserting the **computed
+  transform is `matrix(1, 0, 0, 1, 0, 0)` at rest** catches it — do that whenever you build one.
 
 ## Cross-section travel
 
