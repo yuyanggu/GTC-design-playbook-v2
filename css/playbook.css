@@ -11,13 +11,16 @@
    ========================================================================== */
 
 /* Each chapter is a full panel. It carries its own theme vars (set inline) so the
-   hero colour + accent travel with the panel as it scrolls. The backdrop is BLACK:
-   it's only ever seen during the transition — around the shrinking chapter (the scale
-   pulls in horizontally, so black shows down both sides) and through the rounded
-   top corners of the chapter rising over it. (Matches the GSAP demo's dark stage.) */
+   hero colour + accent travel with the panel as it scrolls.
+
+   The panel is TRANSPARENT: the backdrop seen during a transition is the chalk page
+   background off <html>/<body>. It shows around the shrinking chapter (the scale
+   pulls in horizontally, so it appears down both sides) and through the rounded top
+   corners of the chapter rising over it. The GSAP "stacked panels" demo this was
+   ported from used a black stage; we went chalk. Don't paint a colour here — <html>
+   owns the backdrop so the cross-page fade can cross-fade it (js/transition.js). */
 .chapter-panel {
   position: relative;
-  /* background: #000; */
 }
 
 /* Deep-link anti-flash: the inline head script sets this before paint when the URL

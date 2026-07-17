@@ -45,7 +45,6 @@
   --gray3: #c7c7cc;
   --book-dark: rgba(27, 31, 38, 0.72);
   --book-grad: linear-gradient(180deg, #4f94cf 59.62%, #aed3ed 100%); /* interactive book bg */
-  --book-soon: #585a5c;    /* book 4 "coming soon" */
 
   /* Flower-petal + page accents (Figma) */
   --sky: #73aae5;          /* blue petal */
@@ -430,7 +429,7 @@ html:has(#hero) body {
 
 /* ============================================================================
    HOME SHELF  (section books — rise in on scroll, settle flush to the bottom)
-   Reuses the .book / .spine system; same 1022px centred group as the menu shelf.
+   Reuses the .book / .spine system; same 1022px centred group as the shelf.
    ========================================================================== */
 .home-shelf {
   position: absolute;
@@ -444,10 +443,8 @@ html:has(#hero) body {
   transform-origin: 50% 100%;
   transform: translateX(-50%) scale(var(--shelf-scale, 1));
 }
-/* Home books use a smaller icon than the menu → room for the date + clear spacing. */
+/* Home books use a smaller icon than the shelf default → room for the date. */
 .home-shelf .book__icon { width: 70px; height: 70px; }
-/* Drop book 4's "(Coming soon)" down to the same level as the dates on books 1–3. */
-.home-shelf .book__soon { margin-top: 46px; }
 
 /* "Last updated:" line — hidden for now (kept in markup for easy re-enable). */
 .book__updated {
@@ -511,48 +508,6 @@ html:has(#hero) body {
   .js .intro__headline--wrap .word { transform: none; opacity: 1; }
 }
 
-/* ============================================================================
-   MAGNETIC BUTTON COMPONENT  ("True button")
-   .mag-zone = the magnetic field · .mag-btn = pill (transform target) wrapping a
-   .mag-btn__bg fill layer + a .label. On hover the pill and label parallax toward
-   the cursor at different strengths (see magneticButtons() in main.js).
-   Variants: --explore (Figma 2008:147 pill) · --back (menu back button).
-   ========================================================================== */
-.mag-zone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.mag-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 999px;
-  background: transparent;          /* fill lives on .mag-btn__bg */
-  overflow: hidden;                 /* clip the parallaxing label to the pill */
-  cursor: pointer;
-  will-change: transform;
-}
-.mag-btn__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-}
-.mag-btn .label {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-  font-family: var(--font-sans);
-  line-height: normal;
-  text-transform: uppercase;
-  white-space: nowrap;
-  will-change: transform;
-}
-.mag-btn:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
-
 /* Decorative gray book-spines (the book_element_*.svg vectors), behind the books,
    bottom-aligned and shorter (294px) than the 340px cards. Placed in the 5 gaps. */
 .shelf__spines { position: absolute; inset: 0; z-index: 0; }
@@ -583,7 +538,6 @@ html:has(#hero) body {
   will-change: transform;
   transition: background 0.3s ease;
 }
-.book--soon { background: var(--book-soon); cursor: default; }
 
 .book__inner {
   position: absolute;
@@ -640,19 +594,6 @@ html:has(#hero) body {
   line-height: 1.3;
   letter-spacing: -0.4px;
   color: #fff;
-}
-/* "(Coming soon)" — italic serif, matching the "Last updated" style. */
-.book__soon {
-  display: block;
-  margin-top: 11px;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 1.3;
-  letter-spacing: 0;
-  text-transform: none;
-  color: rgba(246, 242, 231, 0.85);
 }
 .book__icon {
   position: absolute;
@@ -759,7 +700,6 @@ html:has(#hero) body {
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.18s ease, filter 0.18s ease;
   }
-  .home-card--soon { background: var(--book-soon); }
   /* Press feedback (no hover/physics) for the interactive cards. */
   a.home-card:active { transform: scale(0.985); filter: brightness(1.04); }
   a.home-card:focus-visible { outline: 3px solid var(--midnight); outline-offset: 3px; }
@@ -797,15 +737,6 @@ html:has(#hero) body {
     line-height: 1.25;
     letter-spacing: -0.3px;
     color: #fff;
-  }
-  .home-card__soon {
-    display: block;
-    margin-top: 6px;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(13px, 4vw, 16px);
-    color: rgba(246, 242, 231, 0.85);
   }
 
 }

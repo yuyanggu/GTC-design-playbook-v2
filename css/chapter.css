@@ -1,7 +1,7 @@
 /* ============================================================================
    "Why we exist, and the moment" — interior page
-   Layered on top of styles.css (tokens, @font-face, type system, .menu/.book,
-   .mag-zone all come from there). Reference frame = 1440 wide; hero band 1024.
+   Layered on top of styles.css (tokens, @font-face, type system, .book all come
+   from there). Reference frame = 1440 wide; hero band 1024.
    ========================================================================== */
 
 body { background: var(--chalk); }
@@ -39,7 +39,7 @@ body { background: var(--chalk); }
 }
 
 /* ---------------------------------------------------------------------------
-   Left rail (fixed) — divider + rotated label + hamburger (opens menu) + search
+   Left rail (fixed) — divider + rotated chapter label
    --------------------------------------------------------------------------- */
 .rail {
   position: fixed;
@@ -78,43 +78,6 @@ body { background: var(--chalk); }
   text-transform: uppercase;
   color: var(--rail-fg, var(--midnight));   /* chalk on dark heroes */
 }
-
-/* Hamburger — blue square, vertically centred in the rail */
-.rail__menu {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--rail-w);
-  height: 95px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  background: var(--blue);
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.25s ease;
-}
-.rail__menu:hover { background: #3f86c4; }
-.rail__menu:focus-visible { outline: 3px solid var(--midnight); outline-offset: 3px; }
-
-/* Search — bare icon, 20px above the rail bottom */
-.rail__search {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 20px;
-  width: 50px;
-  height: 50px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: var(--rail-fg, var(--midnight));   /* chalk on dark heroes */
-  cursor: pointer;
-}
-.rail__search:focus-visible { outline: 2px solid var(--midnight); outline-offset: 4px; }
-.lucide { display: block; }
 
 /* Re-open pin for the collapsed TOC — "Table of contents ›" laid vertically
    at the TOP of the rail, sharing .rail__label's reading axis (bottom→top)
@@ -216,9 +179,8 @@ body { background: var(--chalk); }
 .rail { will-change: clip-path; }
 
 /* ---------------------------------------------------------------------------
-   Top header — logo (→ home) top-left, hamburger (opens the Menu) top-right.
-   Fixed over the coloured hero and the body; ABOVE the menu overlay (z 50) so the
-   hamburger stays visible/clickable and morphs to an X while the drawer is open.
+   Top header — logo (→ home) top-left. Fixed over the coloured hero and the body.
+   (The hamburger was removed with the drawer Menu, 2026-07 — see .claude/docs/menu.md.)
    --------------------------------------------------------------------------- */
 .topbar {
   position: fixed;
@@ -341,7 +303,7 @@ body { background: var(--chalk); }
 .page-body.foreword.chapter-panel--foreword {
   --fw-rail: var(--rail-w);                /* tracks the rail width automatically */
   min-height: 100vh;
-  padding-top: clamp(96px, 12vh, 140px);   /* clears the topbar logo/hamburger */
+  padding-top: clamp(96px, 12vh, 140px);   /* clears the topbar logo */
 }
 .foreword__title {
   margin: 0 0 0 calc(var(--fw-rail) + 24px);   /* clears the rail + a 24px gutter */
@@ -480,7 +442,7 @@ body { background: var(--chalk); }
 
 /* Chapter stack — every chapter is a quiet text row; the one you're reading turns
    accent and carries its section list nested beneath it. Rows with a data-href
-   jump between chapters (chapterSwitch, same behaviour as the menu); the current
+   jump between chapters (chapterSwitch); the current
    row + the "coming soon" row are inert. */
 .toc__chapters {
   list-style: none;
@@ -521,22 +483,6 @@ a.toc__chapter:hover { color: var(--midnight); }
 .toc__chapter--about .toc__chapter-num { display: none; }
 /* Current chapter — accent, inert (you are here). */
 .toc__chapter.is-current { color: var(--accent, var(--orange)); pointer-events: none; }
-/* Chapter 4 — not built yet (mirrors the menu's "coming soon" row). */
-.toc__chapter--soon { pointer-events: none; }
-.toc__chapter-soon {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 3px 7px 2px;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  vertical-align: 3px;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 9px;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 
 /* Section list — nested under the current chapter's row. */
 .toc__list {
@@ -653,7 +599,7 @@ a.toc__chapter:hover { color: var(--midnight); }
   .toc-bar {
     position: fixed;
     inset: auto 0 0 0;
-    z-index: 46;            /* above the sheet (45), below the menu (50) */
+    z-index: 46;            /* above the sheet (45) */
     display: flex;
     align-items: stretch;
     height: 64px;
@@ -801,7 +747,7 @@ a.toc__chapter:hover { color: var(--midnight); }
 @media (max-width: 768px) {
   /* --- Top bar on mobile ---------------------------------------------------
      Drop the fixed bar's stacking context (→ position:static) and pin the logo
-     individually so it sits above the soft chalk scrim. (The hamburger/drawer
+     individually so it sits above the soft chalk scrim. (The drawer
      was removed 2026-07; the fixed bottom toc-bar is the sole nav here.) A soft
      chalk scrim (::before) sits behind the logo so scrolling body copy fades
      out under it rather than clashing; topbarScrim() (js/chapter.js) switches it
@@ -868,7 +814,7 @@ a.toc__chapter:hover { color: var(--midnight); }
     left: clamp(22px, 3vw, 44px);
     z-index: 44;
   }
-  /* The About coda's "back in" link pins top-right (where the hamburger sat),
+  /* The About coda's "back in" link pins top-right (where the hamburger used to sit),
      aligned to the logo's baseline band. */
   .topbar__enter {
     position: fixed;
@@ -905,14 +851,6 @@ a.toc__chapter:hover { color: var(--midnight); }
   width: min(820px, calc(100% - var(--toc-ml) - var(--toc-w) - var(--toc-gap) - var(--copy-right)));
   padding-top: 78px;           /* 1150 − 1072 */
   color: var(--midnight);
-}
-.copy__heading {
-  margin: 0 0 24px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2rem, 3.35vw, 48px);
-  line-height: 88px;            /* 183.333% of 48px — generous box, no glyph clipping */
-  color: var(--accent, var(--orange));
 }
 .section-head {
   margin: 1.7em 0 0.55em;
@@ -1052,27 +990,6 @@ a.toc__chapter:hover { color: var(--midnight); }
 .copy .callout__body li:last-child { margin-bottom: 0; }
 
 /* Figure note — describes a diagram that isn't drawn yet (text-only aside) */
-.figure-note {
-  margin: 1.4em 0;
-  padding: 16px 18px;
-  border: 1px dashed rgba(1, 34, 51, 0.25);
-  border-radius: 4px;
-  background: rgba(1, 34, 51, 0.025);
-  font-family: var(--font-serif);
-  font-size: calc(var(--copy-fs) * 0.85);
-  line-height: 1.5;
-  color: rgba(1, 34, 51, 0.78);
-}
-.figure-note b {
-  display: block;
-  margin-bottom: 4px;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent, var(--orange));
-}
 
 /* Diagram figure — the rendered SVG diagram (C3). Shows at its natural width, capped to
    the copy column and centred (small diagrams stay small), with generous vertical room. */
@@ -1353,8 +1270,7 @@ a.toc__chapter:hover { color: var(--midnight); }
    --------------------------------------------------------------------------- */
 @media (max-width: 1180px) {
   /* The rail retires here — below the label breakpoint it was only a bare
-     divider line. --rail-w → 0 at :root; the menu stays reachable from the
-     topbar hamburger. The nav drawer/menu never lived in the rail. */
+     divider line. --rail-w → 0 at :root; navigation is the TOC / .toc-sheet. */
   .rail { display: none; }
 
   .page-hero__title { left: clamp(20px, 5vw, 44px); top: auto; bottom: clamp(28px, 5vh, 64px); }

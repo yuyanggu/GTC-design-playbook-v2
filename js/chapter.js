@@ -11,7 +11,7 @@
      document. Each function is scoped to its panel so the three TOCs / reveal
      batches / flowers don't collide, plus the chapter-to-chapter scroll effect
      (panelTransitions), the rail label/colour follow (railSync), and deep-link
-     entry from the menu (handleDeepLink).
+     entry from a shared URL (handleDeepLink).
    ========================================================================== */
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;

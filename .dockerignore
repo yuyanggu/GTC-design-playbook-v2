@@ -24,3 +24,12 @@ Dockerfile.*
 .gitlab-ci.yml
 vercel.json
 _redirects
+
+# Superseded Figma exports — the live diagrams are the diagram_*.webp files. Kept
+# in the repo as source for the diagrams still to be drawn (see CLAUDE.md), but
+# ~18MB that must not ship.
+assets/0? Diagram *
+assets/0? Divider.svg
+assets/Title_Streaks.png
+assets/title_streaks_2.png
+assets/Opening_Title.svg

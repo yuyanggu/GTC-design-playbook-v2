@@ -11,8 +11,8 @@
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
-// ScrollSmoother (page smooth-scroll) + CustomEase/CustomWiggle are vendored (free).
-gsap.registerPlugin(...[ScrollTrigger, window.ScrollSmoother, window.CustomEase, window.CustomWiggle].filter(Boolean));
+// ScrollSmoother (page smooth-scroll) + CustomEase are vendored (free).
+gsap.registerPlugin(...[ScrollTrigger, window.ScrollSmoother, window.CustomEase].filter(Boolean));
 
 const root = document.documentElement;
 root.classList.add("js");
@@ -540,35 +540,9 @@ function wireBookKnockAndHover(shelf, books) {
 
 /* (5 · Menu drawer removed 2026-07 — the reader/veil TOC is the sole nav.) */
 
-/* ============================================================================
-   6 · Magnetic button component ("True button") — wires every `.mag-zone`.
-   Used by the Menu back button (--back) on the chapter pages; no-ops on the home.
-   ========================================================================== */
-function magneticButtons() {
-  if (reduce) return;
-  const strength = 0.4;       // the pill
-  const labelStrength = 0.24; // the label (lighter parallax)
-
-  document.querySelectorAll(".mag-zone").forEach((zone) => {
-    const btn = zone.querySelector(".mag-btn");
-    if (!btn) return;
-    const label = btn.querySelector(".label");
-
-    zone.addEventListener("mousemove", (e) => {
-      const rect = zone.getBoundingClientRect();
-      const mapX = gsap.utils.mapRange(rect.left, rect.right, -rect.width / 2, rect.width / 2, e.clientX);
-      const mapY = gsap.utils.mapRange(rect.top, rect.bottom, -rect.height / 2, rect.height / 2, e.clientY);
-
-      gsap.to(btn, { x: mapX * strength, y: mapY * strength, duration: 0.4, ease: "power2.out", overwrite: true });
-      if (label) gsap.to(label, { x: mapX * labelStrength, y: mapY * labelStrength, duration: 0.4, ease: "power2.out", overwrite: true });
-    });
-
-    zone.addEventListener("mouseleave", () => {
-      gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1,0.4)", overwrite: true });
-      if (label) gsap.to(label, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1,0.4)", overwrite: true });
-    });
-  });
-}
+/* (6 · Magnetic button removed 2026-07 — it only ever wired the drawer Menu's
+   back button, and the Menu is gone. The landing's CTA is now the inline
+   .intro__explore run inside the intro paragraph, which needs no JS.) */
 
 /* ============================================================================
    7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
@@ -709,7 +683,6 @@ introScene();     // once-on-enter headline word rise + copy/Explore fade
 logoBar();        // fixed top-bar logo — fades in when the page bottom is reached
 fitHeadline();    // scale the two-line title so it never wraps at any width
 aboutModal();
-magneticButtons();
 
 // Keep the two-line title fitted as the viewport changes.
 let fhRt;
