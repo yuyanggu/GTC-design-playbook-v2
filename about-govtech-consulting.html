@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
-     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<!-- The GTC Design Playbook — built by the GovTech Consulting Design Team. -->
 <html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
@@ -32,15 +31,12 @@
   <script src="js/gate.js"></script>
 </head>
 <body style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 611 / 611;">
-  <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
-  <!-- Top header: logo (→ home) -->
   <header class="topbar">
     <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
     </a>
   </header>
 
-  <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
     <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
@@ -52,9 +48,6 @@
     <p class="rail__label">about govtech consulting</p>
   </div>
 
-  <!-- Mobile section bar (≤768px) — pinned to the viewport bottom; the arrows step
-       heading-to-heading and the label opens the TOC sheet. Driven by js/chapter.js
-       (mobileTocBar). Fixed elements must live outside #smooth-wrapper. -->
   <nav class="toc-bar" aria-label="Sections" hidden>
     <button class="toc-bar__arrow toc-bar__arrow--prev" type="button" aria-label="Previous section">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
@@ -77,14 +70,12 @@
     <div id="smooth-content">
   <main class="page">
 
-    <!-- ───────────────────────── HERO (orange cover) ───────────────────────── -->
     <section class="page-hero">
       <h1 class="page-hero__title">
         <span class="reveal">01</span>
         <span class="reveal">About GovTech Consulting</span>
       </h1>
 
-      <!-- Top-right graphic (static — no animation) -->
       <div class="hero-flower" aria-hidden="true">
         <div class="hero-flower__spin">
           <img src="assets/1_Graphic.svg" alt="" />
@@ -92,7 +83,6 @@
       </div>
     </section>
 
-    <!-- ───────────────────────── BODY ───────────────────────── -->
     <section class="page-body">
       <div class="page-body__canvas">
 
@@ -154,12 +144,10 @@
             </ul>
           </div>
         </nav>
-       </div><!-- /.body-left -->
+       </div>
 
         <article class="copy">
-          <!-- ══ CANONICAL COPY: mirrored verbatim into playbook.html #ch1 ══ -->
 
-          <!-- 1.1 -->
           <h3 class="section-head reveal" id="s-11">1.1 Who We Are</h3>
           <p class="lead reveal">GovTech Consulting (GTC) was established in June 2025 to advance Singapore&rsquo;s <a href="https://www.smartnation.gov.sg/about/our-vision/smart-nation-vision/" target="_blank" rel="noopener">national mandate</a> for a resilient digital public infrastructure, supporting agencies to navigate the complex, shifting demands of an AI-driven world.</p>
           <p class="reveal">As government agencies drive the digital future of public services, the GTC Design team partners directly with agency counterparts to rethink how their services are discovered, designed, and built &mdash; adapting digital experiences as the public&rsquo;s relationship with government evolves. Now fifty strong and steadily growing, our team brings together diverse backgrounds to introduce novel ways of meeting complex challenges. Working side by side with public officers, we collaborate to fulfil a shared mission: transforming services and elevating the quality of technology for the public good, together.</p>
@@ -169,8 +157,8 @@
     </section>
 
   </main>
-    </div><!-- /#smooth-content -->
-  </div><!-- /#smooth-wrapper -->
+    </div>
+  </div>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

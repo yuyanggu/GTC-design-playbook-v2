@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
-     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<!-- The GTC Design Playbook — built by the GovTech Consulting Design Team. -->
 <html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
@@ -29,11 +28,6 @@
   <script src="js/gate.js"></script>
 </head>
 <body>
-  <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
-       The vertical divider runs the full height; the rotated label, the hamburger
-       (opens the bookshelf Menu) and the search icon ride in the rail. Lives OUTSIDE
-       #smooth-wrapper so it stays viewport-anchored, like the menu/pinwheel. -->
-  <!-- Top header: logo (→ home) -->
   <header class="topbar">
     <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
@@ -45,14 +39,10 @@
     <p class="rail__label">foreword</p>
   </div>
 
-  <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
   <div id="smooth-wrapper">
     <div id="smooth-content">
       <main class="playbook">
         <section class="page-body foreword chapter-panel--foreword">
-          <!-- Title + banner are direct children of the full-width .page-body so they
-               position against the viewport rail (not the centred 1440 canvas); only
-               the copy stays inside the canvas. -->
           <h1 class="foreword__title reveal">Foreword</h1>
           <img class="foreword__graphic reveal" src="assets/foreword_Graphic.png"
                width="1440" height="291" alt="" />
@@ -69,8 +59,8 @@
           </div>
         </section>
       </main>
-    </div><!-- /#smooth-content -->
-  </div><!-- /#smooth-wrapper -->
+    </div>
+  </div>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

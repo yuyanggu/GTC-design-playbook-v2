@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
-     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<!-- The GTC Design Playbook — built by the GovTech Consulting Design Team. -->
 <html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
@@ -32,15 +31,12 @@
   <script src="js/gate.js"></script>
 </head>
 <body style="--hero-bg: var(--blue); --hero-title: var(--chalk); --accent: var(--blue); --flower-aspect: 230 / 229;">
-  <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
-  <!-- Top header: logo (→ home) -->
   <header class="topbar">
     <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
     </a>
   </header>
 
-  <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
     <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
@@ -52,9 +48,6 @@
     <p class="rail__label">our point of view</p>
   </div>
 
-  <!-- Mobile section bar (≤768px) — pinned to the viewport bottom; the arrows step
-       heading-to-heading and the label opens the TOC sheet. Driven by js/chapter.js
-       (mobileTocBar). Fixed elements must live outside #smooth-wrapper. -->
   <nav class="toc-bar" aria-label="Sections" hidden>
     <button class="toc-bar__arrow toc-bar__arrow--prev" type="button" aria-label="Previous section">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
@@ -77,14 +70,12 @@
     <div id="smooth-content">
   <main class="page">
 
-    <!-- ───────────────────────── HERO (blue cover) ───────────────────────── -->
     <section class="page-hero">
       <h1 class="page-hero__title">
         <span class="reveal">02</span>
         <span class="reveal">Our Point of View</span>
       </h1>
 
-      <!-- Top-right graphic (static — no animation) -->
       <div class="hero-flower" aria-hidden="true">
         <div class="hero-flower__spin">
           <img src="assets/2_Graphic.svg" alt="" />
@@ -92,7 +83,6 @@
       </div>
     </section>
 
-    <!-- ───────────────────────── BODY ───────────────────────── -->
     <section class="page-body">
       <div class="page-body__canvas">
 
@@ -184,12 +174,10 @@
             </ul>
           </div>
         </nav>
-       </div><!-- /.body-left -->
+       </div>
 
         <article class="copy">
-          <!-- ══ CANONICAL COPY: mirrored verbatim into playbook.html #ch2 ══ -->
 
-          <!-- 2.1 -->
           <h3 class="section-head reveal" id="s-21">2.1 Foundations that Guide Us</h3>
           <p class="lead reveal">Government services exist to serve everyone. Whether we are designing for a resident accessing a public portal or the officer working the system from inside, our ultimate goal remains the same: ensuring a reliable, effective experience for whoever is on the other side of the screen.</p>
           <p class="reveal">In order to do our work well, we must operate within the guardrails of the public sector.</p>
@@ -217,7 +205,6 @@
             </div>
           </div>
 
-          <!-- 2.2 -->
           <div class="section-divider reveal" aria-hidden="true">
             <img src="assets/02%20Divider.svg" alt="" />
           </div>
@@ -260,7 +247,6 @@
             <p>Public services are deeply human ecosystems, and the human judgment required to navigate them can’t be resolved in a prompt.</p>
           </blockquote>
 
-          <!-- 2.3 -->
           <div class="section-divider reveal" aria-hidden="true">
             <img src="assets/02%20Divider.svg" alt="" />
           </div>
@@ -321,7 +307,6 @@
             </div>
           </details>
 
-          <!-- 2.4 -->
           <div class="section-divider reveal" aria-hidden="true">
             <img src="assets/02%20Divider.svg" alt="" />
           </div>
@@ -341,8 +326,8 @@
     </section>
 
   </main>
-    </div><!-- /#smooth-content -->
-  </div><!-- /#smooth-wrapper -->
+    </div>
+  </div>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

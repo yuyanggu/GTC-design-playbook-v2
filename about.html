@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!-- html.js-pending: FOUC shield. Lifted by main.js once initial states are
-     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<!-- The GTC Design Playbook — built by the GovTech Consulting Design Team. -->
 <html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
@@ -25,8 +24,6 @@
   <script src="js/gate.js"></script>
 </head>
 <body class="page-dark">
-  <!-- Top header: logo (→ home) + a link back into the reader (the drawer menu
-       was retired 2026-07; About is a coda, so it just offers a way back in). -->
   <header class="topbar">
     <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
@@ -34,14 +31,10 @@
     <a class="topbar__enter" href="playbook.html">The Playbook <span aria-hidden="true">→</span></a>
   </header>
 
-  <!-- ScrollSmoother wrapper — content scrolls; menu stays fixed outside -->
   <div id="smooth-wrapper">
     <div id="smooth-content">
       <main class="playbook">
         <section class="page-body about-page">
-          <!-- Hero (Figma 2052:1275): full viewport — topbar at top, head row
-               (title left / intro right, space-between) centred in the gap, the
-               illustration full-bleed along the bottom edge. -->
           <div class="about-hero">
             <div class="about-hero__head">
               <h1 class="about-page__title reveal">Behind the playbook</h1>
@@ -51,9 +44,6 @@
                  width="3420" height="922" alt="" />
           </div>
 
-          <!-- Pinned horizontal gallery — the strip translates left as you scroll
-               (js/about.js galleryScroll). Same-height images, natural widths.
-               Under reduced motion the section unpins and swipes natively (CSS). -->
           <section class="about-gallery" aria-label="Photos of the GTC design team">
             <div class="about-gallery__strip">
               <figure class="about-gallery__item"><img src="assets/photos/about-5.jpg" width="1008" height="756" alt="A playbook alignment session — the team gathered around a screen reading 'A place to align, not a place to learn'." /></figure>
@@ -67,10 +57,6 @@
             </div>
           </section>
 
-          <!-- Behind the Playbook — credits (docx "Behind the Playbook", 2026-07).
-               Right-aligned editorial column: intro + hairline credit rows. Rows fade
-               up via the shared .reveal batch (js/about.js copyReveals). Mirrored
-               verbatim in playbook.html #about. -->
           <section class="about-crew" aria-label="The crew behind the playbook">
             <div class="about-crew__main">
               <p class="about-crew__intro reveal">Behind every framework and flow chart is a tight-knit crew of system-mappers, word-smiths, and pixel-pushers trying to make this document a little more human.</p>
@@ -143,8 +129,8 @@
           </section>
         </section>
       </main>
-    </div><!-- /#smooth-content -->
-  </div><!-- /#smooth-wrapper -->
+    </div>
+  </div>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

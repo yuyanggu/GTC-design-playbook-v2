@@ -1,14 +1,9 @@
 <!DOCTYPE html>
-<!-- html.js-pending: FOUC shield. Lifted by chapter.js once GSAP has set initial
-     states, or by gate.js's 3 s safety timer. <noscript> removes it for
-     JS-disabled visitors. See css/styles.css §FOUC shield. -->
+<!-- The GTC Design Playbook — built by the GovTech Consulting Design Team. -->
 <html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Clean reader paths (/chapter-2/designing-for-everyone) are server-rewritten to
-       this file, so the document URL can be two segments deep. <base href="/"> keeps
-       every relative asset below resolving from the site root, not from that path. -->
   <base href="/" />
   <title>The Design Playbook — GovTech Consulting</title>
   <meta name="description" content="The GTC Design Playbook, read end to end: why we exist, our point of view, and the stages of a project — one continuous, seamless scroll." />
@@ -16,9 +11,6 @@
   <link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Boldonse-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/playbook_logo.svg" as="image" />
-  <!-- FOUC shield: hold the reader blank-chalk until chapter.js has positioned
-       deep-links and run its initial gsap.set's, so the user never sees ch0/ch1
-       jump into place. -->
   <style id="fouc-shield">
     html.js-pending body { background: var(--chalk, #f6f1e6); }
     html.js-pending .topbar,
@@ -57,25 +49,17 @@
   </script>
 </head>
 <body>
-  <!-- ───────────────────────── LEFT RAIL (fixed) ─────────────────────────
-       One rail for the whole reader. The label + colour follow the chapter you're
-       currently in (see railSync in js/chapter.js). Lives OUTSIDE #smooth-wrapper. -->
-  <!-- Top header: logo (→ home) + hamburger (opens the bookshelf Menu) -->
   <header class="topbar">
     <a class="topbar__logo" href="/" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
     </a>
   </header>
 
-  <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
     <p class="rail__label">why we exist, and the moment</p>
   </div>
 
-  <!-- Mobile section bar (≤768px) — pinned to the viewport bottom; the arrows step
-       heading-to-heading and the label opens the TOC sheet. Driven by js/chapter.js
-       (mobileTocBar). Fixed elements must live outside #smooth-wrapper. -->
   <nav class="toc-bar" aria-label="Sections" hidden>
     <button class="toc-bar__arrow toc-bar__arrow--prev" type="button" aria-label="Previous section">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
@@ -94,41 +78,11 @@
     </div>
   </div>
 
-  <!-- ScrollSmoother wrapper — content scrolls; rail + menu stay fixed outside -->
   <div id="smooth-wrapper">
     <div id="smooth-content">
   <main class="playbook">
 
-    <!-- ═══════════════════════ CHAPTER 0 — Foreword: RETIRED 2026-07 ═══════════════════════
-         Hidden site-wide. Its lead moved to the landing welcome copy and its two sections
-         moved to the "About this playbook" popup (index.html #aboutModal). Kept commented
-         here for revert; the reader now opens at Chapter 1. (Inner explanatory comments were
-         inlined as plain text so the whole block nests inside one HTML comment.)
-    <section class="section chapter-panel chapter-panel--foreword" id="ch0"
-             data-rail="foreword"
-             style="--accent: var(--midnight);">
-     <div class="chapter-panel__scale">
-      <section class="page-body foreword">
-        <h1 class="foreword__title reveal">Foreword</h1>
-        <img class="foreword__graphic reveal" src="assets/foreword_Graphic.png"
-             width="1440" height="291" alt="" />
-        <div class="page-body__canvas">
-          <article class="copy foreword__copy">
-            <p class="lead reveal">Welcome to the GTC Design Team playbook &mdash; a shared space to align on our principles, craft, and how we work. Because design never stands still, neither do we. This remains a living draft, constantly refined as we adapt to new challenges and evolve our methods together.</p>
 
-            <h2 class="subsection-head reveal">For GTC Designers</h2>
-            <p class="reveal">This is not a manual for design mechanics, research techniques, or workshop instructions. Instead, it captures how we work, our point of view on where our craft is heading, and what it means to do this work in government, for the public, right now. Treat this playbook as a reference &mdash; somewhere to revisit, question, and build from as we keep learning.</p>
-
-            <h2 class="subsection-head reveal">For Friends of Design</h2>
-            <p class="reveal">Our playbook is open because no one should have to figure this out alone. As technology transforms our craft and we continue to experiment, we know shared learning is what helps the wider tech community move forward together. Whether you are a fellow designer, a partner, or just curious about how we work, this space exists to spark new conversations and shape our collective thinking as we build this future together.</p>
-          </article>
-        </div>
-      </section>
-     </div>
-    </section>
-    -->
-
-    <!-- ═══════════════════════ CHAPTER 1 — About GovTech Consulting ═══════════════════════ -->
     <section class="section chapter-panel" id="ch1"
              data-rail="about govtech consulting"
              style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 611 / 611;">
@@ -202,9 +156,7 @@
          </div>
 
           <article class="copy">
-            <!-- ══ CANONICAL COPY: mirrors about-govtech-consulting.html ══ -->
 
-            <!-- 1.1 -->
             <h3 class="section-head reveal" id="s-11">1.1 Who We Are</h3>
             <p class="lead reveal">GovTech Consulting (GTC) was established in June 2025 to advance Singapore&rsquo;s <a href="https://www.smartnation.gov.sg/about/our-vision/smart-nation-vision/" target="_blank" rel="noopener">national mandate</a> for a resilient digital public infrastructure, supporting agencies to navigate the complex, shifting demands of an AI-driven world.</p>
             <p class="reveal">As government agencies drive the digital future of public services, the GTC Design team partners directly with agency counterparts to rethink how their services are discovered, designed, and built &mdash; adapting digital experiences as the public&rsquo;s relationship with government evolves. Now fifty strong and steadily growing, our team brings together diverse backgrounds to introduce novel ways of meeting complex challenges. Working side by side with public officers, we collaborate to fulfil a shared mission: transforming services and elevating the quality of technology for the public good, together.</p>
@@ -212,10 +164,9 @@
 
         </div>
       </section>
-     </div><!-- /.chapter-panel__scale -->
+     </div>
     </section>
 
-    <!-- ═══════════════════════ CHAPTER 2 — Our Point of View ═══════════════════════ -->
     <section class="section chapter-panel" id="ch2"
              data-rail="our point of view"
              style="--hero-bg: var(--blue); --hero-title: var(--chalk); --accent: var(--blue); --flower-aspect: 230 / 229;">
@@ -316,9 +267,7 @@
          </div>
 
           <article class="copy">
-            <!-- ══ CANONICAL COPY: mirrors our-point-of-view.html ══ -->
 
-            <!-- 2.1 -->
             <h3 class="section-head reveal" id="s-21">2.1 Foundations that Guide Us</h3>
             <p class="lead reveal">Government services exist to serve everyone. Whether we are designing for a resident accessing a public portal or the officer working the system from inside, our ultimate goal remains the same: ensuring a reliable, effective experience for whoever is on the other side of the screen.</p>
             <p class="reveal">In order to do our work well, we must operate within the guardrails of the public sector.</p>
@@ -346,7 +295,6 @@
               </div>
             </div>
 
-            <!-- 2.2 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/02%20Divider.svg" alt="" />
             </div>
@@ -389,7 +337,6 @@
               <p>Public services are deeply human ecosystems, and the human judgment required to navigate them can’t be resolved in a prompt.</p>
             </blockquote>
 
-            <!-- 2.3 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/02%20Divider.svg" alt="" />
             </div>
@@ -450,7 +397,6 @@
               </div>
             </details>
 
-            <!-- 2.4 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/02%20Divider.svg" alt="" />
             </div>
@@ -468,10 +414,9 @@
         </div>
       </section>
 
-     </div><!-- /.chapter-panel__scale -->
+     </div>
     </section>
 
-    <!-- ═══════════════════════ CHAPTER 3 — Our Approach ═══════════════════════ -->
     <section class="section chapter-panel" id="ch3"
              data-rail="our approach"
              style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600; --flower-w: 550px;">
@@ -568,9 +513,7 @@
          </div>
 
           <article class="copy">
-            <!-- ══ CANONICAL COPY: mirrors our-approach.html ══ -->
 
-            <!-- 3.1 -->
             <h3 class="section-head reveal" id="s-31">3.1 The Shape of Engagement</h3>
             <p class="lead reveal">Partnership is how we work. Agencies bring the domain knowledge and the mandate; GTC designers bring discovery capability, technology, and product expertise. Together, we build something that creates real impact for the public. Below shows where our partnership begins and ends, and why both points matter.</p>
             <figure class="figure reveal">
@@ -594,7 +537,6 @@
               </div>
             </div>
 
-            <!-- 3.2 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/01%20Divider.svg" alt="" />
             </div>
@@ -657,7 +599,6 @@
               </div>
             </aside>
 
-            <!-- 3.3 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/01%20Divider.svg" alt="" />
             </div>
@@ -727,10 +668,9 @@
         </div>
       </section>
 
-     </div><!-- /.chapter-panel__scale -->
+     </div>
     </section>
 
-    <!-- ═══════════════════════ CHAPTER 4 — Stages of Engagement ═══════════════════════ -->
     <section class="section chapter-panel" id="ch4"
              data-rail="the stages of an engagement"
              style="--hero-bg: var(--blue); --hero-title: var(--chalk); --accent: var(--blue); --flower-aspect: 600 / 600;">
@@ -829,14 +769,12 @@
          </div>
 
           <article class="copy">
-            <!-- ══ CANONICAL COPY: mirrored across playbook.html #ch4 and stages-of-a-project.html ══ -->
 
             <p class="lead reveal">This section outlines the full arc of the GTC Design team’s involvement across an engagement’s lifecycle. Our work is structured across four key stages, defining how we partner with agencies from initial alignment to our eventual exit: Qualifying, Discovery, Building &amp; Delivery, and Support &amp; Maintenance.</p>
             <figure class="figure reveal">
               <img class="figure__img" src="assets/diagram_4-0_engagement-arc.png" width="2005" height="209" alt="The engagement arc as a horizontal timeline: Qualify, then Discovery — Subphase 1 (discover what’s true) and Subphase 2 (discover what works) — and on into Build." />
             </figure>
 
-            <!-- 4.1 -->
             <h3 class="section-head reveal" id="s-41">4.1 Qualifying</h3>
             <p class="reveal">Before committing to a collaboration, we conduct a surface-level assessment to ensure an engagement aligns with our strategic focus. Unlike the discovery phase, which is more in-depth, this initial phase is focused on gathering high-level context and establishing a shared purpose.</p>
             <p class="reveal">The process is highly flexible, ranging from a single conversation to a few weeks of light sensing depending on the complexity of the engagement.</p>
@@ -868,7 +806,6 @@
               <li><strong>A directional estimate of effort and timeline,</strong> with honest flags on where confidence is still low.</li>
             </ul>
 
-            <!-- 4.2 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/03%20Divider.svg" alt="" />
             </div>
@@ -1063,7 +1000,6 @@
               </div>
             </details>
 
-            <!-- 4.3 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/03%20Divider.svg" alt="" />
             </div>
@@ -1098,7 +1034,6 @@
               </div>
             </div>
 
-            <!-- 4.4 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/03%20Divider.svg" alt="" />
             </div>
@@ -1133,11 +1068,10 @@
         </div>
       </section>
 
-     </div><!-- /.chapter-panel__scale -->
+     </div>
 
     </section>
 
-    <!-- ═══════════════════════ CHAPTER 5 — How We Work ═══════════════════════ -->
     <section class="section chapter-panel" id="ch5"
              data-rail="how we work"
              style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600;">
@@ -1237,11 +1171,9 @@
          </div>
 
           <article class="copy">
-            <!-- ══ CANONICAL COPY: mirrors how-we-work.html ══ -->
 
             <p class="lead reveal">We are always refining our approach to building a collaborative design team. This section is a working draft. For these principles and rituals to work, they must be debated and owned by the whole team. Take a look, add your feedback, and come ready to workshop them in our next session.</p>
 
-            <!-- 5.1 -->
             <h3 class="section-head reveal" id="s-51">5.1 Our Operating Principles</h3>
             <p class="reveal">Operating principles aren’t just abstract ideals — they’re about how we make decisions. These four pillars outline our shared framework for how we collaborate, protect our focus, and drive meaningful results.</p>
             <div class="rulegrid reveal">
@@ -1263,7 +1195,6 @@
               </div>
             </div>
 
-            <!-- 5.2 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/03%20Divider.svg" alt="" />
             </div>
@@ -1364,7 +1295,6 @@
               </div>
             </div>
 
-            <!-- 5.3 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/03%20Divider.svg" alt="" />
             </div>
@@ -1405,7 +1335,6 @@
               </div>
             </div>
 
-            <!-- 5.4 -->
             <div class="section-divider reveal" aria-hidden="true">
               <img src="assets/03%20Divider.svg" alt="" />
             </div>
@@ -1424,23 +1353,14 @@
 
         </div>
       </section>
-     </div><!-- /.chapter-panel__scale -->
+     </div>
     </section>
 
-    <!-- ═══════════════════════ ABOUT — embedded reader panel (mirrors about.html) ═══════════════════════
-         The reader's terminal panel: scrolling past ch5 transitions seamlessly into About
-         (panelTransitions makes ch5 hand off, About being last never scales out). Dark
-         surface (.page-body.about-page), full-bleed hero + pinned horizontal gallery + the
-         "Behind the Playbook" credits — the gallery/topbar-invert motion is driven by aboutPanel()
-         in js/chapter.js (about.js is NOT loaded here; the reader owns one ScrollSmoother). -->
     <section class="section chapter-panel chapter-panel--about" id="about"
              data-rail="about" data-rail-fg="var(--chalk)"
              style="--accent: var(--orange);">
      <div class="chapter-panel__scale">
       <section class="page-body about-page">
-        <!-- Hero (Figma 2052:1275): full viewport — topbar at top, head row
-             (title left / intro right, space-between) centred in the gap, the
-             illustration full-bleed along the bottom edge. -->
         <div class="about-hero">
           <div class="about-hero__head">
             <h1 class="about-page__title reveal">Behind the playbook</h1>
@@ -1450,9 +1370,6 @@
                width="3420" height="922" alt="" />
         </div>
 
-        <!-- Pinned horizontal gallery — the strip translates left as you scroll
-             (aboutPanel/galleryScroll). Same-height images, natural widths.
-             Under reduced motion the section unpins and swipes natively (CSS). -->
         <section class="about-gallery" aria-label="Photos of the GTC design team">
           <div class="about-gallery__strip">
             <figure class="about-gallery__item"><img src="assets/photos/about-5.jpg" width="1008" height="756" alt="A playbook alignment session — the team gathered around a screen reading 'A place to align, not a place to learn'." /></figure>
@@ -1466,8 +1383,6 @@
           </div>
         </section>
 
-        <!-- Behind the Playbook — credits (mirrors about.html verbatim). Rows fade
-             up via the shared .reveal batch (js/chapter.js copyReveals). -->
         <section class="about-crew" aria-label="The crew behind the playbook">
           <div class="about-crew__main">
             <p class="about-crew__intro reveal">Behind every framework and flow chart is a tight-knit crew of system-mappers, word-smiths, and pixel-pushers trying to make this document a little more human.</p>
@@ -1539,15 +1454,13 @@
           </div>
         </section>
       </section>
-     </div><!-- /.chapter-panel__scale -->
+     </div>
     </section>
 
   </main>
-    </div><!-- /#smooth-content -->
-  </div><!-- /#smooth-wrapper -->
+    </div>
+  </div>
 
-  <!-- Drawer Menu removed site-wide (2026-07): the always-visible Table of Contents
-       (now including About) + the mobile veil are the sole navigation. -->
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!-- html.js-pending: FOUC shield. Lifted by chapter.js once initial states are
-     set, or by gate.js's 3 s safety timer. See css/styles.css §FOUC shield. -->
+<!-- The GTC Design Playbook — built by the GovTech Consulting Design Team. -->
 <html lang="en" class="js-pending">
 <head>
   <meta charset="UTF-8" />
@@ -32,15 +31,12 @@
   <script src="js/gate.js"></script>
 </head>
 <body style="--hero-bg: var(--orange); --hero-title: var(--chalk); --accent: var(--orange); --flower-aspect: 600 / 600;">
-  <!-- ───────────────────────── LEFT RAIL (fixed) ───────────────────────── -->
-  <!-- Top header: logo (→ home) -->
   <header class="topbar">
     <a class="topbar__logo" href="index.html" aria-label="The GTC Design Playbook — home">
       <img src="assets/playbook_logo.svg" alt="The GTC Design Playbook" />
     </a>
   </header>
 
-  <!-- Left rail (fixed) — rotated chapter label; revealed below the coloured hero -->
   <div class="rail" aria-label="Section navigation">
     <span class="rail__divider" aria-hidden="true"></span>
     <button class="rail__toc" type="button" aria-label="Show table of contents" title="Show table of contents">
@@ -52,9 +48,6 @@
     <p class="rail__label">how we work</p>
   </div>
 
-  <!-- Mobile section bar (≤768px) — pinned to the viewport bottom; the arrows step
-       heading-to-heading and the label opens the TOC sheet. Driven by js/chapter.js
-       (mobileTocBar). Fixed elements must live outside #smooth-wrapper. -->
   <nav class="toc-bar" aria-label="Sections" hidden>
     <button class="toc-bar__arrow toc-bar__arrow--prev" type="button" aria-label="Previous section">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
@@ -77,14 +70,12 @@
     <div id="smooth-content">
   <main class="page">
 
-    <!-- ───────────────────────── HERO (orange cover) ───────────────────────── -->
     <section class="page-hero">
       <h1 class="page-hero__title">
         <span class="reveal">05</span>
         <span class="reveal">How We Work</span>
       </h1>
 
-      <!-- Top-right graphic (static — no animation). -->
       <div class="hero-flower" aria-hidden="true">
         <div class="hero-flower__spin">
           <img src="assets/5_Graphic.svg" alt="" />
@@ -92,7 +83,6 @@
       </div>
     </section>
 
-    <!-- ───────────────────────── BODY ───────────────────────── -->
     <section class="page-body">
       <div class="page-body__canvas">
 
@@ -183,14 +173,12 @@
             </ul>
           </div>
         </nav>
-       </div><!-- /.body-left -->
+       </div>
 
         <article class="copy">
-          <!-- ══ CANONICAL COPY: mirrored verbatim into playbook.html #ch5 ══ -->
 
           <p class="lead reveal">We are always refining our approach to building a collaborative design team. This section is a working draft. For these principles and rituals to work, they must be debated and owned by the whole team. Take a look, add your feedback, and come ready to workshop them in our next session.</p>
 
-          <!-- 5.1 -->
           <h3 class="section-head reveal" id="s-51">5.1 Our Operating Principles</h3>
           <p class="reveal">Operating principles aren’t just abstract ideals — they’re about how we make decisions. These four pillars outline our shared framework for how we collaborate, protect our focus, and drive meaningful results.</p>
           <div class="rulegrid reveal">
@@ -212,7 +200,6 @@
             </div>
           </div>
 
-          <!-- 5.2 -->
           <div class="section-divider reveal" aria-hidden="true">
             <img src="assets/03%20Divider.svg" alt="" />
           </div>
@@ -313,7 +300,6 @@
             </div>
           </div>
 
-          <!-- 5.3 -->
           <div class="section-divider reveal" aria-hidden="true">
             <img src="assets/03%20Divider.svg" alt="" />
           </div>
@@ -354,7 +340,6 @@
             </div>
           </div>
 
-          <!-- 5.4 -->
           <div class="section-divider reveal" aria-hidden="true">
             <img src="assets/03%20Divider.svg" alt="" />
           </div>
@@ -375,8 +360,8 @@
     </section>
 
   </main>
-    </div><!-- /#smooth-content -->
-  </div><!-- /#smooth-wrapper -->
+    </div>
+  </div>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
