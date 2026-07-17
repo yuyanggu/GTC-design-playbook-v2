@@ -88,6 +88,30 @@ These are the highest-value notes in the repo — preserve them.
   `float:left`). **Do NOT hand-roll a per-frame `gsap.ticker` follow** that re-reads
   `getBoundingClientRect` and re-applies the transform: it lands a frame behind the smoother and the
   nav visibly **lags**. The ScrollTrigger pin is internally synced → glued with no lag. (`stickyToc`.)
+- **…but `pinType:"transform"` is a DESKTOP rule, and applying it on touch causes juddering.**
+  With `smoothTouch: 0` ScrollSmoother doesn't merely stop smoothing on a touch-only device — it
+  **stands down completely**: `#smooth-wrapper` stays `position:relative; overflow:visible` and
+  `#smooth-content` carries **no transform at all** (verified via CDP with `pointer:coarse` /
+  `hover:none` forced so `ScrollTrigger.isTouch === 1`). So the reason `fixed` can't be used on
+  desktop simply **does not exist on touch** — and transform-pinning there is actively harmful: it
+  holds the element still by re-applying a JS counter-translate that grows to the pinned scroll
+  distance (the About gallery's reached **2275px @390**) on *every scroll event*. iOS coalesces
+  momentum-scroll events, so that translate goes **stale for whole frames** and the pinned element
+  visibly **vibrates** against the natively-scrolling page. `position:fixed` is compositor-held —
+  no per-frame JS, nothing to go stale. Gate on **`ScrollTrigger.isTouch === 1`** (exactly the
+  condition ScrollSmoother itself uses to stand down — `isTouch === 2`, a touch *laptop*, keeps the
+  smoother and so must keep `"transform"`), not on a width breakpoint. (`aboutPanel` in
+  `js/chapter.js`, `galleryScroll` in `js/about.js`.)
+- **`will-change: transform` silently kills `pinType:"fixed"`** — it makes the element a containing
+  block for fixed descendants, so a "fixed" pin inside it is positioned against *it* rather than the
+  viewport and just scrolls away (measured: a fixed probe drifted to `-768` → `-1905` instead of
+  holding at `150`). This is the real reason the About gallery couldn't use fixed pinning:
+  `.chapter-panel__scale` hints `will-change: transform, opacity` for the chapter→chapter
+  transition — but `#about` is the **last** panel, and `panelTransitions` only animates
+  `arr.slice(0, -1)`, so About's wrapper is **never** animated (`gsap.getTweensOf` → 0) and the hint
+  was dead weight. `css/playbook.css` now clears it for `.chapter-panel--about` only; ch1–ch5 keep
+  theirs. When a fixed pin mysteriously no-ops, **walk the ancestor chain for `transform`,
+  `will-change`, `filter`, `perspective`, `contain`** before suspecting ScrollTrigger.
 - **`focus()` scrolls the page under ScrollSmoother — `preventScroll` can't stop it.** The
   smoother installs its own window `focusin` handler that `scrollTo(target, false, "center
   center")`s any focused element it considers out of view (`{preventScroll:true}` only suppresses

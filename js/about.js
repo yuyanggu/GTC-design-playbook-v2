@@ -71,10 +71,15 @@ function galleryReveal() {
 
 /* ---- Horizontal gallery: the section pins at viewport centre and the strip
    translates left by its overflow as you keep scrolling — scroll distance =
-   the strip's own width, so the pace feels 1:1. pinType:"transform" is
-   required under ScrollSmoother (see .claude/docs/gotchas.md). Under reduced
-   motion the section stays in flow and the strip swipes natively (CSS
-   overflow-x). ---- */
+   the strip's own width, so the pace feels 1:1. Under reduced motion the section
+   stays in flow and the strip swipes natively (CSS overflow-x).
+
+   pinType is per-device (mirrors aboutPanel() in js/chapter.js, which carries the
+   full reasoning): "transform" is required under ScrollSmoother on desktop (see
+   .claude/docs/gotchas.md), but on a touch-only device the smoother stands down
+   (smoothTouch:0 → smooth 0, no transform on #smooth-content) and transform-pinning
+   only buys a JS counter-translate re-applied every scroll event — which iOS's
+   coalesced momentum-scroll events leave stale, making the strip judder. ---- */
 function galleryScroll() {
   if (reduce) return;
   const section = document.querySelector(".about-gallery");
@@ -93,7 +98,7 @@ function galleryScroll() {
     scrollTrigger: {
       trigger: section,
       pin: true,
-      pinType: "transform",
+      pinType: ScrollTrigger.isTouch === 1 ? "fixed" : "transform",
       scrub: true,
       start: "center center",
       end: () => "+=" + strip.scrollWidth,

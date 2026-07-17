@@ -888,8 +888,23 @@ function aboutPanel() {
 
   // Pin the gallery at viewport centre and translate the strip left by its overflow —
   // scroll distance = the strip's own width, so the pace reads 1:1. A short dead zone
-  // (holdFraction) keeps it still until the rise above has settled. pinType:"transform"
-  // is required under ScrollSmoother (see .claude/docs/gotchas.md).
+  // (holdFraction) keeps it still until the rise above has settled.
+  //
+  // pinType is per-device, and the split is NOT cosmetic:
+  // • Desktop — the smoother transforms #smooth-content, so position:fixed can't
+  //   survive it and pinning MUST be "transform" (see .claude/docs/gotchas.md).
+  // • Touch-only — ScrollSmoother stands down completely (smoothTouch:0 → smooth 0;
+  //   #smooth-content carries no transform, the wrapper is static), so there is
+  //   nothing for fixed to fight. Transform-pinning there buys nothing and costs a
+  //   lot: it holds the gallery still by re-applying a JS counter-translate — growing
+  //   to the strip's full width (~2275px @390) — on every scroll event. iOS coalesces
+  //   momentum-scroll events, so that translate goes stale for whole frames and the
+  //   gallery visibly judders against the natively-scrolling page. position:fixed is
+  //   held by the compositor: no per-frame JS, nothing to go stale.
+  // isTouch===1 is exactly the condition ScrollSmoother itself uses to stand down,
+  // so this tracks it rather than guessing at a breakpoint. (Requires the will-change
+  // override on .chapter-panel--about .chapter-panel__scale in css/playbook.css —
+  // otherwise that wrapper is a containing block and fixed silently no-ops.)
   if (strip && gallery) {
     const holdFraction = 0.16;
     const holdEase = (p) => (p < holdFraction ? 0 : (p - holdFraction) / (1 - holdFraction));
@@ -897,7 +912,8 @@ function aboutPanel() {
       x: () => -(strip.scrollWidth - window.innerWidth),
       ease: holdEase,
       scrollTrigger: {
-        trigger: gallery, pin: true, pinType: "transform", scrub: true,
+        trigger: gallery, pin: true, pinType: ScrollTrigger.isTouch === 1 ? "fixed" : "transform",
+        scrub: true,
         start: "center center", end: () => "+=" + strip.scrollWidth, invalidateOnRefresh: true,
       },
     });

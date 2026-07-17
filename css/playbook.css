@@ -42,5 +42,13 @@ html.deeplinking #smooth-content { opacity: 0; }
   will-change: transform, opacity;
 }
 
+/* …except on #about, which is the LAST panel — panelTransitions() only animates
+   arr.slice(0, -1), so this wrapper never receives a transform and the hint above
+   is dead weight. It is not harmless dead weight: `will-change: transform` makes
+   the element a containing block for fixed-position descendants, which forces the
+   photo gallery's pin to fall back to transform-pinning (a JS counter-translate
+   re-applied every scroll event). See aboutPanel() in js/chapter.js. */
+.chapter-panel--about .chapter-panel__scale { will-change: auto; }
+
 /* The reader has no separate "page" wrapper; chapters butt directly together. */
 .playbook { display: block; }
