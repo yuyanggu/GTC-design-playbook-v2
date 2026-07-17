@@ -354,7 +354,7 @@ function pinwheelScene() {
   const spin = document.createElement("div");
   spin.className = "pinwheel__spin";
   const img = document.createElement("img");
-  img.src = "assets/Align_Graphic.svg";
+  img.src = "assets/Align_Graphic.webp";
   img.alt = "";
   spin.appendChild(img);
   trav.appendChild(spin);
