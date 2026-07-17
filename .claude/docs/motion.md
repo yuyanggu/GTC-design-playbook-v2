@@ -11,14 +11,15 @@ button. Chapter/reader motion lives with its surface ([chapter-pages.md](chapter
   (`#smooth-wrapper > #smooth-content`) runs on **every surface** — the **landing gets a heavier
   glide (`smooth: 1.7`)**, chapter pages + the reader stay at `smooth: 1` (all `smoothTouch: 0`, so
   touch scrolls natively). GSAP also drives the scrubbed/once scenes, scroll fades, the pinwheel,
-  the intro reveal, the Menu drawer, the landing shelf, the cloud drift + parallax, and the Explore
-  magnetic pull.
+  the intro reveal, the landing shelf, and the cloud drift + parallax.
 - **CustomEase** (now-free GSAP plugin) is vendored + registered and **in use**: the About popup's
   `hrOut` ease (`cubic-bezier(0.43,0.195,0.02,1)`, ported from humanistreview.ai — see the popup
-  section below) and `chapter.js`'s `tocSlide`. **CustomWiggle** is vendored + registered but
-  **unused** (the idle `wiggle()` was removed — the button is static at rest); kept for a possible
-  hover wiggle.
-- **motion.dev (Motion One)** is used for **one** entrance only (`.titleblock__media` load-in).
+  section below), `chapter.js`'s `tocSlide`, and the cross-page fade (`transition.js`).
+  **CustomWiggle was removed 2026-07** — it never created a wiggle but blocked render on all 9 pages.
+- **motion.dev (Motion One) was removed 2026-07.** Its one entrance animated `.titleblock__media`,
+  an element that no longer exists, and nothing loaded `vendor/motion.esm.js`. GSAP owns everything
+  now. The Motion-One-vs-GSAP lessons in [gotchas.md](gotchas.md) still apply to any WAAPI/CSS
+  animation that fights GSAP over a property.
   Everything else is GSAP — see the "two libraries over one property" gotcha.
 
 ## Scroll choreography (home-v3 — unpinned, fully native)
@@ -259,7 +260,7 @@ Ours plays the same beats around a real page load:
   replays the fade with GSAP, which is what gives the back button its fade.
 - **Prefetch:** `pointerover` on any `a[href]`/`[data-href]` appends `<link rel="prefetch">` (HR
   fetch-caches on hover), so the beat between fade-out and fade-in stays a quiet blink.
-- **Skips to an instant navigation:** reduced motion, the password gate, an already-transitioning
+- **Skips to an instant navigation:** reduced motion, missing GSAP, an already-transitioning
   page (`leaving` latch).
 
 ## Arrow fade (load-in + cover-exit over one property)
@@ -279,12 +280,12 @@ scale "breathe". Rebuilt on resize. No-op under reduced motion. The **scroll par
 choreography above) lives on the `.clouds` container — a channel the per-cloud tweens never touch —
 so drift, breathe, edge-fade and parallax coexist and the parallax survives the resize rebuild.
 
-## Magnetic button ("True button")
+## Magnetic button ("True button") — REMOVED 2026-07
 
-`magneticButtons()` wires every `.mag-zone` (field) → `.mag-btn` (pill, transform target) →
-`.mag-btn__bg` + `.label`. Static at rest; on `mousemove` `gsap.utils.mapRange` drives the pull
-(pill `strength` 0.4, label 0.24, both `overwrite:true`), returning with `elastic.out(1,0.4)` on
-leave. Only the **`--explore`** variant remains (Figma `2008:147`): pink→peach pill
-(`READ THE PLAYBOOK`) on the landing; `.mag-btn__bg` carries the
-`linear-gradient(0deg,#ffa8cd,#fdd193)` + inset `1px rgba(0,0,0,.2)` stroke. (The Menu's old
-`--back` variant was removed with the bookshelf.)
+`magneticButtons()` and the whole `.mag-*` component are gone (production pass). It wired a
+mouse-following pill via `gsap.utils.mapRange`, returning with `elastic.out(1,0.4)`. By the end it
+only ever bound the drawer Menu's `--back` button, and the Menu went in 2026-07 — the landing's
+`--explore` pill had already been replaced by the inline `.intro__explore` run inside the intro
+paragraph, which rides the paragraph's own fade-up and needs no JS. Confirmed dead at runtime (0
+`.mag-zone` on the live landing) before removal. Recover from git history if the pill is ever
+wanted back.

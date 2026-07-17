@@ -91,7 +91,7 @@ ScrollSmoother all live in one document without conflict.
 The reader uses **path URLs, not hashes**: `/chapter-2`, `/chapter-2/designing-for-everyone`
 (section level — subsections scroll-track but the URL stays at the section). The scheme lives in
 **`js/routes.js`** (`window.GTCRoutes`, a classic `<head>` script loaded before everything, like
-`gate.js`): a single `SECTION_SLUGS` table maps `s-XY` ids ⇄ slugs (chapters derive `/chapter-N`
+the modules): a single `SECTION_SLUGS` table maps `s-XY` ids ⇄ slugs (chapters derive `/chapter-N`
 from `chN`). To add/rename a section, edit that table — it's the source of truth. `GTCRoutes` exposes
 `idToPath`, `pathToId`, `isReaderPath`.
 

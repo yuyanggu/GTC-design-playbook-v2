@@ -22,10 +22,10 @@ was retired. **Nothing is "coming soon" any more** — the last content update (
 Playbook (1).docx`, 2026-07) added the Foreword rewrite (welcome intro + "For GTC Designers" / "For
 Friends of Design"), the new **01 Who We Are** (short chapter), and the new **05** (5.1 Operating
 Principles · 5.2 Rituals & Cadences · 5.3 How We Show Up · 5.4 The Practice in Practice), and renamed
-the two discovery subphases to **"Uncover What is True" / "Identify What Works"** in 02/04. **05 uses
-placeholder art** (reuses `4_Graphic.svg` / `03 Divider.svg` / `menu_4*.svg`) — bespoke
-`5_Graphic.svg`, `05 Divider.svg`, `menu_5.svg` are still wanted. The docx's Sentient/Clash Display
-typeface colophon was intentionally omitted (this site uses DM Sans / Boldonse).
+the two discovery subphases to **"Uncover What is True" / "Identify What Works"** in 02/04. **05 now
+has its own art** — `5_Graphic.webp` and `menu_5{,_hover}.webp` are bespoke and live (they were
+placeholders reusing 04's; a bespoke `05 Divider.svg` is still wanted). The docx's Sentient/Clash
+Display typeface colophon was intentionally omitted (this site uses DM Sans / Boldonse).
 
 ## Detailed docs (`.claude/docs/`)
 
@@ -38,18 +38,30 @@ Read the file that matches your task — each is focused and cross-linked.
 | [motion.md](.claude/docs/motion.md) | You're working on landing motion — the unpinned cover scroll, gradient streaks, the pinwheel, the intro reveal, cloud drift + parallax, or the magnetic button; or need the GSAP-vs-Motion-One / ScrollSmoother philosophy. |
 | [chapter-pages.md](.claude/docs/chapter-pages.md) | You're editing a chapter page — layout, hero, TOC, copy blocks, diagrams/dividers, or the left rail. Also how to build a new chapter. |
 | [reader.md](.claude/docs/reader.md) | You're working on `playbook.html` — panel transitions, snap, the black/rounded-corner look, TOC coexistence, or deep-linking. |
+| [markup.md](.claude/docs/markup.md) | You need to know **why** a page's markup is shaped the way it is — the canonical-copy mirror map, the `#smooth-wrapper` rule, the FOUC contract, the retired blocks. The pages' inline comments were moved here in the 2026-07 production pass. |
 | [menu.md](.claude/docs/menu.md) | You're working on the drawer Menu or the landing bookshelf. |
 | [gotchas.md](.claude/docs/gotchas.md) | **Before** touching motion, pinning, or anything that fights over a transform. Highest-value lessons in the repo. |
 
 ## Tech stack
 
 - **Plain HTML / CSS / vanilla JS** (ES modules). No framework, no build step.
-- **GSAP + ScrollTrigger + ScrollSmoother** own almost all motion (every surface uses ScrollSmoother
-  now — the landing at a heavier `smooth: 1.7`, others at `smooth: 1`). **CustomEase + CustomWiggle**
-  vendored + registered but unused.
-- **motion.dev (Motion One)** — one entrance only (`.titleblock__media`).
+- **GSAP + ScrollTrigger + ScrollSmoother own ALL motion** (every surface uses ScrollSmoother now —
+  the landing at a heavier `smooth: 1.7`, others at `smooth: 1`). **CustomEase** is vendored and
+  genuinely used (`hrOut`, the About popup + cross-page fade).
+- **Motion One and CustomWiggle were removed 2026-07** (production pass). Motion One's one entrance
+  animated `.titleblock__media`, an element that no longer exists, and nothing loaded
+  `vendor/motion.esm.js`; CustomWiggle never created a wiggle but blocked render on all 9 pages.
+  `vendor/` is now four files: gsap · ScrollTrigger · ScrollSmoother · CustomEase.
+- **Art is WebP** (2026-07). The Figma SVG exports wrapped base64 rasters in mask layers, so size
+  bore no relation to render size (`menu_2.svg` was a 100×100 icon weighing 380KB). They're
+  rasterized at 2× their render box. `1_Graphic.svg` stays SVG — it's true vector.
+  **To re-export art, don't ship the raw Figma SVG** — rasterize it (see the production-pass commits
+  for the headless-Chrome → `cwebp` recipe) or the landing regains several MB.
 - Everything is **vendored locally** (`vendor/`); fonts self-hosted (`assets/fonts/`). Do not switch
   to CDNs. See [architecture.md](.claude/docs/architecture.md) for the full file map.
+- **No password gate** (removed 2026-07 for public launch). The 3s FOUC-shield safety timer it used
+  to carry now lives inline in each `<head>` — keep it there; without it a failed module load
+  strands the page blank-chalk.
 
 ## Run / preview
 
@@ -62,10 +74,43 @@ headlessly via **CDP** — see [gotchas.md](.claude/docs/gotchas.md) (headless v
 project memory `headless-motion-verification`.
 
 > **Reader clean URLs need a rewriting host.** The reader is served at clean paths
-> (`/chapter-2/designing-for-everyone`) via `vercel.json` / `_redirects` rewriting `/chapter-*` →
-> `/playbook.html`. Plain `http.server` doesn't rewrite, so locally open `/playbook.html` directly
-> (deep-path reloads only resolve once deployed, or behind a rewrite shim). See
-> [reader.md](.claude/docs/reader.md) → "Clean URLs & deep-linking".
+> (`/chapter-2/designing-for-everyone`) via `serve.json` / `vercel.json` / `_redirects` rewriting
+> `/chapter-*` → `/playbook.html`. Plain `http.server` doesn't rewrite, so locally open
+> `/playbook.html` directly (deep-path reloads only resolve once deployed, or behind a rewrite
+> shim). To exercise the **real** routing locally, run `npx serve . -l 8125` — that is exactly what
+> the deployed image runs. See [reader.md](.claude/docs/reader.md) → "Clean URLs & deep-linking".
+
+## Deploy
+
+Northflank builds the `Dockerfile` on push (`.gitlab-ci.yml` disables pipelines; Git integration
+does the work). No `package.json` → the Dockerfile takes its **`static-html`** branch, skips any
+build, and the runtime runs **`serve . -l 3000`**.
+
+- **`serve.json` is the live production config**, not a local-dev file — `serve` reads it from the
+  directory it serves. It owns the rewrites *and* the cache headers. It must never be
+  `.dockerignore`d. (`vercel.json` / `_redirects` are kept in step for other hosts.)
+- **`.dockerignore` is load-bearing.** The Dockerfile does `COPY . .`, so anything not ignored is
+  published. It keeps out `CLAUDE.md`, `.claude/` (incl. `markup.md`), `docs/`, `playbook-content/`
+  (the `.docx` drafts), `.figma_ref/`, and 18MB of superseded Figma diagram exports. **Adding a new
+  internal folder means adding it there.**
+- `/foreword` serves the **standalone `foreword.html`**, not the reader — the reader's Chapter 0
+  panel was retired 2026-07, so `routes.js` has no `ch0` and `/foreword` is not a reader path.
+
+## 🚩 Before launch
+
+- **Open Graph / link previews are NOT wired up.** No page has `og:title` / `og:image` /
+  `twitter:card` / `rel=canonical`, so pasting a playbook link into Slack, Teams or LinkedIn renders
+  a bare URL instead of a preview card. This matters a lot for a playbook whose whole point is being
+  shared around. **Blocked on one thing: the production domain**, because `og:image` and `canonical`
+  must be absolute URLs — a relative path leaves the card blank in most scrapers, and a wrong domain
+  baked into 9 pages renders broken.
+  **The share card already exists**: `assets/og-image.webp` (1200×630, 19KB — pinwheel + Boldonse
+  lockup on chalk). Once the domain is known this is a ~5-minute job: add the tags to all 9 pages
+  using each page's existing `<title>` + `meta description` (they're all distinct and good).
+- **Rotate the GitLab token.** The `gitlab` remote has a `glpat-…` personal access token embedded
+  directly in its URL in `.git/config`. It isn't committed and `.dockerignore` excludes `.git`, so
+  nothing leaks — but tokens in remote URLs get pasted into terminals and screenshots. Use a
+  credential helper.
 
 ## Status / next
 
@@ -190,12 +235,18 @@ project memory `headless-motion-verification`.
   early flip would put a white logo on chalk. Left **rail hidden** on mobile; `.copy` runs full-width with even
   side padding; foreword drops its `--fw-rail` gutter. Desktop unchanged. See [menu.md](.claude/docs/menu.md).
 - All surfaces: responsive + reduced-motion, no console errors.
-- ⏭️ **Placeholder art / diagrams still wanted.** Chapter **05** reuses `4_Graphic.svg` (hero),
-  `03 Divider.svg`, and `menu_4*.svg` — bespoke `5_Graphic.svg`, `05 Divider.svg`, `menu_5.svg` would
-  be nicer. Chapter **01** uses its own `1_Graphic.svg` hero (renders fine at hero size despite the
-  noted petal-clipping issue elsewhere), `01 Divider.svg`, `menu_1*.svg`. **Diagrams:** every
-  `.diagram-ph` placeholder still needs a drawn SVG (2.3 GTC path, 3.1 engagement arc, 3.3 capability
-  arc, 4.0 full arc, 4.2 dual-track + prototype spectrum). Latest docx source:
-  `playbook-content/Draft_ GTC Design Playbook (1).docx`.
+- ✅ **Production pass (2026-07)** — password gate removed; all 153 inline HTML comments moved to
+  [markup.md](.claude/docs/markup.md) (each page keeps one byline comment); art converted to WebP
+  (**landing 6.3MB → 552KB**, its heaviest asset now a font); dead code from the menu removal and the
+  "coming soon" era deleted; `.dockerignore` added so internal material stops being published;
+  `/foreword` routing fixed. See the **🚩 Before launch** section above — **Open Graph is still
+  outstanding and needs the production domain.**
+- ⏭️ **Diagrams still wanted.** Every `.diagram-ph` placeholder still needs a drawn diagram (2.3 GTC
+  path, 3.1 engagement arc, 3.3 capability arc, 4.0 full arc, 4.2 dual-track + prototype spectrum).
+  The superseded Figma exports (`assets/0? Diagram *.svg`) are kept in the repo as source but are
+  `.dockerignore`d — they're 18MB of base64-in-SVG and must not ship. A bespoke `05 Divider.svg` is
+  also still wanted (05 reuses `03 Divider.svg`). Latest docx source:
+  `playbook-content/Draft_ GTC Design Playbook (1).docx` — note a newer `(2).docx` sits beside it,
+  unreviewed.
 - ℹ️ Mirrored to a second GitHub repo `yuyanggu/GTC-design-playbook-v2` (`main`) in addition to the
   original `origin` (`yuyanggu/GTC-Design-Playbook`, branch `feat/home-v2`).

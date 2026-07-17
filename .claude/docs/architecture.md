@@ -83,7 +83,8 @@ sibling `.html`; reader → in-page `#chN`). Opened by any `[data-menu-open]`.
 
 Booted at the bottom (`smoothScroll()` first). The **index-only scenes early-return when their
 elements are absent**, so loading `main.js` on a chapter page is a safe no-op for them.
-`smoothScroll()`, `menuScene()`, and `magneticButtons()` run everywhere.
+`smoothScroll()` runs everywhere. (`menuScene()` and `magneticButtons()` were removed with the
+drawer Menu — 2026-07.)
 
 | Function | Role | Detail |
 |---|---|---|
@@ -96,8 +97,6 @@ elements are absent**, so loading `main.js` on a chapter page is a safe no-op fo
 | `logoBar()` | Fixed top-left wordmark (`.home-logo`, body-level): hidden until the page bottom is first reached, then shown as a persistent top bar over the content but hidden over the hero cover (no duplicate lockup). | [motion.md](motion.md) |
 | `pinwheelScene()` | Builds the fixed pinwheel traveler; `place()` blends position via `prox.{rise,align}` + tracks the slot rect; the "wind" spin. | [motion.md](motion.md) |
 | `homeBooks()` | Parks `#homeShelf` books/spines, plays their rise-in once the shelf enters, wires knock/hover. | [menu.md](menu.md) |
-| `menuScene()` | Open/close the `#menu` drawer (one interruptible timeline). | [menu.md](menu.md) |
-| `magneticButtons()` | Wires every `.mag-zone` magnetic button (drives the Explore CTA). | [motion.md](motion.md) |
 | `aboutModal()` | The "Sail through" About popup: a counter-translate wipe entrance (mask/panel ±100%, `hrOut` CustomEase), masked-line text + image clip/scale reveals, scroll-lock while open, ESC/scrim close. Reduced motion intentionally ignored. No-ops without `#aboutModal`. | [motion.md](motion.md) |
 
 ### `js/chapter.js` — runs on chapter surfaces
@@ -143,16 +142,16 @@ prefetches the destination. The **entrance** is pure CSS (`gtc-page-in` in `styl
 `backwards` — see [gotchas.md](gotchas.md): CSS animation fill vs GSAP) + a `pageshow` handler that
 replays the fade on bfcache restores (browser back/forward). Deep-linked reader arrivals get their
 entrance from `revealDeepLink` (`chapter.js`), matched to the same 1.3s/`hrOut`. Skips (instant
-nav): reduced motion, the password gate, same-page hash links, modifier/new-tab clicks. Full
+nav): reduced motion, missing GSAP, same-page hash links, modifier/new-tab clicks. Full
 choreography in [motion.md](motion.md).
 
 ### `js/routes.js` — clean-URL route table (reader + landing)
 
-Classic `<head>` script (loaded before `gate.js`'s siblings and the modules) exposing
+Classic `<head>` script (runs first, synchronously, before the modules) exposing
 `window.GTCRoutes` (`idToPath`/`pathToId`/`isReaderPath`). One `SECTION_SLUGS` table is the source of
-truth mapping `#s-XY` ids ⇄ `/chapter-N/<slug>` paths (chapters derive `/chapter-N`). **Special
-case:** `ch0` maps to `/foreword` (not `/chapter-0`); `isReaderPath` matches `/foreword` in addition
-to `/chapter-*`. Read by the anti-flash inline script, `handleDeepLink`/`urlSync` (`chapter.js`),
+truth mapping `#s-XY` ids ⇄ `/chapter-N/<slug>` paths (chapters derive `/chapter-N`). **`ch0` is
+gone** (2026-07): the reader's Foreword panel was retired, so `/foreword` is NOT a reader path — it
+serves the standalone `foreword.html` directly. Read by the anti-flash inline script, `handleDeepLink`/`urlSync` (`chapter.js`),
 and `wireNav` (`main.js`). Paths are server-rewritten — `vercel.json` (Vercel) + `_redirects`
 (Netlify/CF) map `/chapter-*` and `/foreword` → `/playbook.html`; `playbook.html` carries
 `<base href="/">` so its relative assets survive a two-segment path. Full scheme + traps in
@@ -161,20 +160,30 @@ and `wireNav` (`main.js`). Paths are server-rewritten — `vercel.json` (Vercel)
 ## Other directories
 
 - **`assets/`** — graphics + self-hosted `fonts/`. Key files:
-  - `Opening_Title.svg` (606×230 navy lockup), `playbook_logo.svg` (topbar logo), `arrow.svg`
-    (57×45), `Align_Graphic.svg` (cover pinwheel), `title_streaks_2.png` (gradient "PLAYBOOK";
-    `Title_Streaks.png` older, unused), `favicon.png`, `pullmark.svg` (15² quote mark).
-  - Chapter heroes: `1_Graphic.svg` (549×554 four-petal flower — ch1; **known issue:** its internal
-    `clipPath` crops petals to a 549×554 box), `2_Graphic.svg` (230×229 — ch2), `3_Graphic.svg`
-    (600×600 — ch3), `4_Graphic.svg` (not placed yet).
-  - `menu_{0..4}.svg` / `menu_{0..4}_hover.svg` (mono→colour icons — used by both drawer rows and
-    landing books; `menu_0.*` = Foreword glyph added this session), `book_element_{1..5}.svg` (gray shelf-spine clusters, 294px tall — landing shelf only).
-  - **Chapter graphics** (filenames have spaces + en-dashes → referenced URL-encoded):
-    `01 Divider.svg` / `02 Divider.svg` / `03 Divider.svg` (section dividers); diagrams
-    `02 Diagram 1 – Two failure nodes.svg` (C2), `03 Diagram 1 – Full Project Arc.svg`,
-    `03 Diagram 2 – Discovery.svg`, `03 Diagram 3 – The prototype spectrum.svg`,
-    `03 Diagram 4 – The rapid experimentation cycle.svg` (C3).
+  > **Art is WebP since the 2026-07 production pass.** The Figma SVG exports wrapped base64 rasters
+  > in mask layers, so file size bore no relation to render size (`menu_2.svg` was a 100×100 icon
+  > weighing 380KB). Each was rasterized in headless Chrome at 2× its render box and encoded to
+  > WebP — pixel-faithful, 99% smaller. **Re-exporting from Figma? Rasterize; don't ship the raw
+  > SVG.**
+
+  - `playbook_logo.svg` (topbar logo), `arrow.svg` (57×45), `Align_Graphic.webp` (cover pinwheel,
+    583K→26K), `favicon.png`, `pullmark.svg` (15² quote mark), `og-image.webp` (1200×630 share card
+    — **built but not yet wired; needs the production domain**, see CLAUDE.md).
+  - Chapter heroes: `1_Graphic.svg` (four-petal flower — ch1; **stays SVG**, it's true vector and
+    rasterizing made it *bigger*; **known issue:** its internal `clipPath` crops petals to a 549×554
+    box), `2_Graphic.webp` (ch2), `3_Graphic.webp` (ch3), `4_Graphic.webp` (ch4), `5_Graphic.webp`
+    (ch5 — bespoke now, no longer reusing 04's).
+  - `menu_{1..5}.webp` / `menu_{1..5}_hover.webp` — the landing books' icons, and the `_hover` set
+    doubles as the 40px `.callout__icon` on chapter pages, so one 200px source serves both.
+    `book_element_{1..5}.svg` (gray shelf-spine clusters, 294px tall — landing shelf only).
+  - **Diagrams** — `diagram_*.webp`. The old numbered Figma exports (`0? Diagram *.svg`,
+    `0? Divider.svg`, `Title_Streaks.png`, `Opening_Title.svg`) are unreferenced and
+    `.dockerignore`d: 18MB of base64-in-SVG kept as source for the diagrams still to be drawn.
+    Filenames have spaces + en-dashes → reference them URL-encoded if you ever wire them up.
+  - `01 Divider.svg` / `02 Divider.svg` / `03 Divider.svg` are section dividers (05 reuses 03's).
 - **`playbook-content/playbook-outline__5_.html`** — full playbook copy (source for chapter text; not served).
-- **`vendor/`** — `gsap.min.js`, `ScrollTrigger.min.js`, `ScrollSmoother.min.js`, `motion.esm.js`,
-  `CustomEase.min.js`, `CustomWiggle.min.js` (all vendored locally — do not switch to CDNs).
+- **`vendor/`** — `gsap.min.js`, `ScrollTrigger.min.js`, `ScrollSmoother.min.js`, `CustomEase.min.js`
+  (all vendored locally — do not switch to CDNs). `motion.esm.js` (Motion One) and
+  `CustomWiggle.min.js` were removed 2026-07: both were unused, and CustomWiggle blocked render on
+  all 9 pages. The site is GSAP-only.
 - **`.figma_ref/`** — Figma reference screenshots for visual diffing (not shipped/served).

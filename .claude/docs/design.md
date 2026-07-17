@@ -68,4 +68,4 @@ Reference 1440-wide frames; CSS uses fluid %/vh/clamp.
 - **Cover 1 (1440×1024):** eyebrow top 49 (≈4.78vh) centered · `Opening_Title.svg` 606×230
   dead-centered · subtitle top 665 (≈64.9vh) centered · `arrow.svg` top 934 (≈91.2vh) centered.
 - **Cover 3 (1440×1428):** title docked top 119 (≈8.3%) and grows to 599×710 with streaks ·
-  `Align_Graphic.svg` 396² at left 210 / top 915 · text block left 626 / top 915 / width 604.
+  `Align_Graphic.webp` 396² at left 210 / top 915 · text block left 626 / top 915 / width 604.
