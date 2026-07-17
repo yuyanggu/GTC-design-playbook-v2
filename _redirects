@@ -1,5 +1,10 @@
 # Netlify / Cloudflare Pages: serve the reader for clean chapter paths (200 = rewrite,
-# URL stays put). Vercel uses vercel.json instead. See js/routes.js for the scheme.
-/foreword   /playbook.html  200
+# URL stays put). Vercel uses vercel.json; the Northflank image uses serve.json
+# (the runtime runs `serve .`, which reads it). Keep all three in step.
+# See js/routes.js for the scheme.
+#
+# /foreword is NOT a reader path — the reader's Chapter 0 panel was retired
+# 2026-07, so it serves the standalone page directly.
+/foreword   /foreword.html  200
 /about      /about.html     200
 /chapter-*  /playbook.html  200

@@ -43,9 +43,10 @@
   var byId = {};   // id → path
   var byPath = {}; // path → id
 
-  // ch0 is the Foreword — it opts out of the /chapter-N scheme and lives at /foreword.
-  byId["ch0"] = "/foreword";
-  byPath["/foreword"] = "ch0";
+  // No ch0 here. The reader's Chapter 0 Foreword panel was retired 2026-07, so
+  // /foreword is NOT a reader path — it serves the standalone foreword.html
+  // directly (see serve.json / vercel.json / _redirects). Mapping it to #ch0
+  // would send the reader hunting for a panel that no longer exists.
 
   // The About panel is embedded as the reader's terminal panel (id "about") and
   // also exists as the standalone about.html; both share the /about path.
@@ -76,7 +77,7 @@
     // anti-flash inline script, which can't query the DOM yet.
     isReaderPath: function (path) {
       var p = norm(path);
-      return p === "/foreword" || p === "/about" || /^\/chapter-\d+(\/|$)/.test(p);
+      return p === "/about" || /^\/chapter-\d+(\/|$)/.test(p);
     },
   };
 })();

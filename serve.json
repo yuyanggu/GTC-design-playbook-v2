@@ -1,44 +1,75 @@
 {
   "rewrites": [
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/chapter-:n", "destination": "/playbook.html" },
-    { "source": "/chapter-:n/:section", "destination": "/playbook.html" }
+    {
+      "source": "/foreword",
+      "destination": "/foreword.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/chapter-:n",
+      "destination": "/playbook.html"
+    },
+    {
+      "source": "/chapter-:n/:section",
+      "destination": "/playbook.html"
+    }
   ],
   "headers": [
     {
-      "source": "**/*.html",
+      "source": "*.html",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     },
     {
       "source": "assets/**",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=2592000" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000"
+        }
       ]
     },
     {
       "source": "**/fonts/**",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "vendor/**",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "css/**",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, must-revalidate"
+        }
       ]
     },
     {
       "source": "js/**",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, must-revalidate"
+        }
       ]
     }
   ]

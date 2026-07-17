@@ -1,0 +1,26 @@
+# The Dockerfile does `COPY . .` and the static-html branch serves the image
+# root, so anything left here is published. Keep internal material out.
+
+.git
+.gitignore
+.DS_Store
+**/.DS_Store
+*.log
+
+# Internal working material — drafts, agent docs, design refs. Not for the public.
+CLAUDE.md
+.claude/
+docs/
+playbook-content/
+.figma_ref/
+
+# Build/deploy plumbing that the served image has no use for.
+# NOTE: serve.json is NOT listed — the runtime stage runs `serve . -l 3000`, and
+# `serve` reads serve.json from the directory it serves. It is this deploy's
+# live rewrite + caching config, so it must ship.
+Dockerfile
+Dockerfile.*
+.dockerignore
+.gitlab-ci.yml
+vercel.json
+_redirects
