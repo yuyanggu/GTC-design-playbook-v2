@@ -574,6 +574,12 @@ function aboutModal() {
   const illusMasks = gsap.utils.toArray(".about-modal__illus-mask", modal);
   const illusImgs = gsap.utils.toArray(".about-modal__illus-mask img", modal);
   const closeEls = gsap.utils.toArray("[data-about-close]", modal); // scrim + ✕
+  // The modal sits `hidden` (display:none) until opened, so `loading="lazy"` on its
+  // <img>s never fires (no layout box to intersect) — first click would otherwise
+  // reveal a blank/pop-in image. Warm the browser cache for each unique src right
+  // away so every image is already loaded by the time the reveal timeline runs.
+  new Set(illusImgs.map((img) => img.getAttribute("src")).filter(Boolean))
+    .forEach((src) => { const img = new Image(); img.src = src; });
   const main = document.querySelector("main");
   const CLIP_HIDDEN = "inset(100% 0% 0% 0%)"; // clip window collapsed to the bottom edge
   const CLIP_SHOWN = "inset(0% 0% 0% 0%)";
