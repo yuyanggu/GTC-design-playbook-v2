@@ -313,8 +313,9 @@ function introScene() {
 
   if (reduce) return;               // CSS reduced-motion block shows everything statically
 
-  // The "Sail through" CTA lives inside .intro__copy now, so it rides this fade —
-  // tweening it separately would nest a second opacity/y on top of its parent's.
+  // The "Learn what this playbook is for" CTA lives inside .intro__copy now, so it
+  // rides this fade — tweening it separately would nest a second opacity/y on top
+  // of its parent's.
   gsap.set(".intro__copy", { autoAlpha: 0, y: 14 });
 
   // Build the headline reveal at ENTER time so it matches the current wrap state
@@ -546,8 +547,8 @@ function wireBookKnockAndHover(shelf, books) {
 
 /* ============================================================================
    7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
-   (the landing "Sail through" button). Entrance is a humanistreview.ai-style
-   counter-translate wipe: the outer .mask (overflow:hidden) and inner .panel move
+   (the landing's inline "Learn what this playbook is for." link). Entrance is a
+   humanistreview.ai-style counter-translate wipe: the outer .mask (overflow:hidden) and inner .panel move
    equal-and-opposite so the card holds still while the clip window unrolls UP from
    the bottom; text lines rise out of their own clip masks and the two images uncover
    (clip reveal + a slow 1.15→1 inner scale that outlives the reveal). Close rolls the
@@ -604,7 +605,7 @@ function aboutModal() {
     root.style.overflow = "";
     document.body.style.overflow = "";
     if (smoother) smoother.paused(false);
-    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to "Sail through"
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to the opener link
   }
 
   // Park every animated target at its off-screen start. Called at the top of open() so
