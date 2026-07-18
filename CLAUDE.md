@@ -130,7 +130,8 @@ build, and the runtime runs **`serve . -l 3000`**.
   viewport** (`17px + 3.1vw`, ≈54px @1200 → ~29px @390, floor 26px) so the full-width title scales
   DOWN as the screen narrows; below ~466px it **wraps** at the tracked size with
   `text-wrap: balance` (even rows, no widow) — with a once-on-enter **word-by-word masked rise** (a
-  plain fade when wrapped), welcome copy + "Sail through →" button → **About popup**
+  plain fade when wrapped), welcome copy + "Learn what this playbook is for." inline link →
+  **About popup**
   (`aboutModal()`: a humanistreview.ai-style counter-translate wipe — mask/panel move ±100% so the
   card holds still while the clip unrolls up; `hrOut` CustomEase; masked-line text + image clip/scale
   reveals; pauses the smoother while open; reduced motion intentionally ignored. Layout is desktop

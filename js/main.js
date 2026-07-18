@@ -313,8 +313,9 @@ function introScene() {
 
   if (reduce) return;               // CSS reduced-motion block shows everything statically
 
-  // The "Sail through" CTA lives inside .intro__copy now, so it rides this fade —
-  // tweening it separately would nest a second opacity/y on top of its parent's.
+  // The "Learn what this playbook is for" CTA lives inside .intro__copy now, so it
+  // rides this fade — tweening it separately would nest a second opacity/y on top
+  // of its parent's.
   gsap.set(".intro__copy", { autoAlpha: 0, y: 14 });
 
   // Build the headline reveal at ENTER time so it matches the current wrap state
@@ -546,8 +547,8 @@ function wireBookKnockAndHover(shelf, books) {
 
 /* ============================================================================
    7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
-   (the landing "Sail through" button). Entrance is a humanistreview.ai-style
-   counter-translate wipe: the outer .mask (overflow:hidden) and inner .panel move
+   (the landing's inline "Learn what this playbook is for." link). Entrance is a
+   humanistreview.ai-style counter-translate wipe: the outer .mask (overflow:hidden) and inner .panel move
    equal-and-opposite so the card holds still while the clip window unrolls UP from
    the bottom; text lines rise out of their own clip masks and the two images uncover
    (clip reveal + a slow 1.15→1 inner scale that outlives the reveal). Close rolls the
@@ -574,6 +575,12 @@ function aboutModal() {
   const illusMasks = gsap.utils.toArray(".about-modal__illus-mask", modal);
   const illusImgs = gsap.utils.toArray(".about-modal__illus-mask img", modal);
   const closeEls = gsap.utils.toArray("[data-about-close]", modal); // scrim + ✕
+  // The modal sits `hidden` (display:none) until opened, so `loading="lazy"` on its
+  // <img>s never fires (no layout box to intersect) — first click would otherwise
+  // reveal a blank/pop-in image. Warm the browser cache for each unique src right
+  // away so every image is already loaded by the time the reveal timeline runs.
+  new Set(illusImgs.map((img) => img.getAttribute("src")).filter(Boolean))
+    .forEach((src) => { const img = new Image(); img.src = src; });
   const main = document.querySelector("main");
   const CLIP_HIDDEN = "inset(100% 0% 0% 0%)"; // clip window collapsed to the bottom edge
   const CLIP_SHOWN = "inset(0% 0% 0% 0%)";
@@ -598,7 +605,7 @@ function aboutModal() {
     root.style.overflow = "";
     document.body.style.overflow = "";
     if (smoother) smoother.paused(false);
-    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to "Sail through"
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); // back to the opener link
   }
 
   // Park every animated target at its off-screen start. Called at the top of open() so
