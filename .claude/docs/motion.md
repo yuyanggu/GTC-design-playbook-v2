@@ -62,7 +62,7 @@ pieces:
    (hellohello.is style — pre-authored `.word` inline-blocks inside `overflow:hidden` `.line`
    wrappers, `yPercent` 118→0, `power4.out`, stagger 0.07, with the `y:0`-before-`yPercent` guard
    from the retired `manifestoReveal`), while `.intro__copy` / `.intro__explore` fade up (the top-left
-   `.home-logo` is a separate fixed top bar — see `logoBar`). The "Learn what this playbook is for."
+   `.home-logo` is a separate fixed top bar — see `logoBar`). The "How to navigate this guide."
    link (`[data-about-open]`) opens the **About popup** — a counter-translate wipe entrance; see its
    own section below.
 4. **Books/spines rise** — now owned by `homeBooks()`: parked below the fold (clipped by
@@ -121,9 +121,9 @@ two transform channels.
 ## The intro section (`#intro`, Figma 2082-2203)
 
 An in-flow `min-height:100svh` section below the cover: an `.intro__row` (`space-between`) holding the
-Boldonse headline **"We don't wait for the wind. / We steer the motion."** (40–54px, two lines fitted
+Boldonse headline **"Good design / moves with intent."** (40–54px, two lines fitted
 by `fitHeadline()`; stacks ≤1200px and wraps on phones — see below) hard-left and the 421px `.intro__col` (Source
-Serif welcome copy + "Learn what this playbook is for." link, `[data-about-open]` → About popup) hard-right, with the 5-book `.home-shelf`
+Serif welcome copy + "How to navigate this guide." link, `[data-about-open]` → About popup) hard-right, with the 5-book `.home-shelf`
 flush to the section's bottom. The row is **width-matched to the shelf**: both use
 `--shelf-width: min(var(--shelf-w), 100% − var(--shelf-pad))` (`1300px` / `80px`, kept in sync with
 `SHELF_W`/`SHELF_PAD` in `main.js`) and centre via `margin-inline:auto`, so the headline's left edge
@@ -168,7 +168,7 @@ this section any more — it's a fixed body-level element (see `logoBar` in the 
 
 ## About-this-playbook popup — entrance wipe + responsive layout
 
-Opened by the intro's "Learn what this playbook is for." link (`[data-about-open]`); full-screen modal, markup outside
+Opened by the intro's "How to navigate this guide." link (`[data-about-open]`); full-screen modal, markup outside
 `#smooth-wrapper` (so `main` can go `inert`). All behaviour is `aboutModal()` in `main.js`; styling is
 the `.about-modal*` block in `styles.css`. **Reduced motion is intentionally ignored here** — the
 animation always plays (the `reduce` early-return was removed on purpose).

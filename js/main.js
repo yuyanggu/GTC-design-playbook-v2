@@ -252,16 +252,19 @@ function logoBar() {
 
 /* ============================================================================
    2e · Headline fit — the intro title must ALWAYS be exactly two lines with no
-        wrapping. Each `.line` is `white-space:nowrap`; this measures the longest
-        line at the 54px cap and scales the shared font-size down so it fits the
-        space beside the copy column (full width when stacked on mobile). Pure
+        wrapping (until even the 40px floor can't hold, see `wrap` below). Each
+        `.line` is `white-space:nowrap`; this measures the longest line at the
+        54px cap and scales the shared font-size down so it fits the space
+        beside the copy column (full width when stacked). Also matches the copy
+        column's width to the title's own rendered width on tablet (stacked, but
+        wider than mobile) — see the `col.style.width` block at the end. Pure
         layout, so it runs regardless of reduced motion; re-fit on resize + after
         the display font loads (Boldonse metrics differ from the fallback).
    ========================================================================== */
 const HEADLINE_MAX = 54;         // px — Figma cap
 const HEADLINE_MIN = 40;         // px — floor while the title sits beside the copy column
-const HEADLINE_MIN_STACKED = 26; // px — floor once stacked: phones keep two small lines
-                                 //       instead of four wrapped 40px ones
+const HEADLINE_MIN_STACKED = 40; // px — floor once stacked too: never smaller, even on
+                                 //       the narrowest phones (they wrap a 3rd row instead)
 function fitHeadline() {
   const h = document.querySelector(".intro__headline");
   const row = document.querySelector(".intro__row");
@@ -283,21 +286,29 @@ function fitHeadline() {
 
   // Side-by-side (>1200px): fit beside the copy column, clamped to [40, 54] as before.
   // Stacked (≤1200px): a full-width 54px title reads oversized on tablets, so the cap
-  // tracks the viewport instead — 54px at the 1200px stack point easing down to ~29px
-  // at 390px (17px + 3.1vw, mirrored by the CSS no-JS fallback clamp) — and the floor
-  // drops to 26px so the two-line form survives far down into phone widths.
+  // tracks the viewport instead — 54px at the 1200px stack point easing down to a flat
+  // 40px floor below ~740px (17px + 3.1vw, mirrored by the CSS no-JS fallback clamp) —
+  // the title never renders smaller than 40px at any width.
   const cap = stacked
     ? Math.min(HEADLINE_MAX, Math.max(HEADLINE_MIN_STACKED, 17 + window.innerWidth * 0.031))
     : HEADLINE_MAX;
   const floor = stacked ? HEADLINE_MIN_STACKED : HEADLINE_MIN;
   const fit = widest > avail ? HEADLINE_MAX * avail / widest : HEADLINE_MAX; // one-row size
 
-  // If even the floor can't keep the longest line on one row (phones), let the title wrap
-  // (rows balanced via CSS text-wrap:balance) at the viewport-tracked cap rather than
-  // shrink further — introScene reveals with a plain fade when wrapped.
+  // If even the 40px floor can't keep the longest line on one row (the narrowest
+  // phones), let the title wrap (rows balanced via CSS text-wrap:balance) rather than
+  // shrink below 40px — introScene reveals with a plain fade when wrapped.
   const wrap = fit < floor;
   h.style.fontSize = (wrap ? Math.round(cap) : Math.max(floor, Math.floor(Math.min(cap, fit)))) + "px";
   h.classList.toggle("intro__headline--wrap", wrap);
+
+  // Tablet (stacked, but wider than the 800px mobile breakpoint): match the copy
+  // column's width to the title's own rendered box so their edges align exactly.
+  // Desktop keeps its CSS 560px cap and mobile keeps CSS 100% — both cleared here by
+  // resetting the inline style so the CSS value governs again.
+  if (col) {
+    col.style.width = (stacked && window.innerWidth > 800) ? h.getBoundingClientRect().width + "px" : "";
+  }
 }
 
 /* ============================================================================
@@ -313,7 +324,7 @@ function introScene() {
 
   if (reduce) return;               // CSS reduced-motion block shows everything statically
 
-  // The "Learn what this playbook is for" CTA lives inside .intro__copy now, so it
+  // The "How to navigate this guide" CTA lives inside .intro__copy now, so it
   // rides this fade — tweening it separately would nest a second opacity/y on top
   // of its parent's.
   gsap.set(".intro__copy", { autoAlpha: 0, y: 14 });
@@ -547,7 +558,7 @@ function wireBookKnockAndHover(shelf, books) {
 
 /* ============================================================================
    7 · About-this-playbook popup — full-screen modal opened by [data-about-open]
-   (the landing's inline "Learn what this playbook is for." link). Entrance is a
+   (the landing's inline "How to navigate this guide." link). Entrance is a
    humanistreview.ai-style counter-translate wipe: the outer .mask (overflow:hidden) and inner .panel move
    equal-and-opposite so the card holds still while the clip window unrolls UP from
    the bottom; text lines rise out of their own clip masks and the two images uncover

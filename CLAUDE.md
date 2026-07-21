@@ -124,13 +124,13 @@ build, and the runtime runs **`serve . -l 3000`**.
   (`.home-logo`, body-level so `fixed` holds under ScrollSmoother) that reveals once the page bottom
   is reached and then persists over the content but hides over the hero cover (no duplicate lockup);
   one-direction cloud drift + a scrubbed **container parallax** that settles the
-  cloud band along the top of the in-flow **`#intro` section** (Figma `2082-2203`: Boldonse "We
-  don't wait for the wind. / We steer the motion." headline — two lines fitted by `fitHeadline()`:
+  cloud band along the top of the in-flow **`#intro` section** (Figma `2082-2203`: Boldonse "Good
+  design / moves with intent." headline — two lines fitted by `fitHeadline()`:
   **40–54px while side-by-side (>1200px)**; once the intro **stacks (≤1200px)** the cap **tracks the
   viewport** (`17px + 3.1vw`, ≈54px @1200 → ~29px @390, floor 26px) so the full-width title scales
   DOWN as the screen narrows; below ~466px it **wraps** at the tracked size with
   `text-wrap: balance` (even rows, no widow) — with a once-on-enter **word-by-word masked rise** (a
-  plain fade when wrapped), welcome copy + "Learn what this playbook is for." inline link →
+  plain fade when wrapped), welcome copy + "How to navigate this guide." inline link →
   **About popup**
   (`aboutModal()`: a humanistreview.ai-style counter-translate wipe — mask/panel move ±100% so the
   card holds still while the clip unrolls up; `hrOut` CustomEase; masked-line text + image clip/scale

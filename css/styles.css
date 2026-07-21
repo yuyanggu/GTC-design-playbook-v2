@@ -337,14 +337,15 @@ html:has(#hero) body {
    ALWAYS exactly two lines: each `.line` is `white-space:nowrap`, and fitHeadline()
    in main.js scales this shared `font-size` (capped ≤54px) so the longest line fits
    the space beside the copy column; once the row stacks (≤1200px) the cap tracks the
-   viewport (17px + 3.1vw ≈ 54px @1200 → 29px @390, floor 26px) so the full-width
-   title scales DOWN as the screen narrows. The `clamp` here is only a no-JS
-   fallback — JS sets an inline `font-size` that overrides it. */
+   viewport (17px + 3.1vw ≈ 54px @1200 → a flat 40px floor below ~740px) so the
+   full-width title scales DOWN as the screen narrows but never below 40px. The
+   `clamp` here is only a no-JS fallback — JS sets an inline `font-size` that
+   overrides it. */
 .intro__headline {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(26px, 17px + 3.1vw, 54px);   /* fallback; JS fits the real size */
+  font-size: clamp(40px, 17px + 3.1vw, 54px);   /* fallback; JS fits the real size */
   line-height: 1.48;                            /* 80 / 54 */
   letter-spacing: -0.3px;
   color: var(--midnight);
@@ -371,9 +372,12 @@ html:has(#hero) body {
   margin-block: 0;
 }
 .intro__headline .word { display: inline-block; will-change: transform; }
-/* Right column — Figma 421px: the welcome copy (which now carries the CTA inline). */
+/* Right column — the welcome copy (which now carries the CTA inline). Widened from the
+   original Figma 421px spec to a 560px measure at full width, but a %-based width (not
+   a flat 560px) so it narrows on smaller desktop screens instead of crowding the
+   headline out of its own space as the row approaches the ≤1200px stack point. */
 .intro__col {
-  width: min(421px, 100%);
+  width: min(560px, 43%);
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -636,7 +640,7 @@ html:has(#hero) body {
 /* Desktop: the mobile cards section is not rendered. */
 .home-cards { display: none; }
 
-/* ≤1200px — a two-line 40px title no longer fits beside the 421px copy column, so
+/* ≤1200px — a two-line 40px title no longer fits beside the 560px copy column, so
    STACK the intro to one column: the title takes the full shelf-width (its size now
    tracking the viewport via fitHeadline, ~54px here shrinking as the screen narrows)
    and the copy sits beneath it. The shelf still shows here (down to 800px), so the
@@ -648,7 +652,9 @@ html:has(#hero) body {
     align-items: flex-start;          /* title + copy left-aligned to the shelf's left edge */
     gap: clamp(28px, 4vw, 44px);      /* more air between the full-width title and the copy */
   }
-  .intro__col { width: min(421px, 100%); }   /* readable measure below the title */
+  /* Static fallback only — fitHeadline() (main.js) sets an inline width here matching
+     the title's own rendered width above 800px, so their edges align. */
+  .intro__col { width: min(421px, 100%); }
 }
 
 @media (max-width: 800px) {
@@ -667,7 +673,7 @@ html:has(#hero) body {
   /* Intro section stacks: headline above the copy column, cards flow right below
      (no shelf to reserve space for, so the section shrinks to its content). The shelf
      is hidden here, so the row drops the shelf-width cap and just fills the padded box.
-     Headline size comes from fitHeadline() (viewport-tracked, floor 26px). */
+     Headline size comes from fitHeadline() (viewport-tracked, floor 40px). */
   .intro { min-height: auto; padding-block: 96px 28px; padding-inline: clamp(20px, 5.5vw, 32px); overflow: visible; }
   .intro__row { width: 100%; margin-inline: 0; flex-direction: column; gap: 36px; }
   .intro__headline { max-width: 100%; }

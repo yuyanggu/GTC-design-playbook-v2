@@ -97,7 +97,7 @@ drawer Menu — 2026-07.)
 | `logoBar()` | Fixed top-left wordmark (`.home-logo`, body-level): hidden until the page bottom is first reached, then shown as a persistent top bar over the content but hidden over the hero cover (no duplicate lockup). | [motion.md](motion.md) |
 | `pinwheelScene()` | Builds the fixed pinwheel traveler; `place()` blends position via `prox.{rise,align}` + tracks the slot rect; the "wind" spin. | [motion.md](motion.md) |
 | `homeBooks()` | Parks `#homeShelf` books/spines, plays their rise-in once the shelf enters, wires knock/hover. | [menu.md](menu.md) |
-| `aboutModal()` | The "Learn what this playbook is for." About popup: a counter-translate wipe entrance (mask/panel ±100%, `hrOut` CustomEase), masked-line text + image clip/scale reveals, scroll-lock while open, ESC/scrim close. Reduced motion intentionally ignored. No-ops without `#aboutModal`. | [motion.md](motion.md) |
+| `aboutModal()` | The "How to navigate this guide." About popup: a counter-translate wipe entrance (mask/panel ±100%, `hrOut` CustomEase), masked-line text + image clip/scale reveals, scroll-lock while open, ESC/scrim close. Reduced motion intentionally ignored. No-ops without `#aboutModal`. | [motion.md](motion.md) |
 
 ### `js/chapter.js` — runs on chapter surfaces
 
